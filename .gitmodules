@@ -1,0 +1,3 @@
+[submodule "src/main/resources/sever-secrets"]
+	path = src/main/resources/sever-secrets
+	url = https://github.com/team-verby/sever-secrets.git
