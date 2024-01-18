@@ -2,6 +2,9 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.1'
 	id 'io.spring.dependency-management' version '1.1.4'
+
+	id "org.sonarqube" version "4.4.1.3373"
+	id 'jacoco'
 }
 
 group = 'com.verby'
@@ -25,12 +28,87 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
+	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 test {
 	useJUnitPlatform()
+	finalizedBy 'jacocoTestReport'
+}
+
+// Jacoco
+def jacocoDir = layout.buildDirectory.dir("reports/")
+
+jacoco {
+	toolVersion = "0.8.9"
+}
+
+def jacocoExcludePatterns = [
+		"**/*Application*",
+		"**/*Config*",
+		"**/*Exception*",
+		"**/*Request*",
+		"**/*Response*",
+		"**/*Interceptor*",
+		"**/*Filter*",
+		"**/*Resolver*",
+		"**/resources/**"
+]
+
+def excludedClassFilesForReport(classDirectories, jacocoExcludePatterns) {
+	classDirectories.setFrom(files(classDirectories.files.collect {
+		fileTree(dir: it, exclude: jacocoExcludePatterns)
+	}))
+}
+
+jacocoTestReport {
+	dependsOn test
+	reports {
+		html.required.set(true)
+		xml.required.set(true)
+
+		html.destination jacocoDir.get().file("jacoco/index.html").asFile
+		xml.destination jacocoDir.get().file("jacoco/index.xml").asFile
+	}
+
+	afterEvaluate {
+		excludedClassFilesForReport(classDirectories, jacocoExcludePatterns)
+	}
+
+	finalizedBy jacocoTestCoverageVerification
+}
+
+jacocoTestCoverageVerification {
+	excludedClassFilesForReport(classDirectories, jacocoExcludePatterns)
+	violationRules {
+		rule {
+			enabled = true
+			element = 'CLASS'
+
+			limit {
+				counter = 'BRANCH'
+				value = 'COVEREDRATIO'
+				minimum = 0.70
+			}
+
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.70
+			}
+		}
+	}
+}
+
+// SonarCloud
+sonar {
+	properties {
+		property "sonar.projectKey", "team-verby_test-repository"
+		property "sonar.organization", "team-verby"
+		property "sonar.host.url", "https://sonarcloud.io"
+		property "sonar.exclusions", jacocoExcludePatterns.join(",")
+	}
 }
