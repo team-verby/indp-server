@@ -107,7 +107,7 @@ jacocoTestCoverageVerification {
 // SonarCloud
 sonar {
 	properties {
-		property "sonar.projectKey", "team-verby_test-repository"
+		property "sonar.projectKey", "team-verby_indp-server"
 		property "sonar.organization", "team-verby"
 		property "sonar.host.url", "https://sonarcloud.io"
 		property "sonar.exclusions", jacocoExcludePatterns.join(",")
