@@ -21,11 +21,11 @@ class StoreRepositoryTest {
     private StoreRepository storeRepository;
 
     @Nested
-    @DisplayName("findAllByOrderByCreatedAtAsc 메소드 실행 시")
-    class FindAllByOrderByCreatedAtAsc {
+    @DisplayName("findAllByOrderByStoreIdAsc 메소드 실행 시")
+    class FindAllByOrderByStoreIdAsc {
 
         @Test
-        @DisplayName("성공: size 만큼 페이징 조회를 한다.")
+        @DisplayName("성공: id 오름차순으로 size 만큼 페이징 조회를 한다.")
         void findAllByOrderByCreatedAtAsc() {
             // given
             int count = 20;
@@ -37,14 +37,17 @@ class StoreRepositoryTest {
 
             storeRepository.saveAll(stores);
 
+            stores.sort((o1, o2) -> (int) (o1.getStoreId() - o2.getStoreId()));
+            List<Store> expected = stores.subList(0, size);
+
             // when
-            Page<Store> result = storeRepository.findAllByOrderByCreatedAtAsc(
+            Page<Store> result = storeRepository.findAllByOrderByStoreIdAsc(
                 pageable);
 
             // then
             assertThat(result.getTotalElements()).isEqualTo(count);
             assertThat(result.hasNext()).isTrue();
-            assertThat(result.getContent()).hasSize(size);
+            assertThat(result.getContent()).isEqualTo(expected);
         }
 
     }

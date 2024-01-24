@@ -47,7 +47,7 @@ class StoreServiceTest {
 
             FindSimpleStoresResponse expected = FindSimpleStoresResponse.from(pageStores);
 
-            when(storeRepository.findAllByOrderByCreatedAtAsc(pageable)).thenReturn(pageStores);
+            when(storeRepository.findAllByOrderByStoreIdAsc(pageable)).thenReturn(pageStores);
 
             // when
             FindSimpleStoresResponse result = storeService.findSimpleStores(pageable);

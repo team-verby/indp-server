@@ -15,7 +15,7 @@ public class StoreService {
     private final StoreRepository storeRepository;
 
     public FindSimpleStoresResponse findSimpleStores(Pageable pageable) {
-        Page<Store> page = storeRepository.findAllByOrderByCreatedAtAsc(pageable);
+        Page<Store> page = storeRepository.findAllByOrderByStoreIdAsc(pageable);
 
         return FindSimpleStoresResponse.from(page);
     }

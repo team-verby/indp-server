@@ -2,7 +2,9 @@ package com.verby.indp.domain.store.fixture;
 
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.constant.Region;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class StoreFixture {
@@ -24,7 +26,7 @@ public class StoreFixture {
     public static List<Store> stores(int count) {
         return IntStream.range(0, count)
             .mapToObj(i -> store())
-            .toList();
+            .collect(Collectors.toCollection(ArrayList::new));
     }
 
 }
