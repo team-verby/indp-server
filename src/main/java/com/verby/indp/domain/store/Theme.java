@@ -22,4 +22,7 @@ public class Theme {
     @Embedded
     private ThemeName name;
 
+    public String getName() {
+        return name.getName();
+    }
 }

@@ -21,4 +21,7 @@ public class SongForm {
     @Embedded
     private SongFormName name;
 
+    public String getName() {
+        return name.getName();
+    }
 }

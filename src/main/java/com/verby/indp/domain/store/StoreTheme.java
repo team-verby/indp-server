@@ -27,4 +27,7 @@ public class StoreTheme {
     @JoinColumn(name = "theme_id")
     private Theme theme;
 
+    public String getTheme() {
+        return theme.getName();
+    }
 }

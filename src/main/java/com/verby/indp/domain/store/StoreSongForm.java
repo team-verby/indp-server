@@ -28,4 +28,8 @@ public class StoreSongForm {
     @JoinColumn(name = "song_form_id")
     private SongForm songForm;
 
+    public String getSongForm() {
+        return songForm.getName();
+    }
+
 }

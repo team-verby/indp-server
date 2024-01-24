@@ -41,6 +41,12 @@ public class Store extends BaseTimeEntity {
     @OneToMany(mappedBy = "store", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<StoreImage> images = new ArrayList<>();
 
+    @OneToMany(mappedBy = "store")
+    private List<StoreTheme> themes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "store")
+    private List<StoreSongForm> songForms = new ArrayList<>();
+
     public Store(String name, String address, Region region, List<String> imageUrls) {
         this.name = new StoreName(name);
         this.address = new Address(address);
@@ -64,4 +70,15 @@ public class Store extends BaseTimeEntity {
             .toList();
     }
 
+    public List<String> getThemes() {
+        return themes.stream()
+            .map(StoreTheme::getTheme)
+            .toList();
+    }
+
+    public List<String> getSongForms() {
+        return songForms.stream()
+            .map(StoreSongForm::getSongForm)
+            .toList();
+    }
 }
