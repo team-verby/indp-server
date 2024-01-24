@@ -8,9 +8,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "song_form")
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class SongForm {
 
     @Id
@@ -21,4 +23,11 @@ public class SongForm {
     @Embedded
     private SongFormName name;
 
+    public SongForm(String name) {
+        this.name = new SongFormName(name);
+    }
+
+    public String getName() {
+        return name.getName();
+    }
 }

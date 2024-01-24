@@ -57,7 +57,9 @@ def jacocoExcludePatterns = [
 		"**/*Filter*",
 		"**/*Resolver*",
 		"**/resources/**",
-		"**/vo/**"
+		"**/contact/**",
+		"**/common/**",
+		"**/recommendation/**"
 ]
 
 def excludedClassFilesForReport(classDirectories, jacocoExcludePatterns) {
@@ -112,7 +114,5 @@ sonar {
 		property "sonar.organization", "team-verby"
 		property "sonar.host.url", "https://sonarcloud.io"
 		property "sonar.exclusions", jacocoExcludePatterns.join(",")
-		property "sonar.java.coveragePlugin", "jacoco"
-		property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/index.xml"
 	}
 }
