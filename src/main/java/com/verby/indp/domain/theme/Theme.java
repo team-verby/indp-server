@@ -1,17 +1,18 @@
-package com.verby.indp.domain.store;
+package com.verby.indp.domain.theme;
 
-import com.verby.indp.domain.store.vo.ThemeName;
+import com.verby.indp.domain.theme.vo.ThemeName;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "theme")
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class Theme {
 
     @Id
@@ -21,6 +22,10 @@ public class Theme {
 
     @Embedded
     private ThemeName name;
+
+    public Theme(String name) {
+        this.name = new ThemeName(name);
+    }
 
     public String getName() {
         return name.getName();

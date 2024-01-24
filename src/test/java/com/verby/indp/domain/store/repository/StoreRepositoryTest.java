@@ -1,11 +1,17 @@
 package com.verby.indp.domain.store.repository;
 
+import static com.verby.indp.domain.song.fixture.SongFormFixture.songForm;
 import static com.verby.indp.domain.store.constant.Region.GYEONGGI;
 import static com.verby.indp.domain.store.constant.Region.SEOUL;
 import static com.verby.indp.domain.store.fixture.StoreFixture.stores;
+import static com.verby.indp.domain.theme.fixture.ThemeFixture.theme;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.verby.indp.domain.song.SongForm;
+import com.verby.indp.domain.song.repository.SongFormRepository;
 import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.theme.Theme;
+import com.verby.indp.domain.theme.repository.ThemeRepository;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,6 +28,12 @@ class StoreRepositoryTest {
     @Autowired
     private StoreRepository storeRepository;
 
+    @Autowired
+    private ThemeRepository themeRepository;
+
+    @Autowired
+    private SongFormRepository songFormRepository;
+
     @Nested
     @DisplayName("findAllByOrderByStoreIdAsc 메소드 실행 시")
     class FindAllByOrderByStoreIdAsc {
@@ -34,8 +46,14 @@ class StoreRepositoryTest {
             int page = 0;
             int size = 10;
 
+            Theme theme = theme();
+            themeRepository.save(theme);
+
+            SongForm songForm = songForm();
+            songFormRepository.save(songForm);
+
             Pageable pageable = PageRequest.of(page, size);
-            List<Store> stores = stores(count);
+            List<Store> stores = stores(List.of(theme), List.of(songForm), count);
 
             storeRepository.saveAll(stores);
 
@@ -68,9 +86,16 @@ class StoreRepositoryTest {
             int page = 0;
             int size = 10;
 
+            Theme theme = theme();
+            themeRepository.save(theme);
+
+            SongForm songForm = songForm();
+            songFormRepository.save(songForm);
+
             Pageable pageable = PageRequest.of(page, size);
-            List<Store> seoulStores = stores(seoulCount, SEOUL);
-            List<Store> gyeonggiStores = stores(gyeonggiCount, GYEONGGI);
+            List<Store> seoulStores = stores(List.of(theme), List.of(songForm), seoulCount, SEOUL);
+            List<Store> gyeonggiStores = stores(List.of(theme), List.of(songForm), gyeonggiCount,
+                GYEONGGI);
 
             storeRepository.saveAll(gyeonggiStores);
             storeRepository.saveAll(seoulStores);

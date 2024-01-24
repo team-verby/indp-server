@@ -2,8 +2,10 @@ package com.verby.indp.domain.store;
 
 import com.verby.indp.domain.common.entity.BaseTimeEntity;
 import com.verby.indp.domain.common.vo.Address;
+import com.verby.indp.domain.song.SongForm;
 import com.verby.indp.domain.store.constant.Region;
 import com.verby.indp.domain.store.vo.StoreName;
+import com.verby.indp.domain.theme.Theme;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -41,18 +43,31 @@ public class Store extends BaseTimeEntity {
     @OneToMany(mappedBy = "store", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<StoreImage> images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "store")
+    @OneToMany(mappedBy = "store", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<StoreTheme> themes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "store")
+    @OneToMany(mappedBy = "store", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<StoreSongForm> songForms = new ArrayList<>();
 
-    public Store(String name, String address, Region region, List<String> imageUrls) {
+    public Store(
+        String name,
+        String address,
+        Region region,
+        List<String> imageUrls,
+        List<Theme> themes,
+        List<SongForm> songForms
+    ) {
         this.name = new StoreName(name);
         this.address = new Address(address);
         this.region = region;
         this.images = imageUrls.stream()
             .map(imageUrl -> new StoreImage(this, imageUrl))
+            .toList();
+        this.themes = themes.stream()
+            .map(theme -> new StoreTheme(this, theme))
+            .toList();
+        this.songForms = songForms.stream()
+            .map(songForm -> new StoreSongForm(this, songForm))
             .toList();
     }
 

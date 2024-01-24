@@ -1,5 +1,6 @@
 package com.verby.indp.domain.store;
 
+import com.verby.indp.domain.theme.Theme;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,9 +10,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "store_theme")
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class StoreTheme {
 
     @Id
@@ -26,6 +29,11 @@ public class StoreTheme {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theme_id")
     private Theme theme;
+
+    public StoreTheme(Store store, Theme theme) {
+        this.store = store;
+        this.theme = theme;
+    }
 
     public String getTheme() {
         return theme.getName();

@@ -46,7 +46,7 @@ class StoreServiceTest {
             int page = 0;
             int size = 10;
 
-            List<Store> stores = stores(count);
+            List<Store> stores = stores(List.of(), List.of(), count);
             Pageable pageable = PageRequest.of(page, size);
             Page<Store> pageStores = new PageImpl<>(stores.subList(page, size), pageable, count);
 
@@ -80,7 +80,7 @@ class StoreServiceTest {
             int page = 0;
             int size = 10;
 
-            List<Store> seoulStores = stores(seoulCount, SEOUL);
+            List<Store> seoulStores = stores(List.of(), List.of(), seoulCount, SEOUL);
             Pageable pageable = PageRequest.of(page, size);
             Page<Store> pageStores = new PageImpl<>(
                 seoulStores.subList(page, Math.min(size, seoulCount)), pageable, seoulCount);
@@ -112,8 +112,8 @@ class StoreServiceTest {
             int page = 0;
             int size = 10;
 
-            List<Store> seoulStores = stores(seoulCount, SEOUL);
-            List<Store> gyeonggiStores = stores(gyeonggiCount, GYEONGGI);
+            List<Store> seoulStores = stores(List.of(), List.of(), seoulCount, SEOUL);
+            List<Store> gyeonggiStores = stores(List.of(), List.of(), gyeonggiCount, GYEONGGI);
             List<Store> allStores = new ArrayList<>();
             allStores.addAll(seoulStores);
             allStores.addAll(gyeonggiStores);
