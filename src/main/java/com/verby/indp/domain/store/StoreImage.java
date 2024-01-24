@@ -9,9 +9,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "store_image")
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class StoreImage {
 
     @Id
@@ -23,7 +26,12 @@ public class StoreImage {
     @JoinColumn(name = "store_id")
     private Store store;
 
+    @Getter
     @Column(name = "image_url")
     private String imageUrl;
 
+    public StoreImage(Store store, String imageUrl) {
+        this.store = store;
+        this.imageUrl = imageUrl;
+    }
 }
