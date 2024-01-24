@@ -23,9 +23,24 @@ public class StoreFixture {
         );
     }
 
+    public static Store store(Region region) {
+        return new Store(
+            STORE_NAME,
+            STORE_ADDRESS,
+            region,
+            IMAGE_URL_LIST
+        );
+    }
+
     public static List<Store> stores(int count) {
         return IntStream.range(0, count)
             .mapToObj(i -> store())
+            .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public static List<Store> stores(int count, Region region) {
+        return IntStream.range(0, count)
+            .mapToObj(i -> store(region))
             .collect(Collectors.toCollection(ArrayList::new));
     }
 

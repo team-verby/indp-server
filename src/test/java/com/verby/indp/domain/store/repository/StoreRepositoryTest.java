@@ -1,5 +1,7 @@
 package com.verby.indp.domain.store.repository;
 
+import static com.verby.indp.domain.store.constant.Region.GYEONGGI;
+import static com.verby.indp.domain.store.constant.Region.SEOUL;
 import static com.verby.indp.domain.store.fixture.StoreFixture.stores;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,6 +49,41 @@ class StoreRepositoryTest {
             // then
             assertThat(result.getTotalElements()).isEqualTo(count);
             assertThat(result.hasNext()).isTrue();
+            assertThat(result.getContent()).isEqualTo(expected);
+        }
+
+    }
+
+    @Nested
+    @DisplayName("findAllByRegionOrderByStoreIdAsc 메소드 실행 시")
+    class FindAllByRegionOrderByStoreIdAsc {
+
+        @Test
+        @DisplayName("성공: 특정 지역의 매장을 id 오름차순으로 size 만큼 페이징 조회를 한다.")
+        void findAllByRegionOrderByStoreIdAsc() {
+            // given
+            int seoulCount = 5;
+            int gyeonggiCount = 15;
+
+            int page = 0;
+            int size = 10;
+
+            Pageable pageable = PageRequest.of(page, size);
+            List<Store> seoulStores = stores(seoulCount, SEOUL);
+            List<Store> gyeonggiStores = stores(gyeonggiCount, GYEONGGI);
+
+            storeRepository.saveAll(gyeonggiStores);
+            storeRepository.saveAll(seoulStores);
+
+            seoulStores.sort((o1, o2) -> (int) (o1.getStoreId() - o2.getStoreId()));
+            List<Store> expected = seoulStores.subList(0, Math.min(size, seoulCount));
+
+            // when
+            Page<Store> result = storeRepository.findAllByRegionOrderByStoreIdAsc(pageable, SEOUL);
+
+            // then
+            assertThat(result.getTotalElements()).isEqualTo(seoulCount);
+            assertThat(result.hasNext()).isFalse();
             assertThat(result.getContent()).isEqualTo(expected);
         }
 
