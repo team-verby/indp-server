@@ -56,7 +56,10 @@ def jacocoExcludePatterns = [
 		"**/*Interceptor*",
 		"**/*Filter*",
 		"**/*Resolver*",
-		"**/resources/**"
+		"**/resources/**",
+		"**/contact/**",
+		"**/common/**",
+		"**/recommendation/**"
 ]
 
 def excludedClassFilesForReport(classDirectories, jacocoExcludePatterns) {
