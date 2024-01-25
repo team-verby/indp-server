@@ -16,6 +16,17 @@ public class StoreFixture {
     private static final List<String> IMAGE_URL_LIST = List.of("imageUrl1");
     public static final Region STORE_REGION = Region.SEOUL;
 
+    public static Store store() {
+        return new Store(
+            STORE_NAME,
+            STORE_ADDRESS,
+            STORE_REGION,
+            IMAGE_URL_LIST,
+            List.of(),
+            List.of()
+        );
+    }
+
     public static Store store(
         List<Theme> themes,
         List<SongForm> songForms

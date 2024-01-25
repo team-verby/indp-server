@@ -53,6 +53,14 @@ public class Recommendation extends BaseTimeEntity {
         this.phoneNumber = new PhoneNumber(phoneNumber);
     }
 
+    public String getInformation() {
+        return information.getInformation();
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber.getPhoneNumber();
+    }
+
     private void validateStore(Store store) {
         if (isNull(store)) {
             throw new IllegalArgumentException("존재하지 않는 매장입니다.");
