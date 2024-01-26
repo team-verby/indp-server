@@ -1,11 +1,14 @@
 package com.verby.indp.domain.recommendation.service;
 
+import com.verby.indp.domain.common.notification.mail.Mail;
+import com.verby.indp.domain.common.notification.mail.MailService;
 import com.verby.indp.domain.recommendation.Recommendation;
 import com.verby.indp.domain.recommendation.dto.request.RegisterRecommendationRequest;
 import com.verby.indp.domain.recommendation.repository.RecommendationRepository;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,8 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class RecommendationService {
 
+    @Value("${spring.mail.username}")
+    private String to;
+
     private final RecommendationRepository recommendationRepository;
     private final StoreRepository storeRepository;
+    private final MailService mailService;
 
     @Transactional
     public long registerRecommendation(RegisterRecommendationRequest request) {
@@ -24,6 +31,13 @@ public class RecommendationService {
             request.phoneNumber());
 
         Recommendation persistRecommendation = recommendationRepository.save(recommendation);
+
+        Mail mail = new Mail(to, "[버비] 인디피 서비스에 음악이 추천되었어요!",
+            "추천 음악 정보: " + request.information() + "\n" +
+                "추천인 연락처: " + request.phoneNumber() + "\n" +
+                "매장 이름: " + store.getName() + "\n" +
+                "매장 주소: " + store.getAddress() + "\n");
+        mailService.sendMail(mail);
 
         return persistRecommendation.getRecommendationId();
     }
