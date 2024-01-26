@@ -10,3 +10,7 @@ spring:
         show_sql: true
     hibernate:
       ddl-auto: create
+
+  mail:
+    host: MockHost
+    username: MockUsername

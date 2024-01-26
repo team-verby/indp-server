@@ -33,6 +33,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'io.rest-assured:rest-assured:5.4.0'
+	implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.2'
 }
 
 test {
