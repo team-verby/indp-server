@@ -6,6 +6,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.verby.indp.domain.common.notification.mail.Mail;
+import com.verby.indp.domain.common.notification.mail.MailService;
 import com.verby.indp.domain.contact.Contact;
 import com.verby.indp.domain.contact.dto.request.RegisterContactRequest;
 import com.verby.indp.domain.contact.repository.ContactRepository;
@@ -25,6 +27,9 @@ class ContactServiceTest {
 
     @Mock
     private ContactRepository contactRepository;
+
+    @Mock
+    private MailService mailService;
 
     @Nested
     @DisplayName("registerContact 메소드 호출 시")
@@ -46,6 +51,7 @@ class ContactServiceTest {
 
             // then
             verify(contactRepository, times(1)).save(any(Contact.class));
+            verify(mailService, times(1)).sendMail(any(Mail.class));
         }
 
     }

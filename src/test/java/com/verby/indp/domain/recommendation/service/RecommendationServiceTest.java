@@ -10,6 +10,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.verby.indp.domain.common.notification.mail.Mail;
+import com.verby.indp.domain.common.notification.mail.MailService;
 import com.verby.indp.domain.recommendation.Recommendation;
 import com.verby.indp.domain.recommendation.dto.request.RegisterRecommendationRequest;
 import com.verby.indp.domain.recommendation.repository.RecommendationRepository;
@@ -36,6 +38,9 @@ class RecommendationServiceTest {
     @Mock
     private StoreRepository storeRepository;
 
+    @Mock
+    private MailService mailService;
+
     @Nested
     @DisplayName("registerRecommendation 메소드 실행 시")
     class RegisterRecommendation {
@@ -60,6 +65,7 @@ class RecommendationServiceTest {
 
             // then
             verify(recommendationRepository, times(1)).save(any(Recommendation.class));
+            verify(mailService, times(1)).sendMail(any(Mail.class));
         }
 
         @Test
