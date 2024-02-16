@@ -3,6 +3,9 @@ PROJECT_NAME=indp-server
 APPLICATION_NAME=indp
 
 DEPLOY_PATH=$PROJECT_ROOT/deploy
+
+APP_LOG=$DEPLOY_PATH/application.log
+ERROR_LOG=$DEPLOY_PATH/deploy-error.log
 DEPLOY_LOG=$DEPLOY_PATH/deploy.log
 
 mkdir $DEPLOY_PATH
@@ -23,7 +26,8 @@ else
 fi
 
 echo "✅ 새 어플리케이션 배포" >> $DEPLOY_LOG
+
 JAR_NAME=$(ls -tr "$DEPLOY_PATH" | grep jar | tail -n 1)
 
 echo "✅ JAR Name: $JAR_NAME" >> $DEPLOY_LOG
-nohup java -jar $DEPLOY_PATH/$JAR_NAME --spring.profiles.active=dev > $DEPLOY_LOG 2>&1 &
+nohup java -jar $DEPLOY_PATH/$JAR_NAME --spring.profiles.active=dev > $APP_LOG 2> $ERROR_LOG &
