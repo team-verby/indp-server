@@ -1,5 +1,6 @@
 package com.verby.indp.domain.recommendation.service;
 
+import com.verby.indp.domain.common.event.mail.MailSendEvent;
 import com.verby.indp.domain.common.notification.mail.Mail;
 import com.verby.indp.domain.common.notification.mail.MailService;
 import com.verby.indp.domain.recommendation.Recommendation;
@@ -9,6 +10,7 @@ import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +24,7 @@ public class RecommendationService {
 
     private final RecommendationRepository recommendationRepository;
     private final StoreRepository storeRepository;
-    private final MailService mailService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public long registerRecommendation(RegisterRecommendationRequest request) {
@@ -37,7 +39,7 @@ public class RecommendationService {
                 "추천인 연락처: " + request.phoneNumber() + "\n" +
                 "매장 이름: " + store.getName() + "\n" +
                 "매장 주소: " + store.getAddress() + "\n");
-        mailService.sendMail(mail);
+        applicationEventPublisher.publishEvent(new MailSendEvent(mail));
 
         return persistRecommendation.getRecommendationId();
     }
