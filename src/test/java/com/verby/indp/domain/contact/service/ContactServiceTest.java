@@ -6,8 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.verby.indp.domain.common.notification.mail.Mail;
-import com.verby.indp.domain.common.notification.mail.MailService;
+import com.verby.indp.domain.common.event.mail.MailSendEvent;
 import com.verby.indp.domain.contact.Contact;
 import com.verby.indp.domain.contact.dto.request.RegisterContactRequest;
 import com.verby.indp.domain.contact.repository.ContactRepository;
@@ -18,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class ContactServiceTest {
@@ -29,7 +29,7 @@ class ContactServiceTest {
     private ContactRepository contactRepository;
 
     @Mock
-    private MailService mailService;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Nested
     @DisplayName("registerContact 메소드 호출 시")
@@ -51,7 +51,7 @@ class ContactServiceTest {
 
             // then
             verify(contactRepository, times(1)).save(any(Contact.class));
-            verify(mailService, times(1)).sendMail(any(Mail.class));
+            verify(applicationEventPublisher, times(1)).publishEvent(any(MailSendEvent.class));
         }
 
     }
