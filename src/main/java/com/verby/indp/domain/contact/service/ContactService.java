@@ -1,8 +1,7 @@
 package com.verby.indp.domain.contact.service;
 
-import com.verby.indp.domain.common.event.mail.MailSendEvent;
-import com.verby.indp.domain.common.notification.mail.Mail;
-import com.verby.indp.domain.common.notification.mail.MailService;
+import com.verby.indp.domain.common.event.MailSendEvent;
+import com.verby.indp.domain.notification.dto.Mail;
 import com.verby.indp.domain.contact.Contact;
 import com.verby.indp.domain.contact.dto.request.RegisterContactRequest;
 import com.verby.indp.domain.contact.repository.ContactRepository;

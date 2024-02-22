@@ -5,6 +5,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.verby.indp.domain.notification.dto.Mail;
 import com.verby.indp.global.mail.SpringMailService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

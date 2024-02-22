@@ -8,8 +8,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.verby.indp.acceptance.support.ContactSupporter;
-import com.verby.indp.domain.common.notification.mail.Mail;
-import com.verby.indp.domain.common.notification.mail.MailService;
+import com.verby.indp.domain.notification.dto.Mail;
+import com.verby.indp.domain.notification.service.MailService;
 import com.verby.indp.domain.contact.Contact;
 import com.verby.indp.domain.contact.dto.request.RegisterContactRequest;
 import io.restassured.response.ExtractableResponse;
