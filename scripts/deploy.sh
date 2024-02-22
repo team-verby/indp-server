@@ -32,4 +32,4 @@ echo "[ $(date +%c) ] 새 어플리케이션 배포" >> $DEPLOY_LOG
 JAR_NAME=$(ls -tr "$DEPLOY_PATH" | grep jar | tail -n 1)
 
 echo "[ $(date +%c) ] JAR Name: $JAR_NAME" >> $DEPLOY_LOG
-nohup java -jar $DEPLOY_PATH/"$JAR_NAME" --spring.profiles.active=dev > $APP_LOG 2> $ERROR_LOG &
+nohup java -jar $DEPLOY_PATH/"$JAR_NAME" --spring.profiles.active=prod > $APP_LOG 2> $ERROR_LOG &

@@ -2,7 +2,7 @@ name: CD
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "main" ]
 
 env:
   S3_BUCKET_NAME: verby-bucket
