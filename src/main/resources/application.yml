@@ -1,0 +1,30 @@
+spring:
+  profiles:
+    active: local
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+    import:
+      - classpath:server-secrets/application-local.yml
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+    import:
+      - classpath:server-secrets/application-dev.yml
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import:
+      - classpath:server-secrets/application-prod.yml
