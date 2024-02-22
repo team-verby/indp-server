@@ -1,5 +1,7 @@
 package com.verby.indp.domain.store;
 
+import static jakarta.persistence.EnumType.STRING;
+
 import com.verby.indp.domain.common.entity.BaseTimeEntity;
 import com.verby.indp.domain.common.vo.Address;
 import com.verby.indp.domain.song.SongForm;
@@ -10,6 +12,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,6 +40,7 @@ public class Store extends BaseTimeEntity {
     @Embedded
     private Address address;
 
+    @Enumerated(STRING)
     @Column(name = "region")
     private Region region;
 

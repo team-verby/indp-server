@@ -2,8 +2,8 @@ package com.verby.indp.acceptance;
 
 
 import static com.verby.indp.domain.song.fixture.SongFormFixture.songForm;
-import static com.verby.indp.domain.store.constant.Region.GYEONGGI;
-import static com.verby.indp.domain.store.constant.Region.SEOUL;
+import static com.verby.indp.domain.store.constant.Region.경기;
+import static com.verby.indp.domain.store.constant.Region.서울;
 import static com.verby.indp.domain.store.fixture.StoreFixture.stores;
 import static com.verby.indp.domain.theme.fixture.ThemeFixture.theme;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,7 +72,7 @@ class StoreAcceptanceTest extends BaseAcceptanceTest {
     @DisplayName("특정 지역의 매장 목록을 조회한다.")
     void findStoresOfRegion() {
         // given
-        Region region = GYEONGGI;
+        Region region = 경기;
         int seoulCount = 5;
         int gyeonggiCount = 15;
 
@@ -85,8 +85,8 @@ class StoreAcceptanceTest extends BaseAcceptanceTest {
         SongForm songForm = songForm();
         songFormRepository.save(songForm);
 
-        List<Store> seoulStores = stores(List.of(theme), List.of(songForm), seoulCount, SEOUL);
-        List<Store> gyeonggiStores = stores(List.of(theme), List.of(songForm), gyeonggiCount, GYEONGGI);
+        List<Store> seoulStores = stores(List.of(theme), List.of(songForm), seoulCount, 서울);
+        List<Store> gyeonggiStores = stores(List.of(theme), List.of(songForm), gyeonggiCount, 경기);
         List<Store> allStores = new ArrayList<>();
         allStores.addAll(seoulStores);
         allStores.addAll(gyeonggiStores);
@@ -126,8 +126,8 @@ class StoreAcceptanceTest extends BaseAcceptanceTest {
         SongForm songForm = songForm();
         songFormRepository.save(songForm);
 
-        List<Store> seoulStores = stores(List.of(theme), List.of(songForm), seoulCount, SEOUL);
-        List<Store> gyeonggiStores = stores(List.of(theme), List.of(songForm), gyeonggiCount, GYEONGGI);
+        List<Store> seoulStores = stores(List.of(theme), List.of(songForm), seoulCount, 서울);
+        List<Store> gyeonggiStores = stores(List.of(theme), List.of(songForm), gyeonggiCount, 경기);
         List<Store> allStores = new ArrayList<>();
         allStores.addAll(seoulStores);
         allStores.addAll(gyeonggiStores);

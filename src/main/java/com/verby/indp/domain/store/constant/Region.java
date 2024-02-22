@@ -1,8 +1,7 @@
 package com.verby.indp.domain.store.constant;
 
 public enum Region {
-    SEOUL,
-    GYEONGGI,
-    ETC,
+    서울,
+    경기,
     ;
 }
