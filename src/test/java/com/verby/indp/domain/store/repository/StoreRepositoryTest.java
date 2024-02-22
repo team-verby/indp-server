@@ -1,8 +1,8 @@
 package com.verby.indp.domain.store.repository;
 
 import static com.verby.indp.domain.song.fixture.SongFormFixture.songForm;
-import static com.verby.indp.domain.store.constant.Region.GYEONGGI;
-import static com.verby.indp.domain.store.constant.Region.SEOUL;
+import static com.verby.indp.domain.store.constant.Region.경기;
+import static com.verby.indp.domain.store.constant.Region.서울;
 import static com.verby.indp.domain.store.fixture.StoreFixture.stores;
 import static com.verby.indp.domain.theme.fixture.ThemeFixture.theme;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -93,9 +93,9 @@ class StoreRepositoryTest {
             songFormRepository.save(songForm);
 
             Pageable pageable = PageRequest.of(page, size);
-            List<Store> seoulStores = stores(List.of(theme), List.of(songForm), seoulCount, SEOUL);
+            List<Store> seoulStores = stores(List.of(theme), List.of(songForm), seoulCount, 서울);
             List<Store> gyeonggiStores = stores(List.of(theme), List.of(songForm), gyeonggiCount,
-                GYEONGGI);
+                경기);
 
             storeRepository.saveAll(gyeonggiStores);
             storeRepository.saveAll(seoulStores);
@@ -104,7 +104,7 @@ class StoreRepositoryTest {
             List<Store> expected = seoulStores.subList(0, Math.min(size, seoulCount));
 
             // when
-            Page<Store> result = storeRepository.findAllByRegionOrderByStoreIdAsc(pageable, SEOUL);
+            Page<Store> result = storeRepository.findAllByRegionOrderByStoreIdAsc(pageable, 서울);
 
             // then
             assertThat(result.getTotalElements()).isEqualTo(seoulCount);
