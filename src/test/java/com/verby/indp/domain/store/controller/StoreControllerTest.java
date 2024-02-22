@@ -1,6 +1,6 @@
 package com.verby.indp.domain.store.controller;
 
-import static com.verby.indp.domain.store.constant.Region.SEOUL;
+import static com.verby.indp.domain.store.constant.Region.서울;
 import static com.verby.indp.domain.store.fixture.StoreFixture.stores;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -82,13 +82,13 @@ class StoreControllerTest extends BaseControllerTest {
     @DisplayName("성공: 지역별 매장 목록을 조회한다.")
     void findStores() throws Exception {
         // given
-        Region region = SEOUL;
+        Region region = 서울;
 
         int count = 10;
         int page = 0;
         int size = 2;
 
-        List<Store> stores = stores(List.of(), List.of(), count, SEOUL);
+        List<Store> stores = stores(List.of(), List.of(), count, 서울);
         Pageable pageable = PageRequest.of(page, size);
         Page<Store> pageStores = new PageImpl<>(stores.subList(page * size, size), pageable, count);
 

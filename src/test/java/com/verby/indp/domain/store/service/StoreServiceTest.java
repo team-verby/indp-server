@@ -1,7 +1,8 @@
 package com.verby.indp.domain.store.service;
 
-import static com.verby.indp.domain.store.constant.Region.GYEONGGI;
-import static com.verby.indp.domain.store.constant.Region.SEOUL;
+
+import static com.verby.indp.domain.store.constant.Region.경기;
+import static com.verby.indp.domain.store.constant.Region.서울;
 import static com.verby.indp.domain.store.fixture.StoreFixture.stores;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -74,13 +75,13 @@ class StoreServiceTest {
         @DisplayName("성공: size 만큼 특정 지역의 매장 정보를 조회 한다.")
         void findStoresOfRegion() {
             // given
-            Region region = SEOUL;
+            Region region = 서울;
             int seoulCount = 5;
 
             int page = 0;
             int size = 10;
 
-            List<Store> seoulStores = stores(List.of(), List.of(), seoulCount, SEOUL);
+            List<Store> seoulStores = stores(List.of(), List.of(), seoulCount, 서울);
             Pageable pageable = PageRequest.of(page, size);
             Page<Store> pageStores = new PageImpl<>(
                 seoulStores.subList(page, Math.min(size, seoulCount)), pageable, seoulCount);
@@ -112,8 +113,8 @@ class StoreServiceTest {
             int page = 0;
             int size = 10;
 
-            List<Store> seoulStores = stores(List.of(), List.of(), seoulCount, SEOUL);
-            List<Store> gyeonggiStores = stores(List.of(), List.of(), gyeonggiCount, GYEONGGI);
+            List<Store> seoulStores = stores(List.of(), List.of(), seoulCount, 서울);
+            List<Store> gyeonggiStores = stores(List.of(), List.of(), gyeonggiCount, 경기);
             List<Store> allStores = new ArrayList<>();
             allStores.addAll(seoulStores);
             allStores.addAll(gyeonggiStores);
