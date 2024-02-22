@@ -1,4 +1,4 @@
-package com.verby.indp.domain.common.notification.mail;
+package com.verby.indp.domain.notification.dto;
 
 public record Mail(
     String to,

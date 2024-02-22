@@ -10,7 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.verby.indp.domain.common.event.mail.MailSendEvent;
+import com.verby.indp.domain.common.event.MailSendEvent;
 import com.verby.indp.domain.recommendation.Recommendation;
 import com.verby.indp.domain.recommendation.dto.request.RegisterRecommendationRequest;
 import com.verby.indp.domain.recommendation.repository.RecommendationRepository;

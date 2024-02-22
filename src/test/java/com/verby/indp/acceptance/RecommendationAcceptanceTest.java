@@ -7,8 +7,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.verby.indp.acceptance.support.RecommendationSupporter;
-import com.verby.indp.domain.common.notification.mail.Mail;
-import com.verby.indp.domain.common.notification.mail.MailService;
+import com.verby.indp.domain.notification.dto.Mail;
+import com.verby.indp.domain.notification.service.MailService;
 import com.verby.indp.domain.recommendation.dto.request.RegisterRecommendationRequest;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.repository.StoreRepository;
