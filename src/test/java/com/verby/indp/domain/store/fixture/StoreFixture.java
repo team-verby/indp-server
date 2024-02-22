@@ -14,7 +14,7 @@ public class StoreFixture {
     private static final String STORE_NAME = "StoreName";
     private static final String STORE_ADDRESS = "StoreAddress";
     private static final List<String> IMAGE_URL_LIST = List.of("imageUrl1");
-    public static final Region STORE_REGION = Region.SEOUL;
+    public static final Region STORE_REGION = Region.서울;
 
     public static Store store() {
         return new Store(
