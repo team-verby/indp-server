@@ -3,6 +3,7 @@ package com.verby.indp.domain.recommendation;
 import static java.util.Objects.isNull;
 
 import com.verby.indp.domain.common.entity.BaseTimeEntity;
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.common.vo.PhoneNumber;
 import com.verby.indp.domain.recommendation.vo.RecommendationInformation;
 import com.verby.indp.domain.store.Store;
@@ -16,7 +17,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -63,7 +63,7 @@ public class Recommendation extends BaseTimeEntity {
 
     private void validateStore(Store store) {
         if (isNull(store)) {
-            throw new IllegalArgumentException("존재하지 않는 매장입니다.");
+            throw new BadRequestException("존재하지 않는 매장입니다.");
         }
     }
 }

@@ -1,7 +1,9 @@
 package com.verby.indp.domain.recommendation.vo;
 
+import com.verby.indp.domain.common.exception.BadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import java.text.MessageFormat;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,13 +31,14 @@ public class RecommendationInformation {
 
     private void validateBlank(String information) {
         if (Objects.isNull(information) || information.isBlank()) {
-            throw new IllegalArgumentException("추천 음악 정보를 입력해주세요.");
+            throw new BadRequestException("추천 음악 정보를 입력해주세요.");
         }
     }
 
     private void validateSize(String information) {
         if (information.length() > MAX_INFORMATION_SIZE) {
-            throw new IllegalArgumentException("추천 음악 정보의 크기는 최대 50자 입니다.");
+            throw new BadRequestException(
+                MessageFormat.format("추천 음악 정보의 크기는 최대 {0}자 입니다.", MAX_INFORMATION_SIZE));
         }
     }
 }
