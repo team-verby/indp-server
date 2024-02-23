@@ -1,6 +1,7 @@
 package com.verby.indp.domain.recommendation.service;
 
 import com.verby.indp.domain.common.event.MailSendEvent;
+import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.notification.dto.Mail;
 import com.verby.indp.domain.recommendation.Recommendation;
 import com.verby.indp.domain.recommendation.dto.request.RegisterRecommendationRequest;
@@ -45,7 +46,7 @@ public class RecommendationService {
 
     private Store getStore(RegisterRecommendationRequest request) {
         return storeRepository.findById(request.storeId())
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 매장입니다."));
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 매장입니다."));
     }
 
 }

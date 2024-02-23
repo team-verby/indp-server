@@ -4,6 +4,7 @@ import static com.verby.indp.domain.store.fixture.StoreFixture.store;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.store.Store;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -45,7 +46,7 @@ class RecommendationTest {
                 () -> new Recommendation(nullStore, information, phoneNumber));
 
             // then
-            assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+            assertThat(exception).isInstanceOf(BadRequestException.class);
         }
     }
 
