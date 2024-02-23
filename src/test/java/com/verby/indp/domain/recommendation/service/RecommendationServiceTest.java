@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.verby.indp.domain.common.event.MailSendEvent;
+import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.recommendation.Recommendation;
 import com.verby.indp.domain.recommendation.dto.request.RegisterRecommendationRequest;
 import com.verby.indp.domain.recommendation.repository.RecommendationRepository;
@@ -86,7 +87,7 @@ class RecommendationServiceTest {
                 () -> recommendationService.registerRecommendation(request));
 
             // then
-            assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+            assertThat(exception).isInstanceOf(NotFoundException.class);
         }
 
     }

@@ -3,6 +3,7 @@ package com.verby.indp.domain.common.vo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 
+import com.verby.indp.domain.common.exception.BadRequestException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ class PhoneNumberTest {
             Exception exception = catchException(() -> new PhoneNumber(nullPhoneNumber));
 
             // then
-            assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+            assertThat(exception).isInstanceOf(BadRequestException.class);
         }
 
         @Test
@@ -49,7 +50,7 @@ class PhoneNumberTest {
             Exception exception = catchException(() -> new PhoneNumber(nullPhoneNumber));
 
             // then
-            assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+            assertThat(exception).isInstanceOf(BadRequestException.class);
         }
 
         @Test
@@ -62,7 +63,7 @@ class PhoneNumberTest {
             Exception exception = catchException(() -> new PhoneNumber(nullPhoneNumber));
 
             // then
-            assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+            assertThat(exception).isInstanceOf(BadRequestException.class);
         }
 
         @Test
@@ -75,7 +76,7 @@ class PhoneNumberTest {
             Exception exception = catchException(() -> new PhoneNumber(nullPhoneNumber));
 
             // then
-            assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+            assertThat(exception).isInstanceOf(BadRequestException.class);
         }
 
         @Test
@@ -89,7 +90,7 @@ class PhoneNumberTest {
             Exception exception = catchException(() -> new PhoneNumber(nullPhoneNumber));
 
             // then
-            assertThat(exception).isInstanceOf(IllegalArgumentException.class);
+            assertThat(exception).isInstanceOf(BadRequestException.class);
         }
     }
 

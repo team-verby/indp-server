@@ -1,5 +1,6 @@
 package com.verby.indp.domain.contact.vo;
 
+import com.verby.indp.domain.common.exception.BadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.text.MessageFormat;
@@ -30,13 +31,13 @@ public class ContactUserName {
 
     private void validateBlank(String userName) {
         if (Objects.isNull(userName) || userName.isBlank()) {
-            throw new IllegalArgumentException("문의자 성함을 입력해주세요.");
+            throw new BadRequestException("문의자 성함을 입력해주세요.");
         }
     }
 
     private void validateSize(String userName) {
         if (userName.length() > MAX_USER_NAME_SIZE) {
-            throw new IllegalArgumentException(
+            throw new BadRequestException(
                 MessageFormat.format("문의자 성함은 최대 {0}자 입니다.", MAX_USER_NAME_SIZE));
         }
     }
