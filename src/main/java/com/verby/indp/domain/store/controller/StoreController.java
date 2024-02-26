@@ -25,7 +25,7 @@ public class StoreController {
     }
 
     @GetMapping("/stores")
-    public ResponseEntity<FindStoresResponse> findSimpleStores(
+    public ResponseEntity<FindStoresResponse> findStores(
         Pageable pageable,
         @RequestParam(name = "region", required = false) Region region
     ) {
