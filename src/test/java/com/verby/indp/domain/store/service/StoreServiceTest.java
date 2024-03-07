@@ -3,7 +3,7 @@ package com.verby.indp.domain.store.service;
 
 import static com.verby.indp.domain.store.constant.Region.경기;
 import static com.verby.indp.domain.store.constant.Region.서울;
-import static com.verby.indp.domain.store.fixture.StoreFixture.stores;
+import static com.verby.indp.domain.store.fixture.StoreFixture.storesWithId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -47,7 +47,7 @@ class StoreServiceTest {
             int page = 0;
             int size = 10;
 
-            List<Store> stores = stores(List.of(), List.of(), count);
+            List<Store> stores = storesWithId(List.of(), List.of(), count);
             Pageable pageable = PageRequest.of(page, size);
             Page<Store> pageStores = new PageImpl<>(stores.subList(page, size), pageable, count);
 
@@ -81,7 +81,7 @@ class StoreServiceTest {
             int page = 0;
             int size = 10;
 
-            List<Store> seoulStores = stores(List.of(), List.of(), seoulCount, 서울);
+            List<Store> seoulStores = storesWithId(List.of(), List.of(), seoulCount, 서울);
             Pageable pageable = PageRequest.of(page, size);
             Page<Store> pageStores = new PageImpl<>(
                 seoulStores.subList(page, Math.min(size, seoulCount)), pageable, seoulCount);
@@ -113,8 +113,8 @@ class StoreServiceTest {
             int page = 0;
             int size = 10;
 
-            List<Store> seoulStores = stores(List.of(), List.of(), seoulCount, 서울);
-            List<Store> gyeonggiStores = stores(List.of(), List.of(), gyeonggiCount, 경기);
+            List<Store> seoulStores = storesWithId(List.of(), List.of(), seoulCount, 서울);
+            List<Store> gyeonggiStores = storesWithId(List.of(), List.of(), gyeonggiCount, 경기);
             List<Store> allStores = new ArrayList<>();
             allStores.addAll(seoulStores);
             allStores.addAll(gyeonggiStores);

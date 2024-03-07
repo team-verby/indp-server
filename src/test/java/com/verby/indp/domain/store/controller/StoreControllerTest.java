@@ -1,7 +1,7 @@
 package com.verby.indp.domain.store.controller;
 
 import static com.verby.indp.domain.store.constant.Region.서울;
-import static com.verby.indp.domain.store.fixture.StoreFixture.stores;
+import static com.verby.indp.domain.store.fixture.StoreFixture.storesWithId;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
@@ -41,7 +41,7 @@ class StoreControllerTest extends BaseControllerTest {
         int page = 0;
         int size = 2;
 
-        List<Store> stores = stores(List.of(), List.of(), count);
+        List<Store> stores = storesWithId(List.of(), List.of(), count);
         Pageable pageable = PageRequest.of(page, size);
         Page<Store> pageStores = new PageImpl<>(stores.subList(page * size, size), pageable, count);
 
@@ -88,7 +88,7 @@ class StoreControllerTest extends BaseControllerTest {
         int page = 0;
         int size = 2;
 
-        List<Store> stores = stores(List.of(), List.of(), count, 서울);
+        List<Store> stores = storesWithId(List.of(), List.of(), count, 서울);
         Pageable pageable = PageRequest.of(page, size);
         Page<Store> pageStores = new PageImpl<>(stores.subList(page * size, size), pageable, count);
 

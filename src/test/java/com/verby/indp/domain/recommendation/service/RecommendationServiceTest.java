@@ -26,6 +26,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class RecommendationServiceTest {
@@ -50,14 +51,15 @@ class RecommendationServiceTest {
         @DisplayName("성공: 추천 음악 정보를 저장한다.")
         void registerRecommendation() {
             // given
-            long storeId = 1L;
             Store store = store();
+            ReflectionTestUtils.setField(store, "storeId", 1L);
             Recommendation recommendation = recommendation(store);
-
-            RegisterRecommendationRequest request = new RegisterRecommendationRequest(storeId,
+            ReflectionTestUtils.setField(recommendation, "recommendationId", 1L);
+            
+            RegisterRecommendationRequest request = new RegisterRecommendationRequest(store.getStoreId(),
                 recommendation.getInformation(), recommendation.getPhoneNumber());
 
-            when(storeRepository.findById(anyLong())).thenReturn(Optional.of(store));
+            when(storeRepository.findById(store.getStoreId())).thenReturn(Optional.of(store));
             when(recommendationRepository.save(any(Recommendation.class))).thenReturn(
                 recommendation);
 
