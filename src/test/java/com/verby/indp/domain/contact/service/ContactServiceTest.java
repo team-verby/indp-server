@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class ContactServiceTest {
@@ -40,6 +41,7 @@ class ContactServiceTest {
         void registerContact() {
             // given
             Contact contact = contact();
+            ReflectionTestUtils.setField(contact, "contactId", 1L);
 
             RegisterContactRequest request = new RegisterContactRequest(contact.getUserName(),
                 contact.getContent(), contact.getPhoneNumber());

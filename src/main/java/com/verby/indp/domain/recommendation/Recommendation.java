@@ -29,7 +29,7 @@ public class Recommendation extends BaseTimeEntity {
     @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recommendation_id")
-    private long recommendationId;
+    private Long recommendationId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
