@@ -1,8 +1,8 @@
 package com.verby.indp.domain.recommendation.service;
 
-import com.verby.indp.domain.common.event.MailSendEvent;
+import com.verby.indp.domain.recommendation.event.RecommendationMailEvent;
 import com.verby.indp.domain.common.exception.NotFoundException;
-import com.verby.indp.domain.notification.dto.Mail;
+import com.verby.indp.domain.notification.dto.RecommendationMail;
 import com.verby.indp.domain.recommendation.Recommendation;
 import com.verby.indp.domain.recommendation.dto.request.RegisterRecommendationRequest;
 import com.verby.indp.domain.recommendation.repository.RecommendationRepository;
@@ -29,17 +29,14 @@ public class RecommendationService {
     @Transactional
     public long registerRecommendation(RegisterRecommendationRequest request) {
         Store store = getStore(request);
+
         Recommendation recommendation = new Recommendation(store, request.information(),
             request.phoneNumber());
-
         Recommendation persistRecommendation = recommendationRepository.save(recommendation);
 
-        Mail mail = new Mail(to, "[버비] 인디피 서비스에 음악이 추천되었어요!",
-            "추천 음악 정보: " + request.information() + "\n" +
-                "추천인 연락처: " + request.phoneNumber() + "\n" +
-                "매장 이름: " + store.getName() + "\n" +
-                "매장 주소: " + store.getAddress() + "\n");
-        applicationEventPublisher.publishEvent(new MailSendEvent(mail));
+        RecommendationMail recommendationMail = RecommendationMail.of(to,
+            request.information(), request.phoneNumber(), store.getName(), store.getAddress());
+        applicationEventPublisher.publishEvent(new RecommendationMailEvent(recommendationMail));
 
         return persistRecommendation.getRecommendationId();
     }

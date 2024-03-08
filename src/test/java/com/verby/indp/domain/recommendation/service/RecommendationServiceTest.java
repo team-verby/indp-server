@@ -10,10 +10,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.verby.indp.domain.common.event.MailSendEvent;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.recommendation.Recommendation;
 import com.verby.indp.domain.recommendation.dto.request.RegisterRecommendationRequest;
+import com.verby.indp.domain.recommendation.event.RecommendationMailEvent;
 import com.verby.indp.domain.recommendation.repository.RecommendationRepository;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.repository.StoreRepository;
@@ -68,7 +68,7 @@ class RecommendationServiceTest {
 
             // then
             verify(recommendationRepository, times(1)).save(any(Recommendation.class));
-            verify(applicationEventPublisher, times(1)).publishEvent(any(MailSendEvent.class));
+            verify(applicationEventPublisher, times(1)).publishEvent(any(RecommendationMailEvent.class));
         }
 
         @Test
