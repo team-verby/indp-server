@@ -6,7 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.verby.indp.domain.common.event.MailSendEvent;
+import com.verby.indp.domain.contact.event.ContactMailEvent;
 import com.verby.indp.domain.contact.Contact;
 import com.verby.indp.domain.contact.dto.request.RegisterContactRequest;
 import com.verby.indp.domain.contact.repository.ContactRepository;
@@ -53,7 +53,7 @@ class ContactServiceTest {
 
             // then
             verify(contactRepository, times(1)).save(any(Contact.class));
-            verify(applicationEventPublisher, times(1)).publishEvent(any(MailSendEvent.class));
+            verify(applicationEventPublisher, times(1)).publishEvent(any(ContactMailEvent.class));
         }
 
     }
