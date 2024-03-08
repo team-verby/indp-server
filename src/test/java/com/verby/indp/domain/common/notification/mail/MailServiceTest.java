@@ -5,7 +5,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.verby.indp.domain.notification.dto.Mail;
+import com.verby.indp.domain.mail.dto.Mail;
 import com.verby.indp.global.mail.SpringMailService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,7 +35,7 @@ class MailServiceTest {
         @DisplayName("성공: 메일을 전송한다.")
         void sendMail() {
             // given
-            Mail mail = new Mail("to", "subject", "text");
+            Mail mail = new Mail(1L, "to", "subject", "text");
 
             // when
             mailService.sendMail(mail);
@@ -48,7 +48,7 @@ class MailServiceTest {
         @DisplayName("성공: 메일을 전송 실패시 재시도한다.")
         void reSendMailWhenSendFail() {
             // given
-            Mail mail = new Mail("to", "subject", "text");
+            Mail mail = new Mail(1L, "to", "subject", "text");
             int MAX_RETRY_COUNT = 5;
 
             doThrow(new MailSendException("메일 전송 실패")).when(mailSender).send(any(SimpleMailMessage.class));
