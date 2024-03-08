@@ -11,15 +11,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "notification")
+@Getter
+@Table(name = "mail_notification")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-public class Notification extends BaseTimeEntity {
+public class MailNotification extends BaseTimeEntity {
 
     @Id
-    @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "notification_id")
-    private long notificationId;
+    @Column(name = "mail_notification_id")
+    private Long mailNotificationId;
 
     @Column(name = "subject")
     private String subject;
@@ -30,7 +30,7 @@ public class Notification extends BaseTimeEntity {
     @Column(name = "receiver_email")
     private String receiverEmail;
 
-    public Notification(String subject, String text, String receiverEmail) {
+    public MailNotification(String subject, String text, String receiverEmail) {
         this.subject = subject;
         this.text = text;
         this.receiverEmail = receiverEmail;

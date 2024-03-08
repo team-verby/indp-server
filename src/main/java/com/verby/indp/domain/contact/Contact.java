@@ -23,7 +23,7 @@ public class Contact extends BaseTimeEntity {
     @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "contact_id")
-    private long contactId;
+    private Long contactId;
 
     @Embedded
     private ContactUserName userName;

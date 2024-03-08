@@ -32,7 +32,7 @@ public class Store extends BaseTimeEntity {
     @Getter
     @Column(name = "store_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long storeId;
+    private Long storeId;
 
     @Embedded
     private StoreName name;

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class StoreFixture {
 
@@ -66,6 +67,20 @@ public class StoreFixture {
             .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    public static List<Store> storesWithId(
+        List<Theme> themes,
+        List<SongForm> songForms,
+        int count
+    ) {
+        return IntStream.range(0, count)
+            .mapToObj(i -> {
+                Store store = store(themes, songForms);
+                ReflectionTestUtils.setField(store, "storeId", (long) i);
+                return store;
+            })
+            .collect(Collectors.toCollection(ArrayList::new));
+    }
+
     public static List<Store> stores(
         List<Theme> themes,
         List<SongForm> songForms,
@@ -74,6 +89,21 @@ public class StoreFixture {
     ) {
         return IntStream.range(0, count)
             .mapToObj(i -> store(themes, songForms, region))
+            .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public static List<Store> storesWithId(
+        List<Theme> themes,
+        List<SongForm> songForms,
+        int count,
+        Region region
+    ) {
+        return IntStream.range(0, count)
+            .mapToObj(i -> {
+                Store store = store(themes, songForms, region);
+                ReflectionTestUtils.setField(store, "storeId", (long) i);
+                return store;
+            })
             .collect(Collectors.toCollection(ArrayList::new));
     }
 

@@ -23,7 +23,7 @@ class NotificationTest {
 
             // when
             Exception exception = catchException(
-                () -> new Notification(to, subject, text));
+                () -> new MailNotification(to, subject, text));
 
             // then
             assertThat(exception).isNull();

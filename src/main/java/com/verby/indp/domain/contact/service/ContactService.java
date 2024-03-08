@@ -1,10 +1,10 @@
 package com.verby.indp.domain.contact.service;
 
-import com.verby.indp.domain.common.event.MailSendEvent;
-import com.verby.indp.domain.notification.dto.Mail;
+import com.verby.indp.domain.contact.event.ContactMailEvent;
 import com.verby.indp.domain.contact.Contact;
 import com.verby.indp.domain.contact.dto.request.RegisterContactRequest;
 import com.verby.indp.domain.contact.repository.ContactRepository;
+import com.verby.indp.domain.notification.dto.ContactMail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -27,13 +27,15 @@ public class ContactService {
         Contact contact = new Contact(request.userName(), request.content(), request.phoneNumber());
         Contact persistContact = contactRepository.save(contact);
 
-        Mail mail = new Mail(to, "[버비] 문의가 들어왔어요!",
-            "문의 내용: " + request.content() + "\n" +
-            "문의자 성함: " + request.userName() + "\n" +
-            "문의자 연락처: " + request.phoneNumber() + "\n");
-        applicationEventPublisher.publishEvent(new MailSendEvent(mail));
+        sendMail(request);
 
         return persistContact.getContactId();
+    }
+
+    private void sendMail(RegisterContactRequest request) {
+        ContactMail contactMailRequest = ContactMail.of(to, request.content(),
+            request.userName(), request.phoneNumber());
+        applicationEventPublisher.publishEvent(new ContactMailEvent(contactMailRequest));
     }
 
 }
