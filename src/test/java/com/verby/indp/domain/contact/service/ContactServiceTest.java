@@ -6,7 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.verby.indp.domain.common.event.MailSendEvent;
+import com.verby.indp.domain.contact.event.ContactMailEvent;
 import com.verby.indp.domain.contact.Contact;
 import com.verby.indp.domain.contact.dto.request.RegisterContactRequest;
 import com.verby.indp.domain.contact.repository.ContactRepository;
@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class ContactServiceTest {
@@ -40,6 +41,7 @@ class ContactServiceTest {
         void registerContact() {
             // given
             Contact contact = contact();
+            ReflectionTestUtils.setField(contact, "contactId", 1L);
 
             RegisterContactRequest request = new RegisterContactRequest(contact.getUserName(),
                 contact.getContent(), contact.getPhoneNumber());
@@ -51,7 +53,7 @@ class ContactServiceTest {
 
             // then
             verify(contactRepository, times(1)).save(any(Contact.class));
-            verify(applicationEventPublisher, times(1)).publishEvent(any(MailSendEvent.class));
+            verify(applicationEventPublisher, times(1)).publishEvent(any(ContactMailEvent.class));
         }
 
     }

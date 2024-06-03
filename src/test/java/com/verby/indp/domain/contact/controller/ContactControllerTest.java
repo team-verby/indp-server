@@ -1,6 +1,7 @@
 package com.verby.indp.domain.contact.controller;
 
 import static com.verby.indp.domain.contact.fixture.ContactFixture.contact;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -29,7 +30,7 @@ class ContactControllerTest extends BaseControllerTest {
         RegisterContactRequest request = new RegisterContactRequest(contact.getUserName(),
             contact.getContent(), contact.getPhoneNumber());
 
-        when(contactService.registerContact(request)).thenReturn(contact.getContactId());
+        when(contactService.registerContact(request)).thenReturn(anyLong());
 
         // when
         ResultActions resultActions = mockMvc.perform(

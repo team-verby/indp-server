@@ -18,7 +18,7 @@ public class Theme {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "theme_id")
-    private long themeId;
+    private Long themeId;
 
     @Embedded
     private ThemeName name;

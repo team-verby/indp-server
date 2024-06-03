@@ -18,7 +18,7 @@ public class SongForm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "song_form_id")
-    private long songFormId;
+    private Long songFormId;
 
     @Embedded
     private SongFormName name;

@@ -2,6 +2,7 @@ package com.verby.indp.domain.recommendation.controller;
 
 import static com.verby.indp.domain.recommendation.fixture.RecommendationFixture.recommendation;
 import static com.verby.indp.domain.store.fixture.StoreFixture.store;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -19,6 +20,7 @@ import com.verby.indp.domain.store.Store;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.ResultActions;
 
 class RecommendationControllerTest extends BaseControllerTest {
@@ -28,12 +30,13 @@ class RecommendationControllerTest extends BaseControllerTest {
     void registerRecommendation() throws Exception {
         // given
         Store store = store();
+        ReflectionTestUtils.setField(store, "storeId", 1L);
         Recommendation recommendation = recommendation(store());
 
         RegisterRecommendationRequest request = new RegisterRecommendationRequest(store.getStoreId(),
             recommendation.getInformation(), recommendation.getPhoneNumber());
 
-        when(recommendationService.registerRecommendation(request)).thenReturn(recommendation.getRecommendationId());
+        when(recommendationService.registerRecommendation(request)).thenReturn(anyLong());
 
         // when
         ResultActions resultActions = mockMvc.perform(

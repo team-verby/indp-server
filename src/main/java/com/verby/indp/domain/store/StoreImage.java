@@ -27,7 +27,7 @@ public class StoreImage {
     private Store store;
 
     @Getter
-    @Column(name = "image_url")
+    @Column(name = "image_url", length = 10000)
     private String imageUrl;
 
     public StoreImage(Store store, String imageUrl) {
