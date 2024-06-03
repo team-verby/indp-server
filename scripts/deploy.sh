@@ -25,8 +25,8 @@ then
   IDLE_PROFILE=prod1
   IDLE_PORT=8081
 else
-  echo "> 일치하는 Profile이 없습니다. Profile: $CURRENT_PROFILE"
-  echo "> prod1을 할당합니다. IDLE_PROFILE: prod1"
+  echo "> 일치하는 Profile이 없습니다. Profile: $CURRENT_PROFILE" >> $DEPLOY_LOG
+  echo "> prod1을 할당합니다. IDLE_PROFILE: prod1" >> $DEPLOY_LOG
   IDLE_PROFILE=prod1
   IDLE_PORT=8081
 fi
@@ -50,7 +50,7 @@ JAR_NAME=$(ls -tr "$DEPLOY_PATH" | grep jar | tail -n 1)
 echo "[ $(date +%c) ] JAR Name: $JAR_NAME" >> $DEPLOY_LOG
 nohup java -jar $DEPLOY_PATH/"$JAR_NAME" --spring.profiles.active=$IDLE_PROFILE > $APP_LOG 2> $ERROR_LOG &
 
-echo "[ $(date +%c) ] $IDLE_PROFILE 10초 후 Health check 시작"
+echo "[ $(date +%c) ] $IDLE_PROFILE 10초 후 Health check 시작" >> $DEPLOY_LOG
 sleep 10
 
 for retry_count in {1..10}
@@ -60,24 +60,24 @@ do
 
   if [ $up_count -ge 1 ]
   then
-      echo "[ $(date +%c) ] Health check 성공"
+      echo "[ $(date +%c) ] Health check 성공" >> $DEPLOY_LOG
       break
   else
-      echo "[ $(date +%c) ] Health check의 응답을 알 수 없거나 혹은 status가 UP이 아닙니다."
-      echo "[ $(date +%c) ] Health check: ${response}"
+      echo "[ $(date +%c) ] Health check의 응답을 알 수 없거나 혹은 status가 UP이 아닙니다." >> $DEPLOY_LOG
+      echo "[ $(date +%c) ] Health check: ${response}" >> $DEPLOY_LOG
   fi
 
   if [ $retry_count -eq 10 ]
   then
-    echo "[ $(date +%c) ] Health check 실패. "
-    echo "[ $(date +%c) ] Nginx에 연결하지 않고 배포를 종료합니다."
+    echo "[ $(date +%c) ] Health check 실패. " >> $DEPLOY_LOG
+    echo "[ $(date +%c) ] Nginx에 연결하지 않고 배포를 종료합니다." >> $DEPLOY_LOG
     exit 1
   fi
 
-  echo "[ $(date +%c) ] Health check 연결 실패. 재시도..."
+  echo "[ $(date +%c) ] Health check 연결 실패. 재시도..." >> $DEPLOY_LOG
   sleep 10
 done
 
 echo "[ $(date +%c) ] Port Switching" >> $DEPLOY_LOG
 sleep 10
-$PROJECT_ROOT/indp-server/scripts/swith.sh
+sudo sh $PROJECT_ROOT/indp-server/scripts/switch.sh
