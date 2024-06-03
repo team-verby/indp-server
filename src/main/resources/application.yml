@@ -25,6 +25,17 @@ spring:
 spring:
   config:
     activate:
-      on-profile: prod
+      on-profile: prod1
     import:
-      - classpath:server-secrets/application-prod.yml
+      - classpath:server-secrets/application-prod-default.yml
+      - classpath:server-secrets/application-prod1.yml
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod2
+    import:
+      - classpath:server-secrets/application-prod-default.yml
+      - classpath:server-secrets/application-prod2.yml
