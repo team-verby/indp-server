@@ -103,6 +103,9 @@ def jacocoExcludePatterns = [
 		"**/*Filter*",
 		"**/*Resolver*",
 		"**/resources/**",
+		"**/exception/**",
+		"**/config/**",
+		"**/aspect/**",
 		"**/common/**",
 		"**/global/profile/**"
 ]
