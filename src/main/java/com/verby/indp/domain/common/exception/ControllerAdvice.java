@@ -16,8 +16,8 @@ public class ControllerAdvice {
         return ResponseEntity.status(exception.getStatusCode()).body(new ErrorResponse(exception.getMessage()));
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorResponse> handleException(RuntimeException exception) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(Exception exception) {
         String exName = exception.getClass().getSimpleName();
         String exMessage = exception.getMessage();
         log.error("[Exception] exName=[{}] exMessage=[{}]", exName, exMessage);
