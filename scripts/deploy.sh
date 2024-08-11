@@ -40,9 +40,7 @@ if [ -z "$IDLE_PID" ]
 then
   echo "[ $(date +%c) ] $IDLE_PORT 포트에서 구동 중인 애플리케이션이 없으므로 종료하지 않음" >> $DEPLOY_LOG
 else
-  echo "[ $(date +%c) ] kill -15 $IDLE_PID" >> $DEPLOY_LOG
-  kill -15 "$IDLE_PID"
-  sleep 5
+  sudo sh $SCRIPT_PATH/kill.sh $IDLE_PORT
 fi
 
 echo "[ $(date +%c) ] 새 어플리케이션 배포" >> $DEPLOY_LOG
