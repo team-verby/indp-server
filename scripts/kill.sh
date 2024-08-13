@@ -21,7 +21,6 @@ do
   if [ $retry_count -eq 10 ]
   then
     echo "[ $(date +%c) ] $IDLE_PORT kill 실패." >> $DEPLOY_LOG
-    echo "[ $(date +%c) ] 새 어플리케이션을 배포하지 않고 종료" >> $DEPLOY_LOG
     exit 1
   fi
 
