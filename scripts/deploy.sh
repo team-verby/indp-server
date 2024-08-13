@@ -10,7 +10,7 @@ APP_LOG=$DEPLOY_PATH/application.log
 ERROR_LOG=$DEPLOY_PATH/deploy-error.log
 DEPLOY_LOG=$DEPLOY_PATH/deploy.log
 
-echo "\n[ $(date +%c) ] 배포 시작" >> $DEPLOY_LOG
+echo "[ $(date +%c) ] 배포 시작" >> $DEPLOY_LOG
 
 echo "[ $(date +%c) ] Build 파일 복사" >> $DEPLOY_LOG
 cp $PROJECT_ROOT/$PROJECT_NAME/build/libs/*.jar $DEPLOY_PATH/
@@ -43,12 +43,17 @@ else
   sudo sh $SCRIPT_PATH/kill.sh $IDLE_PORT
 fi
 
+if [ $? -ne 0 ]; then
+  echo "[ $(date +%c) ] 새 어플리케이션을 배포하지 않고 종료" >> $DEPLOY_LOG
+  exit 1
+fi
+
 echo "[ $(date +%c) ] 새 어플리케이션 배포" >> $DEPLOY_LOG
 
 JAR_NAME=$(ls -tr "$DEPLOY_PATH" | grep jar | tail -n 1)
 
 echo "[ $(date +%c) ] JAR Name: $JAR_NAME" >> $DEPLOY_LOG
-nohup java -jar $DEPLOY_PATH/"$JAR_NAME" --spring.profiles.active=$IDLE_PROFILE > $APP_LOG 2> $ERROR_LOG &
+nohup java -jar $DEPLOY_PATH/"$JAR_NAME" --spring.profiles.active=$IDLE_PROFILE >> $APP_LOG 2>> $ERROR_LOG &
 
 echo "[ $(date +%c) ] $IDLE_PROFILE 10초 후 Health check 시작" >> $DEPLOY_LOG
 sleep 10
