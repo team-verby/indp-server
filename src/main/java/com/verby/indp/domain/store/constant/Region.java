@@ -4,5 +4,6 @@ public enum Region {
     서울,
     경기,
     대전,
+    부산,
     ;
 }
