@@ -14,3 +14,16 @@ spring:
   mail:
     host: MockHost
     username: MockUsername
+
+jwt:
+  secret: SECRET_KEY
+
+cloud:
+  aws:
+    credentials:
+      accessKey: accessKey
+      secretKey: secretKey
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: bucket
