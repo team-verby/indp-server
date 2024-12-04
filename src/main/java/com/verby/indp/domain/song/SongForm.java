@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -29,5 +30,22 @@ public class SongForm {
 
     public String getName() {
         return name.getName();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SongForm songForm = (SongForm) o;
+        return Objects.equals(songFormId, songForm.songFormId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(songFormId);
     }
 }
