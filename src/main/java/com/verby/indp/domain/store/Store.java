@@ -20,6 +20,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -75,8 +76,67 @@ public class Store extends BaseTimeEntity {
             .toList();
     }
 
+    public void update(
+        String name,
+        String address,
+        Region region,
+        List<String> imageUrls,
+        List<Theme> themes,
+        List<SongForm> songForms
+    ) {
+        this.name = new StoreName(name);
+        this.address = new Address(address);
+        this.region = region;
+        updateImages(imageUrls);
+        updateThemes(themes);
+        updateSongForms(songForms);
+    }
+
+    private void updateSongForms(List<SongForm> updatedSongForms) {
+        List<StoreSongForm> existSongForms = this.songForms.stream()
+            .filter(songForm -> updatedSongForms.contains(songForm.getSongForm()))
+            .toList();
+
+        List<StoreSongForm> newSongForms = updatedSongForms.stream()
+            .map(songForm -> new StoreSongForm(this, songForm))
+            .filter(storeSongForm -> !this.songForms.contains(storeSongForm))
+            .toList();
+
+        this.songForms.clear();
+        this.songForms.addAll(existSongForms);
+        this.songForms.addAll(newSongForms);
+    }
+
+    private void updateThemes(List<Theme> updatedThemes) {
+        List<StoreTheme> existThemes = this.themes.stream()
+            .filter(theme -> updatedThemes.contains(theme.getTheme()))
+            .toList();
+
+        List<StoreTheme> newThemes = updatedThemes.stream()
+            .map(theme -> new StoreTheme(this, theme))
+            .filter(storeTheme -> !this.themes.contains(storeTheme))
+            .toList();
+
+        this.themes.clear();
+        this.themes.addAll(existThemes);
+        this.themes.addAll(newThemes);
+    }
+
+    private void updateImages(List<String> imageUrls) {
+        String nowImageUrl = images.get(0).getImageUrl();
+        String imageUrl = imageUrls.get(0);
+        if (!nowImageUrl.equals(imageUrl)) {
+            images.clear();
+            images.add(new StoreImage(this, imageUrl));
+        }
+    }
+
     public String getName() {
         return name.getName();
+    }
+
+    public String getRegion() {
+        return region.name();
     }
 
     public String getAddress() {
@@ -92,12 +152,31 @@ public class Store extends BaseTimeEntity {
     public List<String> getThemes() {
         return themes.stream()
             .map(StoreTheme::getTheme)
+            .map(Theme::getName)
             .toList();
     }
 
     public List<String> getSongForms() {
         return songForms.stream()
             .map(StoreSongForm::getSongForm)
+            .map(SongForm::getName)
             .toList();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Store store = (Store) o;
+        return Objects.equals(storeId, store.storeId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(storeId);
     }
 }

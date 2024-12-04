@@ -10,6 +10,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.Objects;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -26,6 +28,7 @@ public class StoreTheme {
     @JoinColumn(name = "store_id")
     private Store store;
 
+    @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theme_id")
     private Theme theme;
@@ -35,7 +38,21 @@ public class StoreTheme {
         this.theme = theme;
     }
 
-    public String getTheme() {
-        return theme.getName();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        StoreTheme that = (StoreTheme) o;
+        return Objects.equals(store, that.store) && Objects.equals(theme,
+            that.theme);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(store, theme);
     }
 }

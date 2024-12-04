@@ -5,9 +5,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.verby.indp.config.RestDocsConfig;
+import com.verby.indp.domain.auth.repository.AdminRepository;
+import com.verby.indp.domain.auth.service.AuthService;
 import com.verby.indp.domain.contact.service.ContactService;
 import com.verby.indp.domain.recommendation.service.RecommendationService;
 import com.verby.indp.domain.store.service.StoreService;
+import com.verby.indp.global.image.ImageService;
+import com.verby.indp.global.jwt.TokenManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +47,18 @@ public abstract class BaseControllerTest {
 
     @MockBean
     protected RecommendationService recommendationService;
+
+    @MockBean
+    protected AuthService authService;
+
+    @MockBean
+    protected TokenManager tokenManager;
+
+    @MockBean
+    protected AdminRepository adminRepository;
+
+    @MockBean
+    protected ImageService imageService;
 
     @BeforeEach
     void setUp(final WebApplicationContext context,
