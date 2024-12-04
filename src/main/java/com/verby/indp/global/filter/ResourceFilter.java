@@ -19,7 +19,9 @@ public class ResourceFilter implements Filter {
         "/api/music",
         "/api/stores",
         "/api/main",
-        "/api/contacts"
+        "/api/contacts",
+        "/api/admin",
+        "/api/docs/index.html"
     );
 
     @Override
