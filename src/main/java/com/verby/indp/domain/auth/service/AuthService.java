@@ -15,11 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AuthService {
 
-    private final AdminRepository adminUserRepository;
+    private final AdminRepository adminRepository;
     private final TokenManager tokenManager;
 
     public LoginResponse login(LoginRequest request) {
-        Admin admin = getAdminUser(request);
+        Admin admin = getAdmin(request);
         validatePassword(admin, request);
 
         String token = tokenManager.createToken(admin.getAdminId());
@@ -32,8 +32,8 @@ public class AuthService {
         }
     }
 
-    private Admin getAdminUser(LoginRequest request) {
-        return adminUserRepository.findByUserId(request.userId())
+    private Admin getAdmin(LoginRequest request) {
+        return adminRepository.findByUserId(request.userId())
             .orElseThrow(() -> new AuthException("아이디와 패스워드를 확인해주세요."));
     }
 

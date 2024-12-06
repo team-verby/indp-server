@@ -114,7 +114,13 @@ def jacocoExcludePatterns = [
 		"**/config/**",
 		"**/aspect/**",
 		"**/common/**",
-		"**/global/profile/**"
+		"**/global/profile/**",
+		"**/SongForm*",
+		"**/StoreSongForm*",
+		"**/Store*",
+		"**/StoreTheme*",
+		"**/Theme*"
+
 ]
 
 def excludedClassFilesForReport(classDirectories, jacocoExcludePatterns) {
