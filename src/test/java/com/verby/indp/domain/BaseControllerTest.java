@@ -1,5 +1,6 @@
 package com.verby.indp.domain;
 
+import static com.verby.indp.global.fixture.TokenFixture.accessToken;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -59,6 +60,8 @@ public abstract class BaseControllerTest {
 
     @MockBean
     protected ImageService imageService;
+
+    protected String accessToken = accessToken();
 
     @BeforeEach
     void setUp(final WebApplicationContext context,

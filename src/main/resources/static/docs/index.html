@@ -549,7 +549,7 @@ Content-Length: 304
     "address" : "StoreAddress",
     "imageUrl" : "imageUrl1"
   }, {
-    "id" : 0,
+    "id" : 1,
     "name" : "StoreName",
     "address" : "StoreAddress",
     "imageUrl" : "imageUrl1"
@@ -627,7 +627,7 @@ Content-Length: 304
 <h5 id="_request_2_http_request"><a class="link" href="#_request_2_http_request">HTTP request</a></h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/stores?page=0&amp;size=2&amp;region=SEOUL HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/stores?page=0&amp;size=2&amp;region=%EC%84%9C%EC%9A%B8 HTTP/1.1
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -685,7 +685,7 @@ Content-Length: 390
     "themes" : [ ],
     "songForms" : [ ]
   }, {
-    "id" : 0,
+    "id" : 1,
     "name" : "StoreName",
     "address" : "StoreAddress",
     "imageUrl" : "imageUrl1",
@@ -786,7 +786,7 @@ Content-Length: 99
 Host: localhost:8080
 
 {
-  "storeId" : 0,
+  "storeId" : 1,
   "information" : "recommendationInformation",
   "phoneNumber" : "01012345678"
 }</code></pre>
@@ -963,7 +963,7 @@ Location: /api/contacts/0</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2024-02-15 20:31:48 +0900
+Last updated 2024-05-16 14:42:32 +0900
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
