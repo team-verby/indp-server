@@ -1,7 +1,7 @@
 package com.verby.indp.domain.store.controller;
 
 import static com.verby.indp.domain.auth.fixture.AdminFixture.admin;
-import static com.verby.indp.domain.store.constant.Region.서울;
+import static com.verby.indp.domain.region.fixture.RegionFixture.region;
 import static com.verby.indp.domain.store.fixture.StoreFixture.store;
 import static com.verby.indp.domain.store.fixture.StoreFixture.storesWithId;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,19 +26,17 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
-import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.verby.indp.domain.BaseControllerTest;
+import com.verby.indp.domain.region.Region;
 import com.verby.indp.domain.store.Store;
-import com.verby.indp.domain.store.constant.Region;
 import com.verby.indp.domain.store.dto.request.AddStoreByAdminRequest;
 import com.verby.indp.domain.store.dto.request.UpdateStoreByAdminRequest;
 import com.verby.indp.domain.store.dto.response.FindSimpleStoresResponse;
 import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresResponse;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -60,7 +58,8 @@ class StoreControllerTest extends BaseControllerTest {
         int page = 0;
         int size = 2;
 
-        List<Store> stores = storesWithId(List.of(), List.of(), count);
+        Region 서울 = region("서울");
+        List<Store> stores = storesWithId(서울, List.of(), List.of(), count);
         Pageable pageable = PageRequest.of(page, size);
         Page<Store> pageStores = new PageImpl<>(stores.subList(page * size, size), pageable, count);
 
@@ -101,7 +100,7 @@ class StoreControllerTest extends BaseControllerTest {
     @DisplayName("성공: 지역별 매장 목록을 조회한다.")
     void findStores() throws Exception {
         // given
-        Region region = 서울;
+        Region 서울  = region("서울");
 
         int count = 10;
         int page = 0;
@@ -113,14 +112,14 @@ class StoreControllerTest extends BaseControllerTest {
 
         FindStoresResponse response = FindStoresResponse.from(pageStores);
 
-        when(storeService.findStores(pageable, region)).thenReturn(response);
+        when(storeService.findStores(pageable, 서울.getRegion())).thenReturn(response);
 
         // when
         ResultActions resultActions = mockMvc.perform(
             get("/api/stores")
                 .param("page", String.valueOf(page))
                 .param("size", String.valueOf(size))
-                .param("region", region.name()
+                .param("region", 서울.getRegion()
                 )
         );
 
@@ -132,12 +131,6 @@ class StoreControllerTest extends BaseControllerTest {
                         parameterWithName("page").description("페이지 번호").optional(),
                         parameterWithName("size").description("페이지 사이즈").optional(),
                         parameterWithName("region").description("지역").optional()
-                            .attributes(
-                                key("constraints").value(
-                                    String.join(", ", Arrays.stream(Region.values()).map(
-                                        Region::name).toArray(String[]::new))
-                                )
-                            )
                     ),
                     responseFields(
                         fieldWithPath("pageInfo").type(OBJECT).description("페이지 정보"),
@@ -159,6 +152,8 @@ class StoreControllerTest extends BaseControllerTest {
     @DisplayName("성공 : (관리자) 매장 목록을 조회한다.")
     void findStoresByAdmin() throws Exception {
         // given
+        com.verby.indp.domain.region.Region 서울  = region("서울");
+
         int count = 10;
         int page = 0;
         int size = 2;
@@ -212,7 +207,8 @@ class StoreControllerTest extends BaseControllerTest {
     @DisplayName("성공 : (관리자) 매장을 조회한다.")
     void findStoreByAdmin() throws Exception {
         // given
-        Store store = store();
+        Region 서울 = region("서울");
+        Store store = store(서울);
         ReflectionTestUtils.setField(store, "storeId", 1L);
         FindStoreByAdminResponse response = FindStoreByAdminResponse.from(store);
 
@@ -251,7 +247,8 @@ class StoreControllerTest extends BaseControllerTest {
     @DisplayName("성공 : (관리자) 매장을 삭제한다.")
     void removeStoreByAdmin() throws Exception {
         // given
-        Store store = store();
+        Region 서울 = region("서울");
+        Store store = store(서울);
         ReflectionTestUtils.setField(store, "storeId", 1L);
 
         when(adminRepository.findById(any())).thenReturn(Optional.of(admin()));
@@ -281,7 +278,8 @@ class StoreControllerTest extends BaseControllerTest {
     @DisplayName("성공 : (관리자) 매장을 추가한다.")
     void addStoreByAdmin() throws Exception {
         // given
-        Store store = store();
+        Region 서울 = region("서울");
+        Store store = store(서울);
         AddStoreByAdminRequest request = new AddStoreByAdminRequest(store.getName(),
             store.getAddress(), store.getRegion(),
             store.getImage().get(0), store.getThemes(), store.getSongForms());
@@ -324,7 +322,8 @@ class StoreControllerTest extends BaseControllerTest {
     @DisplayName("성공 : (관리자) 매장 정보를 수정한다.")
     void updateStoreByAdmin() throws Exception {
         // given
-        Store store = store();
+        Region 서울 = region("서울");
+        Store store = store(서울);
         ReflectionTestUtils.setField(store, "storeId", 1L);
         UpdateStoreByAdminRequest request = new UpdateStoreByAdminRequest(
             store.getName(), store.getAddress(), store.getRegion(),

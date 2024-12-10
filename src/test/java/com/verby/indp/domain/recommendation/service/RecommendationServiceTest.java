@@ -1,6 +1,7 @@
 package com.verby.indp.domain.recommendation.service;
 
 import static com.verby.indp.domain.recommendation.fixture.RecommendationFixture.recommendation;
+import static com.verby.indp.domain.region.fixture.RegionFixture.region;
 import static com.verby.indp.domain.store.fixture.StoreFixture.store;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
@@ -15,6 +16,7 @@ import com.verby.indp.domain.recommendation.Recommendation;
 import com.verby.indp.domain.recommendation.dto.request.RegisterRecommendationRequest;
 import com.verby.indp.domain.recommendation.event.RecommendationMailEvent;
 import com.verby.indp.domain.recommendation.repository.RecommendationRepository;
+import com.verby.indp.domain.region.Region;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.repository.StoreRepository;
 import java.util.Optional;
@@ -51,7 +53,8 @@ class RecommendationServiceTest {
         @DisplayName("성공: 추천 음악 정보를 저장한다.")
         void registerRecommendation() {
             // given
-            Store store = store();
+            Region 서울 = region("서울");
+            Store store = store(서울);
             ReflectionTestUtils.setField(store, "storeId", 1L);
             Recommendation recommendation = recommendation(store);
             ReflectionTestUtils.setField(recommendation, "recommendationId", 1L);

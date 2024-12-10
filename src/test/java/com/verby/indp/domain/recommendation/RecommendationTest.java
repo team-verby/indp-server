@@ -1,10 +1,12 @@
 package com.verby.indp.domain.recommendation;
 
+import static com.verby.indp.domain.region.fixture.RegionFixture.region;
 import static com.verby.indp.domain.store.fixture.StoreFixture.store;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 
 import com.verby.indp.domain.common.exception.BadRequestException;
+import com.verby.indp.domain.region.Region;
 import com.verby.indp.domain.store.Store;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +23,8 @@ class RecommendationTest {
         @DisplayName("성공: Recommendation 을 생성한다.")
         void newRecommendation() {
             // given
-            Store store = store(List.of(), List.of());
+            Region 서울 = region("서울");
+            Store store = store(서울, List.of(), List.of());
             String information = "공차";
             String phoneNumber = "01012345678";
 

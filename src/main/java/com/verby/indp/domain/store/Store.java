@@ -1,21 +1,20 @@
 package com.verby.indp.domain.store;
 
-import static jakarta.persistence.EnumType.STRING;
-
 import com.verby.indp.domain.common.entity.BaseTimeEntity;
 import com.verby.indp.domain.common.vo.Address;
+import com.verby.indp.domain.region.Region;
 import com.verby.indp.domain.song.SongForm;
-import com.verby.indp.domain.store.constant.Region;
 import com.verby.indp.domain.store.vo.StoreName;
 import com.verby.indp.domain.theme.Theme;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
@@ -41,8 +40,8 @@ public class Store extends BaseTimeEntity {
     @Embedded
     private Address address;
 
-    @Enumerated(STRING)
-    @Column(name = "region")
+    @ManyToOne
+    @JoinColumn(name = "region_id")
     private Region region;
 
     @OneToMany(mappedBy = "store", orphanRemoval = true, cascade = CascadeType.ALL)
@@ -136,7 +135,7 @@ public class Store extends BaseTimeEntity {
     }
 
     public String getRegion() {
-        return region.name();
+        return region.getRegion();
     }
 
     public String getAddress() {

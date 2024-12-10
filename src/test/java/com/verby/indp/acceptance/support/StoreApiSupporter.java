@@ -3,7 +3,6 @@ package com.verby.indp.acceptance.support;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 
-import com.verby.indp.domain.store.constant.Region;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 
@@ -20,7 +19,7 @@ public class StoreApiSupporter {
             .extract();
     }
 
-    public static ExtractableResponse<Response> findStores(int page, int size, Region region) {
+    public static ExtractableResponse<Response> findStores(int page, int size, String region) {
         return given().log().all()
             .accept(JSON)
             .when().log().all()

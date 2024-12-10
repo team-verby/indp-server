@@ -1,18 +1,18 @@
 package com.verby.indp.acceptance;
 
 
+import static com.verby.indp.domain.region.fixture.RegionFixture.region;
 import static com.verby.indp.domain.song.fixture.SongFormFixture.songForm;
-import static com.verby.indp.domain.store.constant.Region.경기;
-import static com.verby.indp.domain.store.constant.Region.서울;
 import static com.verby.indp.domain.store.fixture.StoreFixture.stores;
 import static com.verby.indp.domain.theme.fixture.ThemeFixture.theme;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.verby.indp.acceptance.support.StoreApiSupporter;
+import com.verby.indp.domain.region.Region;
+import com.verby.indp.domain.region.repository.RegionRepository;
 import com.verby.indp.domain.song.SongForm;
 import com.verby.indp.domain.song.repository.SongFormRepository;
 import com.verby.indp.domain.store.Store;
-import com.verby.indp.domain.store.constant.Region;
 import com.verby.indp.domain.store.dto.response.FindSimpleStoresResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
@@ -37,6 +37,9 @@ class StoreAcceptanceTest extends BaseAcceptanceTest {
     private StoreRepository storeRepository;
 
     @Autowired
+    private RegionRepository regionRepository;
+
+    @Autowired
     private ThemeRepository themeRepository;
 
     @Autowired
@@ -50,7 +53,9 @@ class StoreAcceptanceTest extends BaseAcceptanceTest {
         int page = 0;
         int size = 10;
 
-        List<Store> stores = stores(List.of(), List.of(), count);
+        Region 서울 = region("서울");
+        regionRepository.save(서울);
+        List<Store> stores = stores(서울, List.of(), List.of(), count);
         storeRepository.saveAll(stores);
 
         Pageable pageable = PageRequest.of(page, size);
@@ -72,7 +77,11 @@ class StoreAcceptanceTest extends BaseAcceptanceTest {
     @DisplayName("특정 지역의 매장 목록을 조회한다.")
     void findStoresOfRegion() {
         // given
-        Region region = 경기;
+        Region 서울  = region("서울");
+        Region 경기  = region("경기");
+        regionRepository.save(서울);
+        regionRepository.save(경기);
+
         int seoulCount = 5;
         int gyeonggiCount = 15;
 
@@ -102,7 +111,7 @@ class StoreAcceptanceTest extends BaseAcceptanceTest {
         FindStoresResponse expected = FindStoresResponse.from(pageStores);
 
         // when
-        ExtractableResponse<Response> result = StoreApiSupporter.findStores(page, size, region);
+        ExtractableResponse<Response> result = StoreApiSupporter.findStores(page, size, 경기.getRegion());
 
         // then
         assertThat(result.statusCode()).isEqualTo(200);
@@ -114,6 +123,11 @@ class StoreAcceptanceTest extends BaseAcceptanceTest {
     @DisplayName("전체 지역의 매장 목록을 조회한다.")
     void findStores() {
         // given
+        Region 서울  = region("서울");
+        Region 경기  = region("경기");
+        regionRepository.save(서울);
+        regionRepository.save(경기);
+
         int seoulCount = 5;
         int gyeonggiCount = 15;
 
