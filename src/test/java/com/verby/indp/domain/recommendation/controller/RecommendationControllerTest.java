@@ -1,6 +1,7 @@
 package com.verby.indp.domain.recommendation.controller;
 
 import static com.verby.indp.domain.recommendation.fixture.RecommendationFixture.recommendation;
+import static com.verby.indp.domain.region.fixture.RegionFixture.region;
 import static com.verby.indp.domain.store.fixture.StoreFixture.store;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -16,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.domain.recommendation.Recommendation;
 import com.verby.indp.domain.recommendation.dto.request.RegisterRecommendationRequest;
+import com.verby.indp.domain.region.Region;
 import com.verby.indp.domain.store.Store;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,9 +31,10 @@ class RecommendationControllerTest extends BaseControllerTest {
     @DisplayName("성공: 추천 음악 정보를 등록한다.")
     void registerRecommendation() throws Exception {
         // given
-        Store store = store();
+        Region 서울 = region("서울");
+        Store store = store(서울);
         ReflectionTestUtils.setField(store, "storeId", 1L);
-        Recommendation recommendation = recommendation(store());
+        Recommendation recommendation = recommendation(store(서울));
 
         RegisterRecommendationRequest request = new RegisterRecommendationRequest(store.getStoreId(),
             recommendation.getInformation(), recommendation.getPhoneNumber());

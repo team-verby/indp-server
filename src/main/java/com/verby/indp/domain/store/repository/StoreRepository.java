@@ -1,7 +1,7 @@
 package com.verby.indp.domain.store.repository;
 
+import com.verby.indp.domain.region.Region;
 import com.verby.indp.domain.store.Store;
-import com.verby.indp.domain.store.constant.Region;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -10,6 +10,7 @@ import com.verby.indp.domain.auth.repository.AdminRepository;
 import com.verby.indp.domain.auth.service.AuthService;
 import com.verby.indp.domain.contact.service.ContactService;
 import com.verby.indp.domain.recommendation.service.RecommendationService;
+import com.verby.indp.domain.region.service.RegionService;
 import com.verby.indp.domain.store.service.StoreService;
 import com.verby.indp.global.image.ImageService;
 import com.verby.indp.global.jwt.TokenManager;
@@ -60,6 +61,9 @@ public abstract class BaseControllerTest {
 
     @MockBean
     protected ImageService imageService;
+
+    @MockBean
+    protected RegionService regionService;
 
     protected String accessToken = accessToken();
 

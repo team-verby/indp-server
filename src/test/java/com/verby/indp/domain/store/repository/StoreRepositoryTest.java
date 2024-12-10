@@ -1,12 +1,13 @@
 package com.verby.indp.domain.store.repository;
 
+import static com.verby.indp.domain.region.fixture.RegionFixture.region;
 import static com.verby.indp.domain.song.fixture.SongFormFixture.songForm;
-import static com.verby.indp.domain.store.constant.Region.경기;
-import static com.verby.indp.domain.store.constant.Region.서울;
 import static com.verby.indp.domain.store.fixture.StoreFixture.stores;
 import static com.verby.indp.domain.theme.fixture.ThemeFixture.theme;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.verby.indp.domain.region.Region;
+import com.verby.indp.domain.region.repository.RegionRepository;
 import com.verby.indp.domain.song.SongForm;
 import com.verby.indp.domain.song.repository.SongFormRepository;
 import com.verby.indp.domain.store.Store;
@@ -34,6 +35,9 @@ class StoreRepositoryTest {
     @Autowired
     private SongFormRepository songFormRepository;
 
+    @Autowired
+    private RegionRepository regionRepository;
+
     @Nested
     @DisplayName("findAllByOrderByStoreIdAsc 메소드 실행 시")
     class FindAllByOrderByStoreIdAsc {
@@ -52,8 +56,11 @@ class StoreRepositoryTest {
             SongForm songForm = songForm();
             songFormRepository.save(songForm);
 
+            Region 서울 = region("서울");
+            regionRepository.save(서울);
+
             Pageable pageable = PageRequest.of(page, size);
-            List<Store> stores = stores(List.of(theme), List.of(songForm), count);
+            List<Store> stores = stores(서울, List.of(theme), List.of(songForm), count);
 
             storeRepository.saveAll(stores);
 
@@ -85,6 +92,11 @@ class StoreRepositoryTest {
 
             int page = 0;
             int size = 10;
+
+            Region 서울 = region("서울");
+            Region 경기 = region("경기");
+            regionRepository.save(서울);
+            regionRepository.save(경기);
 
             Theme theme = theme();
             themeRepository.save(theme);

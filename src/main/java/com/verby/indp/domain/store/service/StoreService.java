@@ -1,11 +1,14 @@
 package com.verby.indp.domain.store.service;
 
+
 import com.verby.indp.domain.common.exception.NotFoundException;
+import com.verby.indp.domain.region.Region;
+import com.verby.indp.domain.region.repository.RegionRepository;
+import com.verby.indp.domain.region.vo.RegionName;
 import com.verby.indp.domain.song.SongForm;
 import com.verby.indp.domain.song.repository.SongFormRepository;
 import com.verby.indp.domain.song.vo.SongFormName;
 import com.verby.indp.domain.store.Store;
-import com.verby.indp.domain.store.constant.Region;
 import com.verby.indp.domain.store.dto.request.AddStoreByAdminRequest;
 import com.verby.indp.domain.store.dto.request.UpdateStoreByAdminRequest;
 import com.verby.indp.domain.store.dto.response.FindSimpleStoresResponse;
@@ -32,6 +35,7 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final ThemeRepository themeRepository;
     private final SongFormRepository songFormRepository;
+    private final RegionRepository regionRepository;
 
     public FindSimpleStoresResponse findSimpleStores(Pageable pageable) {
         Page<Store> page = storeRepository.findAllByOrderByStoreIdAsc(pageable);
@@ -39,14 +43,15 @@ public class StoreService {
         return FindSimpleStoresResponse.from(page);
     }
 
-    public FindStoresResponse findStores(Pageable pageable, Region region) {
-        if (region == null) {
+    public FindStoresResponse findStores(Pageable pageable, String regionName) {
+        if (regionName == null) {
             Page<Store> page = storeRepository.findAllByOrderByStoreIdAsc(
                 pageable);
 
             return FindStoresResponse.from(page);
         }
 
+        Region region = getRegionByName(regionName);
         Page<Store> page = storeRepository.findAllByRegionOrderByStoreIdAsc(pageable, region);
 
         return FindStoresResponse.from(page);
@@ -74,7 +79,7 @@ public class StoreService {
         Store store = new Store(
             request.name(),
             request.address(),
-            Region.valueOf(request.region()),
+            getRegion(request.name()),
             List.of(request.imageUrl()),
             getThemes(request.themes()),
             getSongForms(request.songForms())
@@ -89,7 +94,7 @@ public class StoreService {
         store.update(
             request.name(),
             request.address(),
-            Region.valueOf(request.region()),
+            getRegion(request.name()),
             List.of(request.imageUrl()),
             getThemes(request.themes()),
             getSongForms(request.songForms())
@@ -121,8 +126,18 @@ public class StoreService {
         return themes;
     }
 
+    private Region getRegion(String name) {
+        return regionRepository.findByName(new RegionName(name))
+            .orElseGet(() -> regionRepository.save(new Region(name)));
+    }
+
     private Store getStoreById(long storeId) {
         return storeRepository.findById(storeId)
             .orElseThrow(() -> new NotFoundException("존재하지 않는 매장입니다."));
+    }
+
+    private Region getRegionByName(String name) {
+        return regionRepository.findByName(new RegionName(name))
+            .orElseThrow(() -> new NotFoundException("등록되지 않은 지역입니다."));
     }
 }

@@ -1,6 +1,5 @@
 package com.verby.indp.domain.store.controller;
 
-import com.verby.indp.domain.store.constant.Region;
 import com.verby.indp.domain.store.dto.request.AddStoreByAdminRequest;
 import com.verby.indp.domain.store.dto.request.UpdateStoreByAdminRequest;
 import com.verby.indp.domain.store.dto.response.FindSimpleStoresResponse;
@@ -37,7 +36,7 @@ public class StoreController {
     @GetMapping("/stores")
     public ResponseEntity<FindStoresResponse> findStores(
         Pageable pageable,
-        @RequestParam(name = "region", required = false) Region region
+        @RequestParam(name = "region", required = false) String region
     ) {
         return ResponseEntity.ok(storeService.findStores(pageable, region));
     }

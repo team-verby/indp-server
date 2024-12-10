@@ -1,9 +1,8 @@
 package com.verby.indp.domain.store.service;
 
 
+import static com.verby.indp.domain.region.fixture.RegionFixture.region;
 import static com.verby.indp.domain.song.fixture.SongFormFixture.songForm;
-import static com.verby.indp.domain.store.constant.Region.경기;
-import static com.verby.indp.domain.store.constant.Region.서울;
 import static com.verby.indp.domain.store.fixture.StoreFixture.store;
 import static com.verby.indp.domain.store.fixture.StoreFixture.storesWithId;
 import static com.verby.indp.domain.theme.fixture.ThemeFixture.theme;
@@ -15,11 +14,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.verby.indp.domain.common.exception.NotFoundException;
+import com.verby.indp.domain.region.Region;
+import com.verby.indp.domain.region.repository.RegionRepository;
 import com.verby.indp.domain.song.SongForm;
 import com.verby.indp.domain.song.repository.SongFormRepository;
 import com.verby.indp.domain.song.vo.SongFormName;
 import com.verby.indp.domain.store.Store;
-import com.verby.indp.domain.store.constant.Region;
 import com.verby.indp.domain.store.dto.request.AddStoreByAdminRequest;
 import com.verby.indp.domain.store.dto.response.FindSimpleStoresResponse;
 import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
@@ -60,6 +60,9 @@ class StoreServiceTest {
     @Mock
     private SongFormRepository songFormRepository;
 
+    @Mock
+    private RegionRepository regionRepository;
+
     @Nested
     @DisplayName("findSimpleStores 메소드 실행 시")
     class FindSimpleStores {
@@ -68,11 +71,13 @@ class StoreServiceTest {
         @DisplayName("성공: size 만큼 간단한 매장 정보를 조회 한다.")
         void findSimpleStores() {
             // given
+            Region 서울 = region("서울");
+
             int count = 20;
             int page = 0;
             int size = 10;
 
-            List<Store> stores = storesWithId(List.of(), List.of(), count);
+            List<Store> stores = storesWithId(서울, List.of(), List.of(), count);
             Pageable pageable = PageRequest.of(page, size);
             Page<Store> pageStores = new PageImpl<>(stores.subList(page, size), pageable, count);
 
@@ -100,7 +105,7 @@ class StoreServiceTest {
         @DisplayName("성공: size 만큼 특정 지역의 매장 정보를 조회 한다.")
         void findStoresOfRegion() {
             // given
-            Region region = 서울;
+            Region 서울  = region("서울");
             int seoulCount = 5;
 
             int page = 0;
@@ -113,11 +118,12 @@ class StoreServiceTest {
 
             FindStoresResponse expected = FindStoresResponse.from(pageStores);
 
-            when(storeRepository.findAllByRegionOrderByStoreIdAsc(pageable, region)).thenReturn(
+            when(regionRepository.findByName(any())).thenReturn(Optional.of(서울));
+            when(storeRepository.findAllByRegionOrderByStoreIdAsc(pageable, 서울)).thenReturn(
                 pageStores);
 
             // when
-            FindStoresResponse result = storeService.findStores(pageable, region);
+            FindStoresResponse result = storeService.findStores(pageable, 서울.getRegion());
 
             // then
             assertThat(result).isEqualTo(expected);
@@ -131,7 +137,10 @@ class StoreServiceTest {
         @DisplayName("성공: size 만큼 전체 지역의 매장 정보를 조회 한다.")
         void findStores() {
             // given
-            Region nullRegion = null;
+            Region 서울  = region("서울");
+            Region 경기  = region("경기");
+
+            String nullRegion = null;
             int seoulCount = 5;
             int gyeonggiCount = 15;
 
@@ -173,6 +182,8 @@ class StoreServiceTest {
         @DisplayName("성공: size 만큼 매장 정보를 조회 한다.")
         void findStoresOfRegion() {
             // given
+            Region 서울  = region("서울");
+
             int page = 0;
             int size = 10;
             int count = 1;
@@ -206,8 +217,9 @@ class StoreServiceTest {
         @DisplayName("성공 : storeId 에 해당하는 매장 정보를 조회한다.")
         void findStoreById() {
             // given
+            Region 서울  = region("서울");
             long storeId = 1;
-            Store store = store();
+            Store store = store(서울);
 
             FindStoreByAdminResponse expected = FindStoreByAdminResponse.from(store);
 
@@ -262,7 +274,8 @@ class StoreServiceTest {
         @DisplayName("성공 : 새로운 매장 정보가 저징된다.")
         void saveStore() {
             // given
-            Store store = store();
+            Region 서울 = region("서울");
+            Store store = store(서울);
             ReflectionTestUtils.setField(store, "storeId", 1L);
             AddStoreByAdminRequest request = new AddStoreByAdminRequest(
                 store.getName(), store.getAddress(), store.getRegion(),
@@ -281,9 +294,10 @@ class StoreServiceTest {
         @DisplayName("성공 : 새로운 테마와 매장 정보가 저징된다.")
         void saveStoreWithNewTheme() {
             // given
+            Region 서울 = region("서울");
             ThemeName newThemeName = new ThemeName("newThemeName");
             Theme newTheme = new Theme(newThemeName.getName());
-            Store store = store(List.of(newTheme), List.of());
+            Store store = store(서울, List.of(newTheme), List.of());
             ReflectionTestUtils.setField(store, "storeId", 1L);
 
             AddStoreByAdminRequest request = new AddStoreByAdminRequest(
@@ -305,9 +319,10 @@ class StoreServiceTest {
         @DisplayName("성공 : 새로운 곡 구성과 매장 정보가 저징된다.")
         void saveStoreWithSongForm() {
             // given
+            Region 서울 = region("서울");
             SongFormName newSongFormName = new SongFormName("newSongFormName");
             SongForm newSongForm = new SongForm(newSongFormName.getName());
-            Store store = store(List.of(), List.of(newSongForm));
+            Store store = store(서울, List.of(), List.of(newSongForm));
             ReflectionTestUtils.setField(store, "storeId", 1L);
 
             AddStoreByAdminRequest request = new AddStoreByAdminRequest(
