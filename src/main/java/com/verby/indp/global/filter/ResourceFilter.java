@@ -21,6 +21,7 @@ public class ResourceFilter implements Filter {
         "/api/main",
         "/api/contacts",
         "/api/admin",
+        "/api/regions",
         "/docs/index.html"
     );
 
