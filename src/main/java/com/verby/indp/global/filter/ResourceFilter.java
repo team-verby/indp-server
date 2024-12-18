@@ -21,7 +21,8 @@ public class ResourceFilter implements Filter {
         "/api/main",
         "/api/contacts",
         "/api/admin",
-        "/api/docs/index.html"
+        "/api/regions",
+        "/docs/index.html"
     );
 
     @Override
