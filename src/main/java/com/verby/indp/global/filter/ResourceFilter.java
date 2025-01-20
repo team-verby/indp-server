@@ -20,7 +20,8 @@ public class ResourceFilter implements Filter {
         "/api/admin",
         "/api/regions",
         "/docs/index.html",
-        "/profile"
+        "/profile",
+        "/actuator/health"
     );
 
     @Override
