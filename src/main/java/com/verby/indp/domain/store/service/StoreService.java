@@ -79,7 +79,7 @@ public class StoreService {
         Store store = new Store(
             request.name(),
             request.address(),
-            getRegion(request.name()),
+            getRegion(request.region()),
             List.of(request.imageUrl()),
             getThemes(request.themes()),
             getSongForms(request.songForms())
@@ -94,7 +94,7 @@ public class StoreService {
         store.update(
             request.name(),
             request.address(),
-            getRegion(request.name()),
+            getRegion(request.region()),
             List.of(request.imageUrl()),
             getThemes(request.themes()),
             getSongForms(request.songForms())
