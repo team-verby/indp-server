@@ -1,8 +1,11 @@
 package com.verby.indp.domain.auth.controller;
 
+import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.auth.dto.request.LoginRequest;
 import com.verby.indp.domain.auth.dto.response.LoginResponse;
-import com.verby.indp.domain.auth.service.AuthService;
+import com.verby.indp.domain.auth.service.AdminService;
+import com.verby.indp.domain.auth.service.OwnerService;
+import com.verby.indp.global.jwt.TokenManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,14 +14,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
-@RequestMapping("/api/admin")
 public class AuthController {
 
-    private final AuthService authService;
+    private final AdminService adminService;
+    private final OwnerService ownerService;
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    @PostMapping("/admin/login")
+    public ResponseEntity<LoginResponse> adminLogin(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(adminService.login(request));
+    }
+
+    @PostMapping("/owner/login")
+    public ResponseEntity<LoginResponse> ownerLogin(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(ownerService.login(request));
     }
 }

@@ -1,7 +1,9 @@
 package com.verby.indp.global.config;
 
 import com.verby.indp.domain.auth.repository.AdminRepository;
-import com.verby.indp.global.interceptor.LoginCheckInterceptor;
+import com.verby.indp.domain.auth.repository.OwnerRepository;
+import com.verby.indp.global.interceptor.AdminLoginCheckInterceptor;
+import com.verby.indp.global.interceptor.OwnerLoginCheckInterceptor;
 import com.verby.indp.global.jwt.TokenManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -14,11 +16,16 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final TokenManager tokenManager;
     private final AdminRepository adminRepository;
+    private final OwnerRepository ownerRepository;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoginCheckInterceptor(adminRepository, tokenManager))
+        registry.addInterceptor(new AdminLoginCheckInterceptor(adminRepository, tokenManager))
             .addPathPatterns("/api/admin/**")
             .excludePathPatterns("/api/admin/login");
+
+        registry.addInterceptor(new OwnerLoginCheckInterceptor(ownerRepository, tokenManager))
+            .addPathPatterns("/api/owner/**")
+            .excludePathPatterns("/api/owner/login", "/api/owner/stores/apply");
     }
 }

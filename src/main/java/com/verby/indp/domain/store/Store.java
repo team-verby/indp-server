@@ -1,181 +1,94 @@
 package com.verby.indp.domain.store;
 
 import com.verby.indp.domain.common.entity.BaseTimeEntity;
-import com.verby.indp.domain.common.vo.Address;
-import com.verby.indp.domain.region.Region;
-import com.verby.indp.domain.song.SongForm;
-import com.verby.indp.domain.store.vo.StoreName;
-import com.verby.indp.domain.theme.Theme;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import com.verby.indp.domain.auth.Owner;
+import com.verby.indp.domain.playlist.Playlist;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
+@Getter
 @Table(name = "store")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class Store extends BaseTimeEntity {
 
     @Id
-    @Getter
-    @Column(name = "store_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "store_id")
     private Long storeId;
 
-    @Embedded
-    private StoreName name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_apply_id")
+    private StoreApply storeApply;
 
-    @Embedded
-    private Address address;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_user_id")
+    private Owner owner;
 
-    @ManyToOne
-    @JoinColumn(name = "region_id")
-    private Region region;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "playlist_id")
+    private Playlist playlist;
 
-    @OneToMany(mappedBy = "store", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<StoreImage> images = new ArrayList<>();
+    @Column(name = "name")
+    private String name;
 
-    @OneToMany(mappedBy = "store", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<StoreTheme> themes = new ArrayList<>();
+    @Column(name = "industry")
+    private String industry;
 
-    @OneToMany(mappedBy = "store", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<StoreSongForm> songForms = new ArrayList<>();
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "customer_age_group")
+    private String customerAgeGroup;
+
+    @Column(name = "lighting")
+    private Integer lighting; // 조명 색온도 (1000~10000K)
+
+    @OneToOne(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private StoreMusic storeMusic;
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlayMethod> playMethods = new ArrayList<>();
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StoreMood> moods = new ArrayList<>();
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StoreBusinessHour> businessHours = new ArrayList<>();
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StorePhoto> photos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StoreMusicTimePreference> musicTimePreferences = new ArrayList<>();
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StoreGenre> genres = new ArrayList<>();
 
     public Store(
+        StoreApply storeApply,
+        Owner owner,
         String name,
+        String industry,
         String address,
-        Region region,
-        List<String> imageUrls,
-        List<Theme> themes,
-        List<SongForm> songForms
+        String customerAgeGroup,
+        Integer lighting
     ) {
-        this.name = new StoreName(name);
-        this.address = new Address(address);
-        this.region = region;
-        this.images = imageUrls.stream()
-            .map(imageUrl -> new StoreImage(this, imageUrl))
-            .toList();
-        this.themes = themes.stream()
-            .map(theme -> new StoreTheme(this, theme))
-            .toList();
-        this.songForms = songForms.stream()
-            .map(songForm -> new StoreSongForm(this, songForm))
-            .toList();
+        this.storeApply = storeApply;
+        this.owner = owner;
+        this.name = name;
+        this.industry = industry;
+        this.address = address;
+        this.customerAgeGroup = customerAgeGroup;
+        this.lighting = lighting;
     }
 
-    public void update(
-        String name,
-        String address,
-        Region region,
-        List<String> imageUrls,
-        List<Theme> themes,
-        List<SongForm> songForms
-    ) {
-        this.name = new StoreName(name);
-        this.address = new Address(address);
-        this.region = region;
-        updateImages(imageUrls);
-        updateThemes(themes);
-        updateSongForms(songForms);
+    public void setStoreMusic(StoreMusic storeMusic) {
+        this.storeMusic = storeMusic;
     }
 
-    private void updateSongForms(List<SongForm> updatedSongForms) {
-        List<StoreSongForm> existSongForms = this.songForms.stream()
-            .filter(songForm -> updatedSongForms.contains(songForm.getSongForm()))
-            .toList();
-
-        List<StoreSongForm> newSongForms = updatedSongForms.stream()
-            .map(songForm -> new StoreSongForm(this, songForm))
-            .filter(storeSongForm -> !this.songForms.contains(storeSongForm))
-            .toList();
-
-        this.songForms.clear();
-        this.songForms.addAll(existSongForms);
-        this.songForms.addAll(newSongForms);
-    }
-
-    private void updateThemes(List<Theme> updatedThemes) {
-        List<StoreTheme> existThemes = this.themes.stream()
-            .filter(theme -> updatedThemes.contains(theme.getTheme()))
-            .toList();
-
-        List<StoreTheme> newThemes = updatedThemes.stream()
-            .map(theme -> new StoreTheme(this, theme))
-            .filter(storeTheme -> !this.themes.contains(storeTheme))
-            .toList();
-
-        this.themes.clear();
-        this.themes.addAll(existThemes);
-        this.themes.addAll(newThemes);
-    }
-
-    private void updateImages(List<String> imageUrls) {
-        String nowImageUrl = images.get(0).getImageUrl();
-        String imageUrl = imageUrls.get(0);
-        if (!nowImageUrl.equals(imageUrl)) {
-            images.clear();
-            images.add(new StoreImage(this, imageUrl));
-        }
-    }
-
-    public String getName() {
-        return name.getName();
-    }
-
-    public String getRegion() {
-        return region.getRegion();
-    }
-
-    public String getAddress() {
-        return address.getAddress();
-    }
-
-    public List<String> getImage() {
-        return images.stream()
-            .map(StoreImage::getImageUrl)
-            .toList();
-    }
-
-    public List<String> getThemes() {
-        return themes.stream()
-            .map(StoreTheme::getTheme)
-            .map(Theme::getName)
-            .toList();
-    }
-
-    public List<String> getSongForms() {
-        return songForms.stream()
-            .map(StoreSongForm::getSongForm)
-            .map(SongForm::getName)
-            .toList();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Store store = (Store) o;
-        return Objects.equals(storeId, store.storeId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(storeId);
-    }
 }

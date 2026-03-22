@@ -10,7 +10,7 @@ public class TokenFixture {
     public static String accessToken() {
         TokenManager tokenManager = new TokenManager();
         ReflectionTestUtils.setField(tokenManager, "SECRET_KEY", "secretKey");
-        return tokenManager.createToken(MOCK_ADMIN_ID);
+        return tokenManager.createAdminToken(MOCK_ADMIN_ID);
     }
 
 }

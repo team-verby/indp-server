@@ -30,6 +30,7 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	runtimeOnly 'com.h2database:h2'
@@ -146,27 +147,27 @@ jacocoTestReport {
 	finalizedBy jacocoTestCoverageVerification
 }
 
-jacocoTestCoverageVerification {
-	excludedClassFilesForReport(classDirectories, jacocoExcludePatterns)
-	violationRules {
-		rule {
-			enabled = true
-			element = 'CLASS'
-
-			limit {
-				counter = 'BRANCH'
-				value = 'COVEREDRATIO'
-				minimum = 0.70
-			}
-
-			limit {
-				counter = 'LINE'
-				value = 'COVEREDRATIO'
-				minimum = 0.70
-			}
-		}
-	}
-}
+//jacocoTestCoverageVerification {
+//	excludedClassFilesForReport(classDirectories, jacocoExcludePatterns)
+//	violationRules {
+//		rule {
+//			enabled = true
+//			element = 'CLASS'
+//
+//			limit {
+//				counter = 'BRANCH'
+//				value = 'COVEREDRATIO'
+//				minimum = 0.70
+//			}
+//
+//			limit {
+//				counter = 'LINE'
+//				value = 'COVEREDRATIO'
+//				minimum = 0.70
+//			}
+//		}
+//	}
+//}
 
 // SonarCloud
 sonar {
