@@ -48,6 +48,9 @@ public class Store extends BaseTimeEntity {
     @Column(name = "lighting")
     private Integer lighting; // 조명 색온도 (1000~10000K)
 
+    @Column(name = "suspended", nullable = false)
+    private boolean suspended = false;
+
     @OneToOne(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private StoreMusic storeMusic;
 

@@ -17,7 +17,7 @@ public class PlanService {
     private final PlanRepository planRepository;
 
     public FindPlansResponse findPlans() {
-        List<Plan> plans = planRepository.findAllByOrderByDisplayOrderAsc();
+        List<Plan> plans = planRepository.findAll();
         return FindPlansResponse.from(plans);
     }
 }

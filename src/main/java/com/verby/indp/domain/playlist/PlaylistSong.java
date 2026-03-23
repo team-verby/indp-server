@@ -38,10 +38,10 @@ public class PlaylistSong {
     private boolean isRecommended;
 
     @Column(name = "vid")
-    private String vid; // 유튜브 video ID
+    private String vid;
 
     @Column(name = "play_time")
-    private Integer playTime; // 단위: 초
+    private Integer playTime;
 
     @Column(name = "title")
     private String title;

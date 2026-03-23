@@ -30,12 +30,6 @@ public class Plan {
     @Column(name = "monthly_price")
     private int monthlyPrice;
 
-    @Column(name = "is_recommended")
-    private boolean isRecommended;
-
-    @Column(name = "display_order")
-    private int displayOrder;
-
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlanDiscount> discounts = new ArrayList<>();
 

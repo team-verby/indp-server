@@ -7,6 +7,7 @@ import com.verby.indp.domain.playlist.repository.PlaylistSongRepository;
 import com.verby.indp.domain.recommendation.SongRecommendation;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreBusinessHour;
+import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,19 +45,7 @@ public class PlaylistService {
         int recommendedCount = (int) songs.stream().filter(PlaylistSong::isRecommended).count();
         int totalPlayTime = songs.stream().mapToInt(s -> s.getPlayTime() != null ? s.getPlayTime() : 0).sum();
 
-        List<FindStorePlaylistResponse.SongItem> songItems = new ArrayList<>();
-        for (int i = 0; i < songs.size(); i++) {
-            PlaylistSong song = songs.get(i);
-            String refereeName = song.getSongRecommendation() != null
-                ? song.getSongRecommendation().getRefereeName() : null;
-            songItems.add(new FindStorePlaylistResponse.SongItem(
-                song.getPlaylistSongId(), i + 1, song.getTitle(), song.getArtist(),
-                song.getPlayTime(), song.isRecommended(), refereeName
-            ));
-        }
-
-        FindStorePlaylistResponse.PlaylistInfo playlistInfo =
-            new FindStorePlaylistResponse.PlaylistInfo(songs.size(), recommendedCount, totalPlayTime, songItems);
+        FindStorePlaylistResponse.PlaylistInfo playlistInfo = getPlaylistInfo(songs, recommendedCount, totalPlayTime);
 
         return new FindStorePlaylistResponse(isOwner, currentSong, playlistInfo);
     }
@@ -114,6 +103,21 @@ public class PlaylistService {
         playlistSongRepository.deleteAll(recommended);
     }
 
+    private FindStorePlaylistResponse.PlaylistInfo getPlaylistInfo(List<PlaylistSong> songs, int recommendedCount, int totalPlayTime) {
+        List<FindStorePlaylistResponse.SongItem> songItems = new ArrayList<>();
+        for (int i = 0; i < songs.size(); i++) {
+            PlaylistSong song = songs.get(i);
+            String refereeName = song.getSongRecommendation() != null
+                    ? song.getSongRecommendation().getRefereeName() : null;
+            songItems.add(new FindStorePlaylistResponse.SongItem(
+                    song.getPlaylistSongId(), i + 1, song.getTitle(), song.getArtist(),
+                    song.getPlayTime(), song.isRecommended(), refereeName
+            ));
+        }
+
+        return new FindStorePlaylistResponse.PlaylistInfo(songs.size(), recommendedCount, totalPlayTime, songItems);
+    }
+
     private FindStorePlaylistResponse.CurrentSongItem resolveCurrentSong(Store store, List<PlaylistSong> songs) {
         long elapsedSeconds = calcElapsedSeconds(store);
         if (elapsedSeconds < 0) {
@@ -123,7 +127,7 @@ public class PlaylistService {
         long cumulative = 0;
         for (int i = 0; i < songs.size(); i++) {
             PlaylistSong song = songs.get(i);
-            long duration = (long) (song.getPlayTime() != null ? song.getPlayTime() : 0);
+            long duration = song.getPlayTime();
             if (cumulative + duration > elapsedSeconds) {
                 String refereeName = song.getSongRecommendation() != null
                     ? song.getSongRecommendation().getRefereeName() : null;

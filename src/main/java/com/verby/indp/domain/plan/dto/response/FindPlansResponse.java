@@ -19,7 +19,6 @@ public record FindPlansResponse(List<PlanItem> plans) {
         String subtitle,
         String description,
         int monthlyPrice,
-        boolean isRecommended,
         DiscountInfo discount,
         List<String> features
     ) {
@@ -37,7 +36,7 @@ public record FindPlansResponse(List<PlanItem> plans) {
                 .toList();
 
             return new PlanItem(plan.getPlanId(), plan.getCode(), plan.getSubtitle(),
-                plan.getDescription(), plan.getMonthlyPrice(), plan.isRecommended(), discount, features);
+                plan.getDescription(), plan.getMonthlyPrice(), discount, features);
         }
     }
 

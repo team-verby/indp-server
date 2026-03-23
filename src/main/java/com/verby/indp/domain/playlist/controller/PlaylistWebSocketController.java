@@ -63,4 +63,11 @@ public class PlaylistWebSocketController {
             payload
         );
     }
+
+    public void requestCurrentSong(long storeId) {
+        messagingTemplate.convertAndSend(
+            "/topic/stores/" + storeId,
+            Map.of("type", "REQUEST_CURRENT_SONG", "storeId", storeId)
+        );
+    }
 }

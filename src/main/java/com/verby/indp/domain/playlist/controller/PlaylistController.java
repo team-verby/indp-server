@@ -27,7 +27,6 @@ public class PlaylistController {
     private static final String BEARER_PREFIX = "Bearer ";
 
     private final PlaylistService playlistService;
-    private final OwnerStoreService ownerStoreService;
     private final StoreRepository storeRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final TokenManager tokenManager;
@@ -48,19 +47,7 @@ public class PlaylistController {
         @RequestAttribute("ownerId") Long ownerId,
         @PathVariable long storeId
     ) {
-        Store store = ownerStoreService.findMyStore(ownerId, storeId);
-        playlistService.deleteRecommendedSongs(store);
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/admin/stores/{storeId}/playlist/current-realtime")
-    public ResponseEntity<Void> requestCurrentSongRealtime(
-        @PathVariable long storeId
-    ) {
-        messagingTemplate.convertAndSend(
-            "/topic/stores/" + storeId,
-            Map.of("type", "REQUEST_CURRENT_SONG")
-        );
+        // TODO: slack 으로 플레이리스트 재생성 요청 알림
         return ResponseEntity.ok().build();
     }
 

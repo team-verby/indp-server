@@ -10,7 +10,7 @@ public record FindStorePlaylistResponse(
 
     public record CurrentSongItem(
         Long playlistSongId,
-        int playOrder,
+        double playOrder,
         String title,
         String artist,
         String vid,
@@ -31,7 +31,7 @@ public record FindStorePlaylistResponse(
 
     public record SongItem(
         Long playlistSongId,
-        int playOrder,
+        double playOrder,
         String title,
         String artist,
         Integer playTime,
