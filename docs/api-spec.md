@@ -206,11 +206,72 @@
 - Response `201`:
   ```json
   {
+    "orderId": "string",
+    "amount": 234000,
+    "orderName": "string"
+  }
+  ```
+  > 토스 SDK에 전달할 결제 초기화 파라미터 반환
+
+---
+
+## 결제 (Payment)
+
+### 매장 도입 결제 확인
+- **POST** `/api/payments/apply/confirm`
+- 인증 불필요
+- Request Body:
+  ```json
+  {
+    "paymentKey": "string",
+    "orderId": "string",
+    "amount": 234000
+  }
+  ```
+- Response `200`:
+  ```json
+  {
     "loginId": "string",
     "password": "string"
   }
   ```
-  > 생성된 오너 계정 ID와 임시 비밀번호 반환
+  > 결제 확인 후 오너 계정 ID와 임시 비밀번호 반환
+
+### 매장 도입 결제 실패
+- **POST** `/api/payments/apply/fail`
+- 인증 불필요
+- Request Body:
+  ```json
+  {
+    "orderId": "string"
+  }
+  ```
+- Response `200` (body 없음)
+
+### 음악 추천 결제 확인
+- **POST** `/api/payments/recommendation/confirm`
+- 인증 불필요
+- Request Body:
+  ```json
+  {
+    "paymentKey": "string",
+    "orderId": "string",
+    "amount": 1000
+  }
+  ```
+- Response `200` (body 없음)
+  > 결제 확인 후 플레이리스트에 추천곡 반영 및 WebSocket 알림 발송
+
+### 음악 추천 결제 실패
+- **POST** `/api/payments/recommendation/fail`
+- 인증 불필요
+- Request Body:
+  ```json
+  {
+    "orderId": "string"
+  }
+  ```
+- Response `200` (body 없음)
 
 ---
 
@@ -285,10 +346,15 @@
     "songRecommendationId": 1,
     "title": "string",
     "artist": "string",
-    "fee": 1000
+    "fee": 1000,
+    "orderId": "string",
+    "amount": 1000,
+    "orderName": "노래 추천"
   }
   ```
   > `fee`: 추천 수수료 (원)
+  > `orderId`, `amount`, `orderName`: 토스 SDK에 전달할 결제 초기화 파라미터
+  > 결제 완료 후 `POST /api/payments/recommendation/confirm` 호출 필요
 
 ---
 
@@ -469,9 +535,12 @@
     "type": "SONG_RECOMMENDED",
     "title": "string",
     "artist": "string",
+    "vid": "string",
+    "playOrder": 4.5,
     "refereeName": "string"
   }
   ```
+  > `playOrder`: `PlaylistSong`에 저장된 정렬용 double 값 (null 가능 — 플레이리스트 없는 매장)
 
 ---
 
@@ -520,6 +589,7 @@
 | `GET /api/stores/**` | 불필요 |
 | `GET /api/stores/{storeId}/playlist` | 불필요 (토큰 있으면 isOwner 판별) |
 | `POST /api/{storeId}/songs/recommendations` | 불필요 |
+| `POST /api/payments/**` | 불필요 |
 | `/api/admin/**` | 어드민 JWT |
 | `/api/owner/**` | 오너 JWT |
 | WebSocket `/ws?token=` | 오너 JWT (선택적) |

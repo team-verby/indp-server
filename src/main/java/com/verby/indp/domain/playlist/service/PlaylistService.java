@@ -7,7 +7,6 @@ import com.verby.indp.domain.playlist.repository.PlaylistSongRepository;
 import com.verby.indp.domain.recommendation.SongRecommendation;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreBusinessHour;
-import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,21 +50,20 @@ public class PlaylistService {
     }
 
     @Transactional
-    public void addRecommendedSong(Store store, SongRecommendation recommendation) {
+    public PlaylistSong addRecommendedSong(Store store, SongRecommendation recommendation) {
         Playlist playlist = store.getPlaylist();
         if (playlist == null) {
-            return;
+            return null;
         }
 
         List<PlaylistSong> songs = playlistSongRepository
             .findAllByPlaylistPlaylistIdOrderByPlayOrder(playlist.getPlaylistId());
 
         if (songs.isEmpty()) {
-            playlistSongRepository.save(
+            return playlistSongRepository.save(
                 new PlaylistSong(playlist, recommendation, true, recommendation.getVid(), null,
                     recommendation.getTitle(), recommendation.getArtist(), 1.0)
             );
-            return;
         }
 
         int insertAfterIndex = resolveInsertIndex(store, songs);
@@ -81,7 +79,7 @@ public class PlaylistService {
 
         double newPosition = (positions[0] + positions[1]) / 2.0;
 
-        playlistSongRepository.save(
+        return playlistSongRepository.save(
             new PlaylistSong(playlist, recommendation, true, recommendation.getVid(), null,
                 recommendation.getTitle(), recommendation.getArtist(), newPosition)
         );

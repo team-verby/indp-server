@@ -3,17 +3,7 @@ package com.verby.indp.domain.recommendation;
 import com.verby.indp.domain.common.entity.BaseTimeEntity;
 import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.store.Store;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -58,5 +48,9 @@ public class SongRecommendation extends BaseTimeEntity {
         this.vid = vid;
         this.refereeName = refereeName;
         this.fee = fee;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
     }
 }

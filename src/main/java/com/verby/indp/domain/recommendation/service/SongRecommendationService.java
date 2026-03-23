@@ -3,6 +3,9 @@ package com.verby.indp.domain.recommendation.service;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.config.PricePolicy;
 import com.verby.indp.domain.config.PricePolicyRepository;
+import com.verby.indp.domain.payment.Payment;
+import com.verby.indp.domain.payment.repository.PaymentRepository;
+import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.service.PlaylistService;
 import com.verby.indp.domain.recommendation.SongRecommendation;
 import com.verby.indp.domain.recommendation.dto.response.RegisterSongRecommendationResponse;
@@ -22,10 +25,12 @@ import java.util.Map;
 public class SongRecommendationService {
 
     private static final String RECOMMENDATION_FEE_KEY = "recommendation_fee";
+    private static final String RECOMMENDATION_ORDER_NAME = "노래 추천";
 
     private final SongRecommendationRepository songRecommendationRepository;
     private final StoreRepository storeRepository;
     private final PricePolicyRepository pricePolicyRepository;
+    private final PaymentRepository paymentRepository;
     private final PlaylistService playlistService;
     private final SimpMessagingTemplate messagingTemplate;
 
@@ -41,18 +46,29 @@ public class SongRecommendationService {
             new SongRecommendation(store, title, artist, vid, refereeName, fee)
         );
 
-        playlistService.addRecommendedSong(store, recommendation);
-
-        messagingTemplate.convertAndSend(
-            "/topic/stores/" + storeId,
-            Map.of(
-                "type", "SONG_RECOMMENDED",
-                "title", title,
-                "artist", artist,
-                "refereeName", refereeName
-            )
-        );
+        Payment payment = paymentRepository.save(new Payment(RECOMMENDATION_ORDER_NAME, fee));
+        recommendation.setPayment(payment);
 
         return RegisterSongRecommendationResponse.from(recommendation);
+    }
+
+    @Transactional
+    public void confirmPayment(Payment payment) {
+        SongRecommendation recommendation = songRecommendationRepository.findByPayment(payment)
+            .orElseThrow(() -> new NotFoundException("추천 정보가 존재하지 않습니다."));
+
+        PlaylistSong playlistSong = playlistService.addRecommendedSong(recommendation.getStore(), recommendation);
+
+        messagingTemplate.convertAndSend(
+            "/topic/stores/" + recommendation.getStore().getStoreId(),
+            Map.of(
+                "type", "SONG_RECOMMENDED",
+                "title", recommendation.getTitle(),
+                "artist", recommendation.getArtist(),
+                "vid", recommendation.getVid(),
+                "playOrder", playlistSong.getPlayOrder(),
+                "refereeName", recommendation.getRefereeName()
+            )
+        );
     }
 }

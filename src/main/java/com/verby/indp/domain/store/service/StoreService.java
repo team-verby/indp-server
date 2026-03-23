@@ -3,17 +3,26 @@ package com.verby.indp.domain.store.service;
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.auth.repository.OwnerRepository;
 import com.verby.indp.domain.common.exception.NotFoundException;
+import com.verby.indp.domain.payment.Payment;
+import com.verby.indp.domain.payment.repository.PaymentRepository;
+import com.verby.indp.domain.plan.Plan;
+import com.verby.indp.domain.plan.PlanDiscount;
+import com.verby.indp.domain.plan.repository.PlanRepository;
 import com.verby.indp.domain.store.*;
 import com.verby.indp.domain.store.dto.request.ApplyStoreRequest;
 import com.verby.indp.domain.store.dto.response.ApplyStoreResponse;
+import com.verby.indp.domain.store.dto.response.ConfirmApplyPaymentResponse;
 import com.verby.indp.domain.store.repository.StoreApplyRepository;
 import com.verby.indp.domain.store.repository.StoreRepository;
+import com.verby.indp.domain.subscription.StoreSubscription;
+import com.verby.indp.domain.subscription.repository.StoreSubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
@@ -24,14 +33,16 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final OwnerRepository ownerRepository;
     private final StoreApplyRepository storeApplyRepository;
+    private final PlanRepository planRepository;
+    private final PaymentRepository paymentRepository;
+    private final StoreSubscriptionRepository storeSubscriptionRepository;
 
     @Transactional
     public ApplyStoreResponse applyStore(ApplyStoreRequest request) {
         String loginId = generateUniqueLoginId();
-        String password = generatePassword();
 
         Owner owner = ownerRepository.save(
-            new Owner(loginId, password, request.applicantName(), request.applicantPhone()));
+            new Owner(loginId, UUID.randomUUID().toString(), request.applicantName(), request.applicantPhone()));
 
         StoreApply storeApply = storeApplyRepository.save(
             new StoreApply(request.applicantName(), request.applicantPhone(), request.inquiryContent()));
@@ -73,9 +84,39 @@ public class StoreService {
             request.playlistType(), request.vibe(), request.tempo(), request.rejectedSongNote());
         store.setStoreMusic(storeMusic);
 
-        return new ApplyStoreResponse(loginId, password);
+        Plan plan = planRepository.findById(request.planId())
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 플랜입니다."));
+
+        int monthlyPrice = plan.getDiscounts().stream()
+            .filter(PlanDiscount::isActive)
+            .findFirst()
+            .map(d -> plan.getMonthlyPrice() * (100 - d.getDiscountRate()) / 100)
+            .orElse(plan.getMonthlyPrice());
+        int amount = monthlyPrice * request.usagePeriod();
+
+        String orderName = "인디피" + plan.getCode();
+        Payment payment = paymentRepository.save(
+            new Payment(orderName, amount, store.getStoreId(), plan.getPlanId(), request.usagePeriod()));
+
+        return new ApplyStoreResponse(payment.getOrderId(), payment.getAmount(), payment.getOrderName());
     }
 
+    @Transactional
+    public ConfirmApplyPaymentResponse confirmApplyPayment(Payment payment) {
+        Store store = storeRepository.findById(payment.getStoreId())
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 매장입니다."));
+        Plan plan = planRepository.findById(payment.getPlanId())
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 플랜입니다."));
+
+        LocalDate startDate = LocalDate.now();
+        LocalDate endDate = startDate.plusMonths(payment.getUsagePeriod());
+        storeSubscriptionRepository.save(new StoreSubscription(store, plan, payment, startDate, endDate));
+
+        String newPassword = generatePassword();
+        store.getOwner().updatePassword(newPassword);
+
+        return new ConfirmApplyPaymentResponse(store.getOwner().getLoginId(), newPassword);
+    }
 
     public Page<Store> findStores(Pageable pageable) {
         return storeRepository.findAllByOrderByStoreIdAsc(pageable);

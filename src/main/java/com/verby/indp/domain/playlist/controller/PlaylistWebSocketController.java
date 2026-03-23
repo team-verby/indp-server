@@ -1,18 +1,17 @@
 package com.verby.indp.domain.playlist.controller;
 
-import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.repository.StoreRepository;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
+
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -55,19 +54,11 @@ public class PlaylistWebSocketController {
     @MessageMapping("/stores/{storeId}/current-song")
     public void receiveCurrentSong(
         @DestinationVariable long storeId,
-        @Payload Map<String, Object> payload,
-        SimpMessageHeaderAccessor headerAccessor
+        @Payload Map<String, Object> payload
     ) {
         messagingTemplate.convertAndSend(
             "/topic/admin/stores/" + storeId + "/current-song",
             payload
-        );
-    }
-
-    public void requestCurrentSong(long storeId) {
-        messagingTemplate.convertAndSend(
-            "/topic/stores/" + storeId,
-            Map.of("type", "REQUEST_CURRENT_SONG", "storeId", storeId)
         );
     }
 }
