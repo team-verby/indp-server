@@ -15,31 +15,27 @@ public record FindPlansResponse(List<PlanItem> plans) {
 
     public record PlanItem(
         Long planId,
-        String code,
+        String type,
         String subtitle,
         String description,
         int monthlyPrice,
-        DiscountInfo discount,
+        int discountRate,
         List<String> features
     ) {
         public static PlanItem from(Plan plan) {
-            DiscountInfo discount = plan.getDiscounts().stream()
+            int discountRate = plan.getDiscounts().stream()
                 .filter(PlanDiscount::isActive)
                 .findFirst()
-                .map(d -> new DiscountInfo(d.getDiscountRate(),
-                    (int) (plan.getMonthlyPrice() * (100 - d.getDiscountRate()) / 100.0)))
-                .orElse(null);
+                .map(PlanDiscount::getDiscountRate)
+                .orElse(0);
 
             List<String> features = plan.getFeatures().stream()
                 .sorted(Comparator.comparingInt(PlanFeature::getSortOrder))
                 .map(PlanFeature::getFeatureLabel)
                 .toList();
 
-            return new PlanItem(plan.getPlanId(), plan.getCode(), plan.getSubtitle(),
-                plan.getDescription(), plan.getMonthlyPrice(), discount, features);
+            return new PlanItem(plan.getPlanId(), plan.getType().name(), plan.getSubtitle(),
+                plan.getDescription(), plan.getMonthlyPrice(), discountRate, features);
         }
-    }
-
-    public record DiscountInfo(int discountRate, int discountedPrice) {
     }
 }

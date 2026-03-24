@@ -40,28 +40,10 @@ public class Payment extends BaseTimeEntity {
     @Column(name = "status")
     private PaymentStatus status = PaymentStatus.PENDING;
 
-    @Column(name = "store_id")
-    private Long storeId;
-
-    @Column(name = "plan_id")
-    private Long planId;
-
-    @Column(name = "usage_period")
-    private Integer usagePeriod;
-
     public Payment(String orderName, int amount) {
         this.orderId = UUID.randomUUID().toString();
         this.orderName = orderName;
         this.amount = amount;
-    }
-
-    public Payment(String orderName, int amount, Long storeId, Long planId, int usagePeriod) {
-        this.orderId = UUID.randomUUID().toString();
-        this.orderName = orderName;
-        this.amount = amount;
-        this.storeId = storeId;
-        this.planId = planId;
-        this.usagePeriod = usagePeriod;
     }
 
     public void updatePaymentKey(String paymentKey) {

@@ -21,7 +21,7 @@ public record FindSubscriptionResponse(
             subscription.getStartDate(),
             subscription.getEndDate(),
             paidAt,
-            subscription.getPlan().getCode(),
+            subscription.getPlan().getType(),
             subscription.getPlan().getSubtitle()
         );
     }

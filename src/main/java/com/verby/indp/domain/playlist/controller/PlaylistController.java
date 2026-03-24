@@ -5,19 +5,10 @@ import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistResponse;
 import com.verby.indp.domain.playlist.service.PlaylistService;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.repository.StoreRepository;
-import com.verby.indp.domain.store.service.OwnerStoreService;
 import com.verby.indp.global.jwt.TokenManager;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -28,7 +19,6 @@ public class PlaylistController {
 
     private final PlaylistService playlistService;
     private final StoreRepository storeRepository;
-    private final SimpMessagingTemplate messagingTemplate;
     private final TokenManager tokenManager;
 
     @GetMapping("/stores/{storeId}/playlist")

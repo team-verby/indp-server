@@ -11,7 +11,6 @@ import com.verby.indp.domain.plan.repository.PlanRepository;
 import com.verby.indp.domain.store.*;
 import com.verby.indp.domain.store.dto.request.ApplyStoreRequest;
 import com.verby.indp.domain.store.dto.response.ApplyStoreResponse;
-import com.verby.indp.domain.store.dto.response.ConfirmApplyPaymentResponse;
 import com.verby.indp.domain.store.repository.StoreApplyRepository;
 import com.verby.indp.domain.store.repository.StoreRepository;
 import com.verby.indp.domain.subscription.StoreSubscription;
@@ -39,6 +38,7 @@ public class StoreService {
 
     @Transactional
     public ApplyStoreResponse applyStore(ApplyStoreRequest request) {
+        // TODO: 매장 도입, 점주 등록, 구독 등록, 결제 라이프 사이클
         String loginId = generateUniqueLoginId();
 
         Owner owner = ownerRepository.save(
@@ -94,15 +94,18 @@ public class StoreService {
             .orElse(plan.getMonthlyPrice());
         int amount = monthlyPrice * request.usagePeriod();
 
-        String orderName = "인디피" + plan.getCode();
-        Payment payment = paymentRepository.save(
-            new Payment(orderName, amount, store.getStoreId(), plan.getPlanId(), request.usagePeriod()));
+        String orderName = "인디피_구독_" + store.getName();
+        Payment payment = paymentRepository.save(new Payment(orderName, amount));
+
+        LocalDate startDate = LocalDate.now();
+        LocalDate endDate = startDate.plusMonths(request.usagePeriod());
+        storeSubscriptionRepository.save(new StoreSubscription(store, plan, payment, startDate, endDate));
 
         return new ApplyStoreResponse(payment.getOrderId(), payment.getAmount(), payment.getOrderName());
     }
 
     @Transactional
-    public ConfirmApplyPaymentResponse confirmApplyPayment(Payment payment) {
+    public void confirmApplyPayment(Payment payment) {
         Store store = storeRepository.findById(payment.getStoreId())
             .orElseThrow(() -> new NotFoundException("존재하지 않는 매장입니다."));
         Plan plan = planRepository.findById(payment.getPlanId())
@@ -114,8 +117,6 @@ public class StoreService {
 
         String newPassword = generatePassword();
         store.getOwner().updatePassword(newPassword);
-
-        return new ConfirmApplyPaymentResponse(store.getOwner().getLoginId(), newPassword);
     }
 
     public Page<Store> findStores(Pageable pageable) {

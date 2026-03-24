@@ -2,8 +2,12 @@ package com.verby.indp.domain.payment.service;
 
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.payment.Payment;
+import com.verby.indp.domain.payment.PaymentType;
+import com.verby.indp.domain.payment.dto.request.ConfirmPaymentRequest;
 import com.verby.indp.domain.payment.exception.PaymentBadRequestException;
 import com.verby.indp.domain.payment.repository.PaymentRepository;
+import com.verby.indp.domain.recommendation.service.SongRecommendationService;
+import com.verby.indp.domain.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,19 +20,26 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final PaymentClient paymentClient;
+    private final StoreService storeService;
+    private final SongRecommendationService songRecommendationService;
 
     @Transactional
-    public Payment validateAndConfirmPayment(String orderId, String paymentKey, Integer amount) {
-        Payment payment = getPayment(orderId);
+    public void confirm(ConfirmPaymentRequest request) {
+        Payment payment = getPayment(request.orderId());
+
         validatePaymentStatus(payment);
-        validatePaymentAmount(payment, amount);
+        validatePaymentAmount(payment, request.amount());
 
-        paymentClient.confirmPayment(orderId, paymentKey, amount);
+        paymentClient.confirmPayment(request.orderId(), request.paymentKey(), request.amount());
 
-        payment.updatePaymentKey(paymentKey);
+        payment.updatePaymentKey(request.paymentKey());
         payment.success();
 
-        return payment;
+        if (request.paymentType() == PaymentType.STORE_APPLY) {
+            storeService.confirmApplyPayment(payment);
+        } else if (request.paymentType() == PaymentType.SONG_RECOMMENDATION) {
+            songRecommendationService.confirmPayment(payment);
+        }
     }
 
     @Transactional
@@ -45,7 +56,7 @@ public class PaymentService {
         }
     }
 
-    private void validatePaymentAmount(Payment payment, Integer amount) {
+    private void validatePaymentAmount(Payment payment, int amount) {
         if (payment.isDifferentAmount(amount)) {
             throw new PaymentBadRequestException("결제 금액이 일치하지 않습니다");
         }

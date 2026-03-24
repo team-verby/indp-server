@@ -18,8 +18,8 @@ public class Plan {
     @Column(name = "plan_id")
     private Long planId;
 
-    @Column(name = "code")
-    private String code;
+    @Column(name = "type")
+    private PlanType type;
 
     @Column(name = "subtitle")
     private String subtitle;
