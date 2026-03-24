@@ -35,7 +35,7 @@ public class SongRecommendationService {
     private final SimpMessagingTemplate messagingTemplate;
 
     @Transactional
-    public RegisterSongRecommendationResponse register(long storeId, String title, String artist, String vid, String refereeName) {
+    public RegisterSongRecommendationResponse register(long storeId, String title, String artist, String vid, Integer playTime, String refereeName) {
         Store store = storeRepository.findById(storeId)
             .orElseThrow(() -> new NotFoundException("존재하지 않는 매장입니다."));
         int fee = pricePolicyRepository.findById(RECOMMENDATION_FEE_KEY)
@@ -43,7 +43,7 @@ public class SongRecommendationService {
             .orElseThrow(() -> new NotFoundException("추천 비용 설정이 존재하지 않습니다."));
 
         SongRecommendation recommendation = songRecommendationRepository.save(
-            new SongRecommendation(store, title, artist, vid, refereeName, fee)
+            new SongRecommendation(store, title, artist, vid, playTime, refereeName, fee)
         );
 
         Payment payment = paymentRepository.save(new Payment(RECOMMENDATION_ORDER_NAME, fee));

@@ -4,6 +4,7 @@ public record RegisterSongRecommendationRequest(
     String artist,
     String title,
     String vid,
+    Integer playTime,
     String refereeName
 ) {
 }

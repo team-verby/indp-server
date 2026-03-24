@@ -31,6 +31,9 @@ public class SongRecommendation extends BaseTimeEntity {
     @Column(name = "vid")
     private String vid;
 
+    @Column(name = "play_time")
+    private Integer playTime;
+
     @Column(name = "referee_name")
     private String refereeName;
 
@@ -41,11 +44,12 @@ public class SongRecommendation extends BaseTimeEntity {
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
-    public SongRecommendation(Store store, String title, String artist, String vid, String refereeName, int fee) {
+    public SongRecommendation(Store store, String title, String artist, String vid, Integer playTime, String refereeName, int fee) {
         this.store = store;
         this.title = title;
         this.artist = artist;
         this.vid = vid;
+        this.playTime = playTime;
         this.refereeName = refereeName;
         this.fee = fee;
     }

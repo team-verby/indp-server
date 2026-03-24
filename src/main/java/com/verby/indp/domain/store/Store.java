@@ -6,6 +6,7 @@ import com.verby.indp.domain.playlist.Playlist;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,7 @@ public class Store extends BaseTimeEntity {
     @Column(name = "suspended", nullable = false)
     private boolean suspended = false;
 
+    @Setter
     @OneToOne(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private StoreMusic storeMusic;
 
@@ -90,8 +92,8 @@ public class Store extends BaseTimeEntity {
         this.lighting = lighting;
     }
 
-    public void setStoreMusic(StoreMusic storeMusic) {
-        this.storeMusic = storeMusic;
+    public void assignPlaylist(Playlist playlist) {
+        this.playlist = playlist;
     }
 
 }

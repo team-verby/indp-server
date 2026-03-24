@@ -16,12 +16,16 @@ public class ResourceFilter implements Filter {
         "/api/music",
         "/api/stores",
         "/api/main",
-        "/api/contacts",
         "/api/admin",
-        "/api/regions",
+        "/api/owner",
+        "/api/plans",
+        "/api/images",
+        "/api/payments",
         "/docs/index.html",
+        "/frontend-test.html",
         "/profile",
-        "/actuator/health"
+        "/actuator/health",
+        "/ws"
     );
 
     @Override

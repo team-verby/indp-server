@@ -15,13 +15,13 @@ public class SongRecommendationController {
 
     private final SongRecommendationService songRecommendationService;
 
-    @PostMapping("/{storeId}/songs/recommendations")
+    @PostMapping("/stores/{storeId}/songs/recommendations")
     public ResponseEntity<RegisterSongRecommendationResponse> registerRecommendation(
         @PathVariable long storeId,
         @RequestBody RegisterSongRecommendationRequest request
     ) {
         RegisterSongRecommendationResponse response = songRecommendationService.register(
-            storeId, request.title(), request.artist(), request.vid(), request.refereeName());
+            storeId, request.title(), request.artist(), request.vid(), request.playTime(), request.refereeName());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

@@ -3,6 +3,7 @@ package com.verby.indp.domain.playlist.service;
 import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistResponse;
+import com.verby.indp.domain.playlist.repository.PlaylistRepository;
 import com.verby.indp.domain.playlist.repository.PlaylistSongRepository;
 import com.verby.indp.domain.recommendation.SongRecommendation;
 import com.verby.indp.domain.store.Store;
@@ -23,6 +24,7 @@ import java.util.Optional;
 public class PlaylistService {
 
     private static final int RECOMMENDATION_INSERT_OFFSET = 5;
+    private final PlaylistRepository playlistRepository;
     private final PlaylistSongRepository playlistSongRepository;
 
     public FindStorePlaylistResponse getStorePlaylist(Store store, boolean isOwner) {
@@ -53,7 +55,8 @@ public class PlaylistService {
     public PlaylistSong addRecommendedSong(Store store, SongRecommendation recommendation) {
         Playlist playlist = store.getPlaylist();
         if (playlist == null) {
-            return null;
+            playlist = playlistRepository.save(new Playlist());
+            store.assignPlaylist(playlist);
         }
 
         List<PlaylistSong> songs = playlistSongRepository
@@ -61,7 +64,7 @@ public class PlaylistService {
 
         if (songs.isEmpty()) {
             return playlistSongRepository.save(
-                new PlaylistSong(playlist, recommendation, true, recommendation.getVid(), null,
+                new PlaylistSong(playlist, recommendation, true, recommendation.getVid(), recommendation.getPlayTime(),
                     recommendation.getTitle(), recommendation.getArtist(), 1.0)
             );
         }
@@ -80,7 +83,7 @@ public class PlaylistService {
         double newPosition = (positions[0] + positions[1]) / 2.0;
 
         return playlistSongRepository.save(
-            new PlaylistSong(playlist, recommendation, true, recommendation.getVid(), null,
+            new PlaylistSong(playlist, recommendation, true, recommendation.getVid(), recommendation.getPlayTime(),
                 recommendation.getTitle(), recommendation.getArtist(), newPosition)
         );
     }

@@ -12,12 +12,10 @@ import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Table(name = "playlist")
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class Playlist extends BaseTimeEntity {
 
     @Id
@@ -27,8 +25,4 @@ public class Playlist extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlaylistSong> songs = new ArrayList<>();
-
-    public Playlist(List<PlaylistSong> songs) {
-        this.songs = songs;
-    }
 }
