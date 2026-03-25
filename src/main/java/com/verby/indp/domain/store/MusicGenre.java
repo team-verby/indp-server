@@ -1,0 +1,51 @@
+package com.verby.indp.domain.store;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Getter
+@Table(name = "music_genre")
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+public class MusicGenre {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "music_genre_id")
+    private Long musicGenreId;
+
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_music_id")
+    private StoreMusic storeMusic;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "genre")
+    private Genre genre;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "preference_type", nullable = false)
+    private PreferenceType preferenceType;
+
+    public MusicGenre(Genre genre, PreferenceType preferenceType) {
+        this.genre = genre;
+        this.preferenceType = preferenceType;
+    }
+
+    public enum Genre {
+        BALLAD,
+        HIPHOP,
+        INDIE,
+        ROCK,
+        DANCE,
+        CLASSIC,
+        CHILDREN
+    }
+
+    public enum PreferenceType {
+        LIKE,
+        DISLIKE
+    }
+}

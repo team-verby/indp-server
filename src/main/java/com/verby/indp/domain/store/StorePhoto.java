@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -23,6 +24,7 @@ public class StorePhoto {
     @Column(name = "store_photo_id")
     private Long storePhotoId;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private Store store;
@@ -36,8 +38,7 @@ public class StorePhoto {
     @Column(name = "is_main")
     private boolean isMain;
 
-    public StorePhoto(Store store, String imageUrl, int sortOrder, boolean isMain) {
-        this.store = store;
+    public StorePhoto(String imageUrl, int sortOrder, boolean isMain) {
         this.imageUrl = imageUrl;
         this.sortOrder = sortOrder;
         this.isMain = isMain;

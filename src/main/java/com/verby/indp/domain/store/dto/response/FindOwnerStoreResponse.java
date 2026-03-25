@@ -2,7 +2,7 @@ package com.verby.indp.domain.store.dto.response;
 
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreMusic;
-import com.verby.indp.domain.store.StoreMusicTimePreference;
+import com.verby.indp.domain.store.MusicTimePreference;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -33,7 +33,7 @@ public record FindOwnerStoreResponse(
         MusicInfo musicInfo = null;
         if (store.getStoreMusic() != null) {
             StoreMusic m = store.getStoreMusic();
-            List<String> moods = store.getMoods().stream().map(sm -> sm.getVibe().name()).toList();
+            List<String> moods = store.getVibes().stream().map(sm -> sm.getVibe().name()).toList();
             List<String> methods = store.getPlayMethods().stream().map(pm -> pm.getMethod().name()).toList();
             List<String> genres = store.getGenres().stream().map(g -> g.getGenre()).toList();
 
@@ -46,7 +46,7 @@ public record FindOwnerStoreResponse(
                 m.getPlaylistType() != null ? m.getPlaylistType().name() : null,
                 timePreferences,
                 m.getVibe(),
-                m.getTempo() != null ? m.getTempo().name() : null,
+                m.getMusicTempo() != null ? m.getMusicTempo().name() : null,
                 genres, m.getRejectedSongNote());
         }
 
@@ -69,7 +69,7 @@ public record FindOwnerStoreResponse(
     }
 
     public record TimePreferenceItem(LocalTime startTime, LocalTime endTime, String mood) {
-        public static TimePreferenceItem from(StoreMusicTimePreference tp) {
+        public static TimePreferenceItem from(MusicTimePreference tp) {
             return new TimePreferenceItem(tp.getStartTime(), tp.getEndTime(), tp.getMood());
         }
     }

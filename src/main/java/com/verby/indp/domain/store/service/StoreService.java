@@ -14,6 +14,7 @@ import com.verby.indp.domain.store.dto.response.ApplyStoreResponse;
 import com.verby.indp.domain.store.repository.StoreApplyRepository;
 import com.verby.indp.domain.store.repository.StoreRepository;
 import com.verby.indp.domain.subscription.StoreSubscription;
+import com.verby.indp.domain.subscription.SubscriptionStatus;
 import com.verby.indp.domain.subscription.repository.StoreSubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,7 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -38,85 +41,55 @@ public class StoreService {
 
     @Transactional
     public ApplyStoreResponse applyStore(ApplyStoreRequest request) {
-        // TODO: 매장 도입, 점주 등록, 구독 등록, 결제 라이프 사이클
+        List<PlayMethod> playMethods = request.playMethods().stream()
+                .map(PlayMethod::new)
+                .toList();
+        List<MusicGenre> musicGenres = request.preferenceGenres().stream()
+                .map(preferenceGenre -> new MusicGenre(preferenceGenre.genre(), preferenceGenre.preferenceType()))
+                .toList();
+        List<MusicTimePreference> musicTimePreferences = request.timePreferences().stream()
+                .map(timePreference -> new MusicTimePreference(timePreference.startTime(), timePreference.endTime(), timePreference.mood()))
+                .toList();
+        StoreMusic storeMusic = new StoreMusic(request.platform(), request.playedMusic(), request.rejectedSongNote(),
+                request.playlistType(), request.musicTempo(), request.mood(), playMethods, musicTimePreferences, musicGenres);
+
         String loginId = generateUniqueLoginId();
+        String password = generatePassword();
+        Owner owner = new Owner(loginId, password, request.applicantName(), request.applicantPhone());
+        StoreApply storeApply = new StoreApply(request.applicantName(), request.applicantPhone(), request.inquiryContent());
+        List<StoreBusinessHour> storeBusinessHours = request.businessHours().stream()
+                .map(bh -> new StoreBusinessHour(bh.dayOfWeek(), bh.openTime(), bh.closeTime(), bh.isClosed()))
+                .toList();
+        List<StorePhoto> storePhotos = IntStream.range(0, request.photoUrls().size())
+                .mapToObj(i -> new StorePhoto(request.photoUrls().get(i), i, i == 0))
+                .toList();
+        List<StoreVibe> storeVibes = request.vibes().stream()
+                .map(StoreVibe::new)
+                .toList();
 
-        Owner owner = ownerRepository.save(
-            new Owner(loginId, UUID.randomUUID().toString(), request.applicantName(), request.applicantPhone()));
-
-        StoreApply storeApply = storeApplyRepository.save(
-            new StoreApply(request.applicantName(), request.applicantPhone(), request.inquiryContent()));
-
-        Store store = storeRepository.save(new Store(
-            storeApply, owner, request.name(), request.industry(), request.address(),
-            request.customerAgeGroup(), request.lighting()));
-
-        for (ApplyStoreRequest.BusinessHour bh : request.businessHours()) {
-            store.getBusinessHours().add(
-                new StoreBusinessHour(store, bh.dayOfWeek(), bh.openTime(), bh.closeTime(), bh.isClosed()));
-        }
-
-        for (int i = 0; i < request.photoUrls().size(); i++) {
-            store.getPhotos().add(new StorePhoto(store, request.photoUrls().get(i), i, i == 0));
-        }
-
-        for (StoreMood.Vibe vibe : request.moods()) {
-            store.getMoods().add(new StoreMood(store, vibe));
-        }
-
-        for (PlayMethod.Method method : request.playMethods()) {
-            store.getPlayMethods().add(new PlayMethod(store, method));
-        }
-
-        for (String genre : request.rejectedGenres()) {
-            store.getGenres().add(new StoreGenre(store, genre));
-        }
-
-        if (request.timePreferences() != null) {
-            for (ApplyStoreRequest.TimePreference tp : request.timePreferences()) {
-                store.getMusicTimePreferences().add(
-                    new StoreMusicTimePreference(store, tp.startTime(), tp.endTime(), tp.mood()));
-            }
-        }
-
-        StoreMusic storeMusic = new StoreMusic(
-            store, request.platform(), request.playedMusic(),
-            request.playlistType(), request.vibe(), request.tempo(), request.rejectedSongNote());
-        store.setStoreMusic(storeMusic);
+        Store store = new Store(storeApply, owner, request.name(), request.industry(), request.address(), request.customerAgeGroup(), request.lighting(), storeMusic, storeVibes, storeBusinessHours, storePhotos);
+        storeRepository.save(store);
 
         Plan plan = planRepository.findById(request.planId())
             .orElseThrow(() -> new NotFoundException("존재하지 않는 플랜입니다."));
 
-        int monthlyPrice = plan.getDiscounts().stream()
-            .filter(PlanDiscount::isActive)
-            .findFirst()
-            .map(d -> plan.getMonthlyPrice() * (100 - d.getDiscountRate()) / 100)
-            .orElse(plan.getMonthlyPrice());
-        int amount = monthlyPrice * request.usagePeriod();
+        int amount = calculateAmount(plan, request.usagePeriod());
 
-        String orderName = "인디피_구독_" + store.getName();
+        String orderName = "인디피_구독_" + request.name();
         Payment payment = paymentRepository.save(new Payment(orderName, amount));
 
-        LocalDate startDate = LocalDate.now();
-        LocalDate endDate = startDate.plusMonths(request.usagePeriod());
-        storeSubscriptionRepository.save(new StoreSubscription(store, plan, payment, startDate, endDate));
+        StoreSubscription storeSubscription = new StoreSubscription(store, plan, payment, request.usagePeriod());
+        storeSubscriptionRepository.save(storeSubscription);
 
         return new ApplyStoreResponse(payment.getOrderId(), payment.getAmount(), payment.getOrderName());
     }
 
     @Transactional
     public void confirmApplyPayment(Payment payment) {
-        Store store = storeRepository.findById(payment.getStoreId())
-            .orElseThrow(() -> new NotFoundException("존재하지 않는 매장입니다."));
-        Plan plan = planRepository.findById(payment.getPlanId())
-            .orElseThrow(() -> new NotFoundException("존재하지 않는 플랜입니다."));
-
-        LocalDate startDate = LocalDate.now();
-        LocalDate endDate = startDate.plusMonths(payment.getUsagePeriod());
-        storeSubscriptionRepository.save(new StoreSubscription(store, plan, payment, startDate, endDate));
-
-        String newPassword = generatePassword();
-        store.getOwner().updatePassword(newPassword);
+        StoreSubscription storeSubscription = storeSubscriptionRepository.findByPayment(payment)
+                .orElseThrow(() -> new NotFoundException("구독 정보가 존재하지 않습니다."));
+        storeSubscription.updateStartDate(LocalDate.now());
+        storeSubscription.updateStatus(SubscriptionStatus.ACTIVE);
     }
 
     public Page<Store> findStores(Pageable pageable) {
@@ -125,6 +98,15 @@ public class StoreService {
 
     public Store findStore(long storeId) {
         return getStoreById(storeId);
+    }
+
+    private int calculateAmount(Plan plan, int usagePeriod) {
+        int monthlyPrice = plan.getDiscounts().stream()
+                .filter(PlanDiscount::isActive)
+                .findFirst()
+                .map(d -> plan.getMonthlyPrice() * (100 - d.getDiscountRate()) / 100)
+                .orElse(plan.getMonthlyPrice());
+        return monthlyPrice * usagePeriod;
     }
 
     private Store getStoreById(long storeId) {

@@ -1,18 +1,12 @@
 package com.verby.indp.domain.store;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,6 +19,7 @@ public class StoreMusic {
     @Column(name = "store_music_id")
     private Long storeMusicId;
 
+    @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private Store store;
@@ -42,21 +37,34 @@ public class StoreMusic {
     @Column(name = "playlist_type")
     private PlaylistType playlistType;
 
-    @Column(name = "vibe")
-    private String vibe;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "tempo")
-    private Tempo tempo;
+    private MusicTempo musicTempo;
 
-    public StoreMusic(Store store, String platform, String playedMusic, PlaylistType playlistType, String vibe, Tempo tempo, String rejectedSongNote) {
-        this.store = store;
+    @Column(name = "musicMood")
+    private String musicMood;
+
+    @OneToMany(mappedBy = "storeMusic", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlayMethod> playMethods = new ArrayList<>();
+
+    @OneToMany(mappedBy = "storeMusic", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MusicTimePreference> musicTimePreferences = new ArrayList<>();
+
+    @OneToMany(mappedBy = "storeMusic", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MusicGenre> genres = new ArrayList<>();
+
+    public StoreMusic(String platform, String playedMusic, String rejectedSongNote, PlaylistType playlistType,
+                      MusicTempo musicTempo, String musicMood, List<PlayMethod> playMethods,
+                      List<MusicTimePreference> musicTimePreferences, List<MusicGenre> genres) {
         this.platform = platform;
         this.playedMusic = playedMusic;
-        this.playlistType = playlistType;
-        this.vibe = vibe;
-        this.tempo = tempo;
         this.rejectedSongNote = rejectedSongNote;
+        this.playlistType = playlistType;
+        this.musicTempo = musicTempo;
+        this.musicMood = musicMood;
+        setPlayMethods(playMethods);
+        setMusicTimePreferences(musicTimePreferences);
+        setGenres(genres);
     }
 
     public enum PlaylistType {
@@ -65,11 +73,26 @@ public class StoreMusic {
         CONSISTENT_VIBE
     }
 
-    public enum Tempo {
+    public enum MusicTempo {
         SLOW,
         CALM,
         NORMAL,
         LIVELY,
         UPBEAT
+    }
+
+    private void setPlayMethods(List<PlayMethod> playMethods) {
+        this.playMethods = playMethods;
+        playMethods.forEach(playMethod -> playMethod.setStoreMusic(this));
+    }
+
+    private void setMusicTimePreferences(List<MusicTimePreference> musicTimePreferences) {
+        this.musicTimePreferences = musicTimePreferences;
+        musicTimePreferences.forEach(musicTimePreference -> musicTimePreference.setStoreMusic(this));
+    }
+
+    private void setGenres(List<MusicGenre> genres) {
+        this.genres = genres;
+        genres.forEach(genre -> genre.setStoreMusic(this));
     }
 }

@@ -3,6 +3,7 @@ package com.verby.indp.domain.store;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalTime;
 
@@ -17,6 +18,7 @@ public class StoreBusinessHour {
     @Column(name = "store_business_hour_id")
     private Long storeBusinessHourId;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private Store store;
@@ -33,8 +35,7 @@ public class StoreBusinessHour {
     @Column(name = "is_closed")
     private boolean isClosed;
 
-    public StoreBusinessHour(Store store, int dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isClosed) {
-        this.store = store;
+    public StoreBusinessHour(int dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isClosed) {
         this.dayOfWeek = dayOfWeek;
         this.openTime = openTime;
         this.closeTime = closeTime;

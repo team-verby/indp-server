@@ -22,11 +22,11 @@ public class Store extends BaseTimeEntity {
     @Column(name = "store_id")
     private Long storeId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "store_apply_id")
     private StoreApply storeApply;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "owner_user_id")
     private Owner owner;
 
@@ -47,20 +47,13 @@ public class Store extends BaseTimeEntity {
     private String customerAgeGroup;
 
     @Column(name = "lighting")
-    private Integer lighting; // 조명 색온도 (1000~10000K)
+    private int lighting;
 
-    @Column(name = "suspended", nullable = false)
-    private boolean suspended = false;
-
-    @Setter
     @OneToOne(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private StoreMusic storeMusic;
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlayMethod> playMethods = new ArrayList<>();
-
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<StoreMood> moods = new ArrayList<>();
+    private List<StoreVibe> vibes = new ArrayList<>();
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StoreBusinessHour> businessHours = new ArrayList<>();
@@ -68,21 +61,9 @@ public class Store extends BaseTimeEntity {
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StorePhoto> photos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<StoreMusicTimePreference> musicTimePreferences = new ArrayList<>();
-
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<StoreGenre> genres = new ArrayList<>();
-
-    public Store(
-        StoreApply storeApply,
-        Owner owner,
-        String name,
-        String industry,
-        String address,
-        String customerAgeGroup,
-        Integer lighting
-    ) {
+    public Store(StoreApply storeApply, Owner owner, String name, String industry, String address,
+                 String customerAgeGroup, int lighting, StoreMusic storeMusic, List<StoreVibe> vibes,
+                 List<StoreBusinessHour> businessHours, List<StorePhoto> photos) {
         this.storeApply = storeApply;
         this.owner = owner;
         this.name = name;
@@ -90,10 +71,33 @@ public class Store extends BaseTimeEntity {
         this.address = address;
         this.customerAgeGroup = customerAgeGroup;
         this.lighting = lighting;
+        setStoreMusic(storeMusic);
+        setVibes(vibes);
+        setBusinessHours(businessHours);
+        setPhotos(photos);
     }
 
     public void assignPlaylist(Playlist playlist) {
         this.playlist = playlist;
     }
 
+    private void setStoreMusic(StoreMusic storeMusic) {
+        this.storeMusic = storeMusic;
+        storeMusic.setStore(this);
+    }
+
+    private void setVibes(List<StoreVibe> vibes) {
+        this.vibes = vibes;
+        vibes.forEach(vibe -> vibe.setStore(this));
+    }
+
+    private void setBusinessHours(List<StoreBusinessHour> businessHours) {
+        this.businessHours = businessHours;
+        businessHours.forEach(businessHour -> businessHour.setStore(this));
+    }
+
+    private void setPhotos(List<StorePhoto> photos) {
+        this.photos = photos;
+        photos.forEach(photo -> photo.setStore(this));
+    }
 }

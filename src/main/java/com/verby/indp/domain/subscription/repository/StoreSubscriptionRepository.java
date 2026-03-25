@@ -1,5 +1,6 @@
 package com.verby.indp.domain.subscription.repository;
 
+import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.subscription.StoreSubscription;
 import java.util.List;
@@ -10,5 +11,5 @@ public interface StoreSubscriptionRepository extends JpaRepository<StoreSubscrip
 
     List<StoreSubscription> findAllByStore(Store store);
 
-    Optional<StoreSubscription> findTopByStoreOrderByStartDateDesc(Store store);
+    Optional<StoreSubscription> findByPayment(Payment payment);
 }

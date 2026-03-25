@@ -18,6 +18,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -48,11 +49,25 @@ public class StoreSubscription extends BaseTimeEntity {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    public StoreSubscription(Store store, Plan plan, Payment payment, LocalDate startDate, LocalDate endDate) {
+    @Column(name = "usagePeriod")
+    private int usagePeriod;
+
+    @Column(name = "status")
+    private SubscriptionStatus status = SubscriptionStatus.PENDING_PAYMENT;
+
+    public StoreSubscription(Store store, Plan plan, Payment payment, int usagePeriod) {
         this.store = store;
         this.plan = plan;
         this.payment = payment;
+        this.usagePeriod = usagePeriod;
+    }
+
+    public void updateStatus(SubscriptionStatus status) {
+        this.status = status;
+    }
+
+    public void updateStartDate(LocalDate startDate) {
         this.startDate = startDate;
-        this.endDate = endDate;
+        this.endDate = startDate.plusMonths(this.usagePeriod);
     }
 }
