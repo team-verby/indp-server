@@ -1,5 +1,6 @@
 package com.verby.indp.global.interceptor;
 
+import com.verby.indp.domain.auth.Admin;
 import com.verby.indp.domain.auth.repository.AdminRepository;
 import com.verby.indp.domain.common.exception.AuthException;
 import com.verby.indp.global.jwt.TokenManager;
@@ -12,8 +13,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @RequiredArgsConstructor
 public class AdminLoginCheckInterceptor implements HandlerInterceptor {
 
-    public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String BEARER_PREFIX = "Bearer ";
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String BEARER_PREFIX = "Bearer ";
 
     private final AdminRepository adminRepository;
     private final TokenManager tokenManager;
@@ -28,10 +29,10 @@ public class AdminLoginCheckInterceptor implements HandlerInterceptor {
         if (authorization != null && authorization.startsWith(BEARER_PREFIX)) {
             Long adminId = tokenManager.decodeAdminToken(authorization.substring(BEARER_PREFIX.length()));
 
-            adminRepository.findById(adminId)
+            Admin admin = adminRepository.findById(adminId)
                 .orElseThrow(() -> new AuthException("권한이 없습니다."));
 
-            request.setAttribute("adminId", adminId);
+            request.setAttribute("admin", admin);
             return true;
         }
 

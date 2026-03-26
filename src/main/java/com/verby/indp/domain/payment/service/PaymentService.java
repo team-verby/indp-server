@@ -7,7 +7,7 @@ import com.verby.indp.domain.payment.dto.request.ConfirmPaymentRequest;
 import com.verby.indp.domain.payment.exception.PaymentBadRequestException;
 import com.verby.indp.domain.payment.repository.PaymentRepository;
 import com.verby.indp.domain.recommendation.service.SongRecommendationService;
-import com.verby.indp.domain.store.service.StoreService;
+import com.verby.indp.domain.subscription.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,8 +20,8 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final PaymentClient paymentClient;
-    private final StoreService storeService;
     private final SongRecommendationService songRecommendationService;
+    private final SubscriptionService subscriptionService;
 
     @Transactional
     public void confirm(ConfirmPaymentRequest request) {
@@ -36,7 +36,7 @@ public class PaymentService {
         payment.success();
 
         if (request.paymentType() == PaymentType.STORE_APPLY) {
-            storeService.confirmApplyPayment(payment);
+            subscriptionService.confirmApplyPayment(payment);
         } else if (request.paymentType() == PaymentType.SONG_RECOMMENDATION) {
             songRecommendationService.confirmPayment(payment);
         }

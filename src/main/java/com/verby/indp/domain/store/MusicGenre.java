@@ -34,6 +34,14 @@ public class MusicGenre {
         this.preferenceType = preferenceType;
     }
 
+    public boolean isPreferred() {
+        return preferenceType == PreferenceType.LIKE;
+    }
+
+    public boolean isRejected() {
+        return preferenceType == PreferenceType.DISLIKE;
+    }
+
     public enum Genre {
         BALLAD,
         HIPHOP,

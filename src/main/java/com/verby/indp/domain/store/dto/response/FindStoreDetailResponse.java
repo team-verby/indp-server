@@ -33,13 +33,13 @@ public record FindStoreDetailResponse(
         );
     }
 
-    public record BusinessHourItem(int dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isClosed) {
+    private record BusinessHourItem(int dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isClosed) {
         public static BusinessHourItem from(StoreBusinessHour h) {
             return new BusinessHourItem(h.getDayOfWeek(), h.getOpenTime(), h.getCloseTime(), h.isClosed());
         }
     }
 
-    public record PhotoItem(String imageUrl, boolean isMain) {
+    private record PhotoItem(String imageUrl, boolean isMain) {
         public static PhotoItem from(StorePhoto p) {
             return new PhotoItem(p.getImageUrl(), p.isMain());
         }

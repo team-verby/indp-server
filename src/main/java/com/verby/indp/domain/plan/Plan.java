@@ -18,6 +18,7 @@ public class Plan {
     @Column(name = "plan_id")
     private Long planId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private PlanType type;
 

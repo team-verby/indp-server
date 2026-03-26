@@ -17,6 +17,6 @@ public class PlanController {
 
     @GetMapping
     public ResponseEntity<FindPlansResponse> findPlans() {
-        return ResponseEntity.ok(planService.findPlans());
+        return ResponseEntity.ok(planService.getAllPlans());
     }
 }

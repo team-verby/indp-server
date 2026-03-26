@@ -1,12 +1,12 @@
 package com.verby.indp.domain.store;
 
-import com.verby.indp.domain.common.entity.BaseTimeEntity;
 import com.verby.indp.domain.auth.Owner;
+import com.verby.indp.domain.common.entity.BaseTimeEntity;
 import com.verby.indp.domain.playlist.Playlist;
+import com.verby.indp.domain.subscription.StoreSubscription;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +61,9 @@ public class Store extends BaseTimeEntity {
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StorePhoto> photos = new ArrayList<>();
 
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StoreSubscription> subscriptions = new ArrayList<>();
+
     public Store(StoreApply storeApply, Owner owner, String name, String industry, String address,
                  String customerAgeGroup, int lighting, StoreMusic storeMusic, List<StoreVibe> vibes,
                  List<StoreBusinessHour> businessHours, List<StorePhoto> photos) {
@@ -81,6 +84,10 @@ public class Store extends BaseTimeEntity {
         this.playlist = playlist;
     }
 
+    public void addSubscription(StoreSubscription subscription) {
+        this.subscriptions.add(subscription);
+        subscription.setStore(this);
+    }
     private void setStoreMusic(StoreMusic storeMusic) {
         this.storeMusic = storeMusic;
         storeMusic.setStore(this);

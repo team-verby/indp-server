@@ -1,8 +1,7 @@
 package com.verby.indp.domain.store.dto.response;
 
-import com.verby.indp.domain.store.Store;
-import com.verby.indp.domain.store.StoreMusic;
-import com.verby.indp.domain.store.MusicTimePreference;
+import com.verby.indp.domain.store.*;
+
 import java.time.LocalTime;
 import java.util.List;
 
@@ -13,78 +12,79 @@ public record FindOwnerStoreResponse(
 ) {
 
     public static FindOwnerStoreResponse from(Store store) {
-        ApplyInfo applyInfo = store.getStoreApply() != null
-            ? new ApplyInfo(
-                store.getStoreApply().getApplicantName(),
-                store.getStoreApply().getApplicantPhone())
-            : null;
+        StoreApply storeApply = store.getStoreApply();
 
-        List<BusinessHourItem> hours = store.getBusinessHours().stream()
-            .map(h -> new BusinessHourItem(h.getDayOfWeek(), h.getOpenTime(), h.getCloseTime(), h.isClosed()))
-            .toList();
-
-        List<String> photoUrls = store.getPhotos().stream()
-            .map(p -> p.getImageUrl())
-            .toList();
-
-        StoreInfo storeInfo = new StoreInfo(
-            store.getName(), store.getIndustry(), store.getAddress(), hours, photoUrls);
-
-        MusicInfo musicInfo = null;
-        if (store.getStoreMusic() != null) {
-            StoreMusic m = store.getStoreMusic();
-            List<String> moods = store.getVibes().stream().map(sm -> sm.getVibe().name()).toList();
-            List<String> methods = store.getPlayMethods().stream().map(pm -> pm.getMethod().name()).toList();
-            List<String> genres = store.getGenres().stream().map(g -> g.getGenre()).toList();
-
-            List<TimePreferenceItem> timePreferences = store.getMusicTimePreferences().stream()
-                .map(TimePreferenceItem::from)
-                .toList();
-
-            musicInfo = new MusicInfo(
-                store.getCustomerAgeGroup(), methods, moods, store.getLighting(),
-                m.getPlaylistType() != null ? m.getPlaylistType().name() : null,
-                timePreferences,
-                m.getVibe(),
-                m.getMusicTempo() != null ? m.getMusicTempo().name() : null,
-                genres, m.getRejectedSongNote());
-        }
+        ApplyInfo applyInfo = ApplyInfo.from(storeApply);
+        StoreInfo storeInfo = StoreInfo.from(store);
+        MusicInfo musicInfo = MusicInfo.from(store.getStoreMusic());
 
         return new FindOwnerStoreResponse(applyInfo, storeInfo, musicInfo);
     }
 
-    public record ApplyInfo(String applicantName, String applicantPhone) {
+    private record ApplyInfo(String applicantName, String applicantPhone) {
+        private static ApplyInfo from(StoreApply storeApply) {
+            return new ApplyInfo(storeApply.getApplicantName(), storeApply.getApplicantPhone());
+        }
     }
 
-    public record StoreInfo(
+    private record StoreInfo(
         String name,
         String industry,
         String address,
         List<BusinessHourItem> businessHours,
-        List<String> photoUrls
+        String customerAgeGroup,
+        List<String> photoUrls,
+        List<String> vibes,
+        int lighting
     ) {
-    }
-
-    public record BusinessHourItem(int dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isClosed) {
-    }
-
-    public record TimePreferenceItem(LocalTime startTime, LocalTime endTime, String mood) {
-        public static TimePreferenceItem from(MusicTimePreference tp) {
-            return new TimePreferenceItem(tp.getStartTime(), tp.getEndTime(), tp.getMood());
+        private static StoreInfo from(Store store) {
+            List<BusinessHourItem> businessHourItems = store.getBusinessHours().stream()
+                .map(BusinessHourItem::from)
+                .toList();
+            List<String> photoUrls = store.getPhotos().stream()
+                .map(StorePhoto::getImageUrl)
+                .toList();
+            List<String> vibes = store.getVibes().stream()
+                .map(storeVibe -> storeVibe.getVibe().name())
+                .toList();
+            return new StoreInfo(store.getName(), store.getIndustry(), store.getAddress(), businessHourItems, store.getCustomerAgeGroup(), photoUrls, vibes, store.getLighting());
         }
     }
 
-    public record MusicInfo(
-        String customerAgeGroup,
+    private record BusinessHourItem(int dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isClosed) {
+        private static BusinessHourItem from(StoreBusinessHour businessHour) {
+            return new BusinessHourItem(businessHour.getDayOfWeek(), businessHour.getOpenTime(), businessHour.getCloseTime(), businessHour.isClosed());
+        }
+    }
+
+    private record MusicInfo(
         List<String> playMethods,
-        List<String> moods,
-        Integer lighting,
         String playlistType,
         List<TimePreferenceItem> timePreferences,
-        String vibe,
-        String tempo,
+        String musicMood,
+        String musicTempo,
+        List<String> preferredGenres,
         List<String> rejectedGenres,
         String rejectedSongNote
     ) {
+        private static MusicInfo from(StoreMusic storeMusic) {
+            List<String> methods = storeMusic.getPlayMethods().stream().map(pm -> pm.getMethod().name()).toList();
+            List<TimePreferenceItem> timePreferences = storeMusic.getMusicTimePreferences().stream()
+                .map(TimePreferenceItem::from)
+                .toList();
+            List<String> preferredGenres = storeMusic.getGenres().stream().filter(MusicGenre::isPreferred)
+                .map(genre -> genre.getGenre().name()).toList();
+            List<String> rejectedGenres = storeMusic.getGenres().stream().filter(MusicGenre::isRejected)
+                .map(genre -> genre.getGenre().name()).toList();
+
+            return new MusicInfo(methods, storeMusic.getPlaylistType().name(), timePreferences, storeMusic.getMusicMood(),
+                storeMusic.getMusicTempo().name(), preferredGenres, rejectedGenres, storeMusic.getRejectedSongNote());
+        }
+    }
+
+    private record TimePreferenceItem(LocalTime startTime, LocalTime endTime, String mood) {
+        private static TimePreferenceItem from(MusicTimePreference timePreference) {
+            return new TimePreferenceItem(timePreference.getStartTime(), timePreference.getEndTime(), timePreference.getMood());
+        }
     }
 }

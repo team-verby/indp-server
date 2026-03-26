@@ -7,15 +7,15 @@ import com.verby.indp.domain.store.StorePhoto;
 import java.time.LocalTime;
 import java.util.List;
 
-public record FindStoreListResponse(List<StoreItem> stores) {
+public record FindStoresResponse(List<StoreItem> stores) {
 
-    public static FindStoreListResponse from(List<Store> stores) {
-        return new FindStoreListResponse(
+    public static FindStoresResponse from(List<Store> stores) {
+        return new FindStoresResponse(
             stores.stream().map(StoreItem::from).toList()
         );
     }
 
-    public record StoreItem(
+    private record StoreItem(
         Long storeId,
         String name,
         String industry,
@@ -23,7 +23,7 @@ public record FindStoreListResponse(List<StoreItem> stores) {
         String mainPhotoUrl,
         List<BusinessHourItem> businessHours
     ) {
-        public static StoreItem from(Store store) {
+        private static StoreItem from(Store store) {
             String mainPhotoUrl = store.getPhotos().stream()
                 .filter(StorePhoto::isMain)
                 .findFirst()
@@ -39,7 +39,7 @@ public record FindStoreListResponse(List<StoreItem> stores) {
         }
     }
 
-    public record BusinessHourItem(int dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isClosed) {
+    private record BusinessHourItem(int dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isClosed) {
         public static BusinessHourItem from(StoreBusinessHour h) {
             return new BusinessHourItem(h.getDayOfWeek(), h.getOpenTime(), h.getCloseTime(), h.isClosed());
         }
