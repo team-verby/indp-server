@@ -45,7 +45,7 @@ public class StoreService {
         StoreSubscription storeSubscription = new StoreSubscription(plan, payment, request.usagePeriod());
         store.addSubscription(storeSubscription);
 
-        return new ApplyStoreResponse(payment.getOrderId(), payment.getAmount(), payment.getOrderName());
+        return ApplyStoreResponse.from(storeSubscription);
     }
 
     public Page<Store> findStores(Pageable pageable) {

@@ -1,10 +1,14 @@
 package com.verby.indp.domain.playlist.service;
 
+import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.playlist.PlaylistSong;
+import com.verby.indp.domain.playlist.ScheduledPlaylistSong;
+import com.verby.indp.domain.playlist.ScheduledPlaylistUpdate;
 import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistResponse;
 import com.verby.indp.domain.playlist.repository.PlaylistRepository;
 import com.verby.indp.domain.playlist.repository.PlaylistSongRepository;
+import com.verby.indp.domain.playlist.repository.ScheduledPlaylistUpdateRepository;
 import com.verby.indp.domain.recommendation.SongRecommendation;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreBusinessHour;
@@ -26,6 +30,7 @@ public class PlaylistService {
     private static final int RECOMMENDATION_INSERT_OFFSET = 5;
     private final PlaylistRepository playlistRepository;
     private final PlaylistSongRepository playlistSongRepository;
+    private final ScheduledPlaylistUpdateRepository scheduledPlaylistUpdateRepository;
 
     public FindStorePlaylistResponse getStorePlaylist(Store store, boolean isOwner) {
         Playlist playlist = store.getPlaylist();
@@ -89,6 +94,57 @@ public class PlaylistService {
     }
 
     @Transactional
+    public void updateCurrentSong(Playlist playlist, long playlistSongId) {
+        PlaylistSong song = getPlaylistSong(playlistSongId);
+        playlist.updateCurrentSong(song);
+    }
+
+    @Transactional
+    public void stopPlaylist(Playlist playlist) {
+        playlist.stop();
+    }
+
+    @Transactional
+    public void saveScheduledUpdate(Store store, LocalDateTime scheduledAt, List<ScheduledPlaylistSong> songs) {
+        scheduledPlaylistUpdateRepository.save(new ScheduledPlaylistUpdate(store, scheduledAt, songs));
+    }
+
+    @Transactional
+    public void applyDueScheduledUpdates() {
+        List<ScheduledPlaylistUpdate> due = scheduledPlaylistUpdateRepository
+            .findAllByStatusAndScheduledAtLessThanEqual(
+                ScheduledPlaylistUpdate.UpdateStatus.PENDING,
+                LocalDateTime.now()
+            );
+
+        for (ScheduledPlaylistUpdate update : due) {
+            applyScheduledUpdate(update);
+            update.markApplied();
+        }
+    }
+
+    private void applyScheduledUpdate(ScheduledPlaylistUpdate update) {
+        Store store = update.getStore();
+        Playlist playlist = store.getPlaylist();
+        if (playlist == null) {
+            playlist = playlistRepository.save(new Playlist());
+            store.assignPlaylist(playlist);
+        }
+
+        playlistSongRepository.deleteAllByPlaylist(playlist);
+        playlist.stop();
+
+        List<ScheduledPlaylistSong> songs = update.getSongs();
+        for (int i = 0; i < songs.size(); i++) {
+            ScheduledPlaylistSong s = songs.get(i);
+            playlistSongRepository.save(
+                new PlaylistSong(playlist, null, false, s.getVid(), s.getPlayTime(),
+                    s.getTitle(), s.getArtist(), (i + 1) * 10.0)
+            );
+        }
+    }
+
+    @Transactional
     public void deleteRecommendedSongs(Store store) {
         Playlist playlist = store.getPlaylist();
         if (playlist == null) {
@@ -102,6 +158,11 @@ public class PlaylistService {
             .toList();
 
         playlistSongRepository.deleteAll(recommended);
+    }
+
+    private PlaylistSong getPlaylistSong(long id) {
+        return playlistSongRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("존재하지 않은 플레이리스트 곡입니다."));
     }
 
     private FindStorePlaylistResponse.PlaylistInfo getPlaylistInfo(List<PlaylistSong> songs, int recommendedCount, int totalPlayTime) {

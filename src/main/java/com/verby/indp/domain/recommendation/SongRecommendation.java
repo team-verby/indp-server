@@ -37,24 +37,29 @@ public class SongRecommendation extends BaseTimeEntity {
     @Column(name = "referee_name")
     private String refereeName;
 
-    @Column(name = "fee", nullable = false)
-    private int fee;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
-    public SongRecommendation(Store store, String title, String artist, String vid, Integer playTime, String refereeName, int fee) {
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private RecommendationStatus status = RecommendationStatus.PENDING_PAYMENT;
+
+    public enum RecommendationStatus {
+        PENDING_PAYMENT, RECOMMENDED, PAYMENT_FAILED
+    }
+
+    public SongRecommendation(Store store, String title, String artist, String vid, Integer playTime, String refereeName, Payment payment) {
         this.store = store;
         this.title = title;
         this.artist = artist;
         this.vid = vid;
         this.playTime = playTime;
         this.refereeName = refereeName;
-        this.fee = fee;
+        this.payment = payment;
     }
 
-    public void setPayment(Payment payment) {
-        this.payment = payment;
+    public void updateStatus(RecommendationStatus status) {
+        this.status = status;
     }
 }

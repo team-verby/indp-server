@@ -18,7 +18,7 @@ public class SlackNotificationService {
 
     private final ApiService apiService;
 
-    @Value("${slack.webhook.uri}")
+    @Value("${slack.webhook.uri:}")
     private String webhookUri;
 
     @Async

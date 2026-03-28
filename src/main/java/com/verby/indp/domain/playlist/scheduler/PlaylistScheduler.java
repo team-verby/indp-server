@@ -18,6 +18,11 @@ public class PlaylistScheduler {
     private final PlaylistService playlistService;
 
     @Scheduled(cron = "0 * * * * *")
+    public void applyScheduledPlaylistUpdates() {
+        playlistService.applyDueScheduledUpdates();
+    }
+
+    @Scheduled(cron = "0 * * * * *")
     public void deleteRecommendedSongsAtClose() {
         LocalDateTime now = LocalDateTime.now();
         int dayOfWeek = now.getDayOfWeek().getValue();

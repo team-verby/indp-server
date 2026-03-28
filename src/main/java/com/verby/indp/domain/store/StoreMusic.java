@@ -81,6 +81,35 @@ public class StoreMusic {
         UPBEAT
     }
 
+    public void update(String platform, String playedMusic, String rejectedSongNote, PlaylistType playlistType,
+                       MusicTempo musicTempo, String musicMood, List<PlayMethod> playMethods,
+                       List<MusicTimePreference> musicTimePreferences, List<MusicGenre> genres) {
+        this.platform = platform;
+        this.playedMusic = playedMusic;
+        this.rejectedSongNote = rejectedSongNote;
+        this.playlistType = playlistType;
+        this.musicTempo = musicTempo;
+        this.musicMood = musicMood;
+
+        this.playMethods.clear();
+        playMethods.forEach(pm -> {
+            pm.setStoreMusic(this);
+            this.playMethods.add(pm);
+        });
+
+        this.musicTimePreferences.clear();
+        musicTimePreferences.forEach(mtp -> {
+            mtp.setStoreMusic(this);
+            this.musicTimePreferences.add(mtp);
+        });
+
+        this.genres.clear();
+        genres.forEach(g -> {
+            g.setStoreMusic(this);
+            this.genres.add(g);
+        });
+    }
+
     private void setPlayMethods(List<PlayMethod> playMethods) {
         this.playMethods = playMethods;
         playMethods.forEach(playMethod -> playMethod.setStoreMusic(this));

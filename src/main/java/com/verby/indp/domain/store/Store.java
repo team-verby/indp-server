@@ -80,6 +80,33 @@ public class Store extends BaseTimeEntity {
         setPhotos(photos);
     }
 
+    public void update(String name, String industry, String address, String customerAgeGroup, int lighting,
+                       List<StoreBusinessHour> businessHours, List<StorePhoto> photos, List<StoreVibe> vibes) {
+        this.name = name;
+        this.industry = industry;
+        this.address = address;
+        this.customerAgeGroup = customerAgeGroup;
+        this.lighting = lighting;
+
+        this.businessHours.clear();
+        businessHours.forEach(bh -> {
+            bh.setStore(this);
+            this.businessHours.add(bh);
+        });
+
+        this.photos.clear();
+        photos.forEach(p -> {
+            p.setStore(this);
+            this.photos.add(p);
+        });
+
+        this.vibes.clear();
+        vibes.forEach(v -> {
+            v.setStore(this);
+            this.vibes.add(v);
+        });
+    }
+
     public void assignPlaylist(Playlist playlist) {
         this.playlist = playlist;
     }
