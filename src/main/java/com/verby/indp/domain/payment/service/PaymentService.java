@@ -35,8 +35,8 @@ public class PaymentService {
         payment.updatePaymentKey(request.paymentKey());
         payment.success();
 
-        if (request.paymentType() == PaymentType.STORE_APPLY) {
-            subscriptionService.confirmApplyPayment(payment);
+        if (request.paymentType() == PaymentType.SUBSCRIPTION) {
+            subscriptionService.confirmPayment(payment);
         } else if (request.paymentType() == PaymentType.SONG_RECOMMENDATION) {
             songRecommendationService.confirmPayment(payment);
         }

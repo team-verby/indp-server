@@ -13,7 +13,7 @@ public record FindPlansResponse(List<PlanItem> plans) {
         return new FindPlansResponse(plans.stream().map(PlanItem::from).toList());
     }
 
-    public record PlanItem(
+    private record PlanItem(
         Long planId,
         String type,
         String subtitle,
@@ -22,7 +22,7 @@ public record FindPlansResponse(List<PlanItem> plans) {
         int discountRate,
         List<String> features
     ) {
-        public static PlanItem from(Plan plan) {
+        private static PlanItem from(Plan plan) {
             int discountRate = plan.getDiscounts().stream()
                 .filter(PlanDiscount::isActive)
                 .findFirst()
@@ -34,7 +34,7 @@ public record FindPlansResponse(List<PlanItem> plans) {
                 .map(PlanFeature::getFeatureLabel)
                 .toList();
 
-            return new PlanItem(plan.getPlanId(), plan.getType().name(), plan.getSubtitle(),
+            return new PlanItem(plan.getPlanId(), plan.getType(), plan.getSubtitle(),
                 plan.getDescription(), plan.getMonthlyPrice(), discountRate, features);
         }
     }

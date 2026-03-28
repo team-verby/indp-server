@@ -1,6 +1,5 @@
 package com.verby.indp.domain.subscription.dto.response;
 
-import com.verby.indp.domain.plan.PlanType;
 import com.verby.indp.domain.subscription.StoreSubscription;
 
 import java.time.LocalDate;
@@ -19,15 +18,15 @@ public record FindSubscriptionsResponse(
         );
     }
 
-    public record SubscriptionItem(
+    private record SubscriptionItem(
         LocalDate startDate,
         LocalDate endDate,
         LocalDateTime paidAt,
-        PlanType planType,
+        String planType,
         String planSubtitle
     ) {
 
-        public static SubscriptionItem from(StoreSubscription subscription) {
+        private static SubscriptionItem from(StoreSubscription subscription) {
             LocalDateTime paidAt = subscription.getPayment() != null
                 ? subscription.getPayment().getPaidAt()
                 : null;

@@ -30,7 +30,7 @@ public class Store extends BaseTimeEntity {
     @JoinColumn(name = "owner_user_id")
     private Owner owner;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "playlist_id")
     private Playlist playlist;
 

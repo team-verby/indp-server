@@ -1,17 +1,11 @@
 package com.verby.indp.domain.playlist;
 
 import com.verby.indp.domain.common.entity.BaseTimeEntity;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
 
 @Entity
 @Getter
@@ -22,6 +16,13 @@ public class Playlist extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "playlist_id")
     private Long playlistId;
+
+    @Column(name = "is_playing")
+    private boolean isPlaying = false;
+
+    @OneToOne
+    @JoinColumn(name = "playlist_id")
+    private PlaylistSong currentPlayingSong;
 
     @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlaylistSong> songs = new ArrayList<>();

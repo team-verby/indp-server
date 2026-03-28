@@ -32,7 +32,7 @@ public class SubscriptionService {
     }
 
     @Transactional
-    public void confirmApplyPayment(Payment payment) {
+    public void confirmPayment(Payment payment) {
         StoreSubscription storeSubscription = getByPayment(payment);
 
         storeSubscription.updateStartDate(LocalDate.now());

@@ -17,7 +17,7 @@ public class PlanService {
 
     private final PlanRepository planRepository;
 
-    public FindPlansResponse getAllPlans() {
+    public FindPlansResponse getPlans() {
         List<Plan> plans = planRepository.findAll();
         return FindPlansResponse.from(plans);
     }
