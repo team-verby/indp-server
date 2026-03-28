@@ -1,12 +1,11 @@
 package com.verby.indp.domain.playlist.controller;
 
-import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistResponse;
 import com.verby.indp.domain.playlist.service.PlaylistService;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.service.StoreService;
 import com.verby.indp.global.jwt.TokenManager;
-import com.verby.indp.global.resolver.LoginOwner;
+import com.verby.indp.global.slack.SlackNotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +20,7 @@ public class PlaylistController {
     private final PlaylistService playlistService;
     private final TokenManager tokenManager;
     private final StoreService storeService;
+    private final SlackNotificationService slackNotificationService;
 
     @GetMapping("/stores/{storeId}/playlist")
     public ResponseEntity<FindStorePlaylistResponse> findStorePlaylist(
@@ -34,11 +34,9 @@ public class PlaylistController {
     }
 
     @PostMapping("/owner/stores/{storeId}/playlist/regenerate")
-    public ResponseEntity<Void> regeneratePlaylist(
-        @LoginOwner Owner owner,
-        @PathVariable long storeId
-    ) {
-        // TODO: slack 으로 플레이리스트 재생성 요청 알림
+    public ResponseEntity<Void> regeneratePlaylist(@PathVariable long storeId) {
+        Store store = storeService.getStoreById(storeId);
+        slackNotificationService.sendPlaylistRegenerateRequest(store);
         return ResponseEntity.ok().build();
     }
 

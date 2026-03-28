@@ -21,6 +21,10 @@ spring:
 jwt:
   secret: SECRET_KEY
 
+slack:
+  webhook:
+    uri: https://mock-slack-webhook
+
 cloud:
   aws:
     credentials:
