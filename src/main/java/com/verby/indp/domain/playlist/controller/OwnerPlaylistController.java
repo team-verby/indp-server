@@ -1,0 +1,28 @@
+package com.verby.indp.domain.playlist.controller;
+
+import com.verby.indp.domain.auth.Owner;
+import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistByOwnerResponse;
+import com.verby.indp.domain.playlist.service.PlaylistService;
+import com.verby.indp.global.resolver.LoginOwner;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/owner")
+@RequiredArgsConstructor
+public class OwnerPlaylistController {
+
+    private final PlaylistService playlistService;
+
+    @GetMapping("/stores/{storeId}/playlist")
+    public ResponseEntity<FindStorePlaylistByOwnerResponse> findStorePlaylist(@LoginOwner Owner owner, @PathVariable long storeId) {
+        return ResponseEntity.ok(playlistService.getStorePlaylistByOwner(owner, storeId));
+    }
+
+    @PostMapping("/stores/{storeId}/playlist/regenerate")
+    public ResponseEntity<Void> regeneratePlaylist(@LoginOwner Owner owner, @PathVariable long storeId) {
+        playlistService.regeneratePlaylist(owner, storeId);
+        return ResponseEntity.ok().build();
+    }
+}

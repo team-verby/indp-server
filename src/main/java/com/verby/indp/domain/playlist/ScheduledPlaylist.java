@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Table(name = "scheduled_playlist_update")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-public class ScheduledPlaylistUpdate {
+public class ScheduledPlaylist {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,11 +38,11 @@ public class ScheduledPlaylistUpdate {
         PENDING, APPLIED
     }
 
-    public ScheduledPlaylistUpdate(Store store, LocalDateTime scheduledAt, List<ScheduledPlaylistSong> songs) {
+    public ScheduledPlaylist(Store store, LocalDateTime scheduledAt, List<ScheduledPlaylistSong> songs) {
         this.store = store;
         this.scheduledAt = scheduledAt;
         songs.forEach(s -> {
-            s.setScheduledPlaylistUpdate(this);
+            s.setScheduledPlaylist(this);
             this.songs.add(s);
         });
     }

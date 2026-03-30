@@ -18,8 +18,8 @@ public class ScheduledPlaylistSong {
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "scheduled_playlist_update_id", nullable = false)
-    private ScheduledPlaylistUpdate scheduledPlaylistUpdate;
+    @JoinColumn(name = "scheduled_playlist_id", nullable = false)
+    private ScheduledPlaylist scheduledPlaylist;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -34,9 +34,9 @@ public class ScheduledPlaylistSong {
     private Integer playTime;
 
     @Column(name = "sort_order", nullable = false)
-    private int sortOrder;
+    private double sortOrder;
 
-    public ScheduledPlaylistSong(String title, String artist, String vid, Integer playTime, int sortOrder) {
+    public ScheduledPlaylistSong(String title, String artist, String vid, Integer playTime, Double sortOrder) {
         this.title = title;
         this.artist = artist;
         this.vid = vid;
