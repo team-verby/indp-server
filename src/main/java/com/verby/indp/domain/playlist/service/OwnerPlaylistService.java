@@ -1,6 +1,7 @@
 package com.verby.indp.domain.playlist.service;
 
 import com.verby.indp.domain.auth.Owner;
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.playlist.PlaylistSong;
@@ -30,7 +31,7 @@ public class OwnerPlaylistService {
         Store store = storeService.getStoreById(storeId);
 
         validateOwnership(store, owner);
-        subscriptionService.validateActiveSubscription(store);
+        validateSubscribeActive(store);
 
         Playlist playlist = store.getPlaylist();
         if (playlist == null) {
@@ -47,9 +48,15 @@ public class OwnerPlaylistService {
         Store store = storeService.getStoreById(storeId);
 
         validateOwnership(store, owner);
-        subscriptionService.validateActiveSubscription(store);
+        validateSubscribeActive(store);
 
         slackNotificationService.sendPlaylistRegenerateRequest(store);
+    }
+
+    private void validateSubscribeActive(Store store) {
+        if (store.isInactive()) {
+            throw new BadRequestException("구독 정보가 없습니다.");
+        }
     }
 
     private void validateOwnership(Store store, Owner owner) {

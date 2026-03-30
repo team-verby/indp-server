@@ -1,5 +1,6 @@
 package com.verby.indp.domain.playlist.service;
 
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.ScheduledPlaylist;
@@ -35,7 +36,8 @@ public class PlaylistService {
 
     public FindStorePlaylistResponse getStorePlaylist(long storeId) {
         Store store = storeService.getStoreById(storeId);
-        subscriptionService.validateActiveSubscription(store);
+        validateSubscribeActive(store);
+
         Playlist playlist = store.getPlaylist();
         if (playlist == null) {
             return new FindStorePlaylistResponse(null, null);
@@ -49,7 +51,7 @@ public class PlaylistService {
 
     @Transactional
     public PlaylistSong addRecommendedSong(Store store, SongRecommendation recommendation) {
-        subscriptionService.validateActiveSubscription(store);
+        validateSubscribeActive(store);
         Playlist playlist = store.getPlaylist();
         if (playlist == null) {
             playlist = playlistRepository.save(new Playlist());
@@ -180,5 +182,11 @@ public class PlaylistService {
         }
 
         return songs.size() - 1;
+    }
+
+    private void validateSubscribeActive(Store store) {
+        if (store.isInactive()) {
+            throw new BadRequestException("구독 정보가 없습니다.");
+        }
     }
 }

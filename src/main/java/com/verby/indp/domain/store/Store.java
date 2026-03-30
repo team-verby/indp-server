@@ -4,6 +4,7 @@ import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.common.entity.BaseTimeEntity;
 import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.subscription.StoreSubscription;
+import com.verby.indp.domain.subscription.SubscriptionStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -109,6 +110,11 @@ public class Store extends BaseTimeEntity {
 
     public void assignPlaylist(Playlist playlist) {
         this.playlist = playlist;
+    }
+
+    public boolean isInactive() {
+        return subscriptions.stream()
+            .noneMatch(s -> s.getStatus() == SubscriptionStatus.ACTIVE);
     }
 
     public void addSubscription(StoreSubscription subscription) {

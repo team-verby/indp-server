@@ -2,6 +2,7 @@ package com.verby.indp.domain.store.service;
 
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.auth.repository.OwnerRepository;
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.plan.Plan;
@@ -15,7 +16,6 @@ import com.verby.indp.domain.store.dto.response.FindStoresResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
 import com.verby.indp.domain.subscription.StoreSubscription;
 import com.verby.indp.domain.subscription.SubscriptionStatus;
-import com.verby.indp.domain.subscription.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,7 +39,6 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final OwnerRepository ownerRepository;
     private final PlanService planService;
-    private final SubscriptionService subscriptionService;
 
     @Transactional
     public ApplyStoreResponse applyStore(ApplyStoreRequest request) {
@@ -61,7 +60,7 @@ public class StoreService {
 
     public FindStoreDetailByAdminResponse findStore(long storeId) {
         Store store = getStoreById(storeId);
-        subscriptionService.validateActiveSubscription(store);
+        validateSubscribeActive(store);
         return FindStoreDetailByAdminResponse.from(store);
     }
 
@@ -166,6 +165,12 @@ public class StoreService {
 
     private String generatePassword() {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+    }
+
+    private void validateSubscribeActive(Store store) {
+        if (store.isInactive()) {
+            throw new BadRequestException("구독 정보가 없습니다.");
+        }
     }
 
 }

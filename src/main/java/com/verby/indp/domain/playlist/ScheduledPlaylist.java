@@ -11,14 +11,14 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "scheduled_playlist_update")
+@Table(name = "scheduled_playlist")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class ScheduledPlaylist {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "scheduled_playlist_update_id")
-    private Long scheduledPlaylistUpdateId;
+    @Column(name = "scheduled_playlist_id")
+    private Long scheduledPlaylistId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
@@ -31,7 +31,7 @@ public class ScheduledPlaylist {
     @Column(name = "status", nullable = false)
     private UpdateStatus status = UpdateStatus.PENDING;
 
-    @OneToMany(mappedBy = "scheduledPlaylistUpdate", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "scheduledPlaylist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ScheduledPlaylistSong> songs = new ArrayList<>();
 
     public enum UpdateStatus {
