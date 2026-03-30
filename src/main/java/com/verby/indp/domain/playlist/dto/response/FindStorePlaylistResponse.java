@@ -5,39 +5,23 @@ import com.verby.indp.domain.playlist.PlaylistSong;
 import java.util.List;
 
 public record FindStorePlaylistResponse(
-    CurrentSongItem currentSong,
+    CurrentSongResponse currentSong,
     PlaylistInfo playlist
 ) {
 
-    public static FindStorePlaylistResponse from(List<PlaylistSong> songs, PlaylistSong currentSong) {
-        CurrentSongItem currentSongItem = CurrentSongItem.from(currentSong);
+    public static FindStorePlaylistResponse from(List<PlaylistSong> songs, CurrentSongResponse currentSong) {
         PlaylistInfo playlistInfo = PlaylistInfo.from(songs);
-        return new FindStorePlaylistResponse();
+        return new FindStorePlaylistResponse(currentSong, playlistInfo);
     }
 
-    public record CurrentSongItem(
-        Long playlistSongId,
-        double playOrder,
-        String title,
-        String artist,
-        Integer playTime,
-        int elapsedSeconds,
-        boolean isRecommended,
-        String refereeName
-    ) {
-        public static CurrentSongItem from(PlaylistSong currentSong) {
-
-        }
-    }
-
-    public record PlaylistInfo(
+    private record PlaylistInfo(
         int totalCount,
         int recommendedCount,
         int totalPlayTime,
         List<SongItem> songs
     ) {
 
-        public static PlaylistInfo from(List<PlaylistSong> songs) {
+        private static PlaylistInfo from(List<PlaylistSong> songs) {
             int totalCount = songs.size();
             int recommendedCount = (int) songs.stream().filter(PlaylistSong::isRecommended).count();
             int totalPlayTime = songs.stream().mapToInt(s -> s.getPlayTime() != null ? s.getPlayTime() : 0).sum();
@@ -47,7 +31,7 @@ public record FindStorePlaylistResponse(
         }
     }
 
-    public record SongItem(
+    private record SongItem(
         Long playlistSongId,
         double playOrder,
         String title,

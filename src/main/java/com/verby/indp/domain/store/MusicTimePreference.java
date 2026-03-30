@@ -1,15 +1,6 @@
 package com.verby.indp.domain.store;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import java.time.LocalTime;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,18 +21,18 @@ public class MusicTimePreference {
     @JoinColumn(name = "store_music_id")
     private StoreMusic storeMusic;
 
-    @Column(name = "start_time")
-    private LocalTime startTime;
+    @Column(name = "start_time_hour")
+    private int startTimeHour;
 
-    @Column(name = "end_time")
-    private LocalTime endTime;
+    @Column(name = "end_time_hour")
+    private int endTimeHour;
 
     @Column(name = "mood")
     private String mood;
 
-    public MusicTimePreference(LocalTime startTime, LocalTime endTime, String mood) {
-        this.startTime = startTime;
-        this.endTime = endTime;
+    public MusicTimePreference(int startTimeHour, int endTimeHour, String mood) {
+        this.startTimeHour = startTimeHour;
+        this.endTimeHour = endTimeHour;
         this.mood = mood;
     }
 }

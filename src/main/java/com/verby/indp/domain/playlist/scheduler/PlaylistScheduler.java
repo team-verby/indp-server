@@ -1,14 +1,16 @@
 package com.verby.indp.domain.playlist.scheduler;
 
 import com.verby.indp.domain.playlist.service.PlaylistService;
+import com.verby.indp.domain.playlist.service.PlaylistWebSocketService;
 import com.verby.indp.domain.store.StoreBusinessHour;
 import com.verby.indp.domain.store.repository.StoreBusinessHourRepository;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor

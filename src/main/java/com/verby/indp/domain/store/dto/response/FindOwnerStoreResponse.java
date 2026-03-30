@@ -82,9 +82,9 @@ public record FindOwnerStoreResponse(
         }
     }
 
-    private record TimePreferenceItem(LocalTime startTime, LocalTime endTime, String mood) {
+    private record TimePreferenceItem(int startTimeHour, int endTimeHour, String mood) {
         private static TimePreferenceItem from(MusicTimePreference timePreference) {
-            return new TimePreferenceItem(timePreference.getStartTime(), timePreference.getEndTime(), timePreference.getMood());
+            return new TimePreferenceItem(timePreference.getStartTimeHour(), timePreference.getEndTimeHour(), timePreference.getMood());
         }
     }
 }

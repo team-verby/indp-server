@@ -54,7 +54,7 @@ public class OwnerStoreService {
             .map(PlayMethod::new)
             .toList();
         List<MusicTimePreference> timePreferences = request.timePreferences().stream()
-            .map(tp -> new MusicTimePreference(tp.startTime(), tp.endTime(), tp.mood()))
+            .map(tp -> new MusicTimePreference(tp.startTime().getHour(), tp.endTime().getHour(), tp.mood()))
             .toList();
         List<MusicGenre> genres = request.preferenceGenres().stream()
             .map(g -> new MusicGenre(g.genre(), g.preferenceType()))

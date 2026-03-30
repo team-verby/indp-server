@@ -32,7 +32,6 @@ public class SongRecommendationService {
     private final PlaylistWebSocketService playlistWebSocketService;
 
     @Transactional
-
     public RegisterSongRecommendationResponse register(long storeId, String title, String artist, String vid, Integer playTime, String refereeName) {
         Store store = storeService.getStoreById(storeId);
         Payment payment = buildPayment(store.getName());

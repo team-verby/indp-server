@@ -2,7 +2,7 @@ package com.verby.indp.domain.playlist.controller;
 
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistByOwnerResponse;
-import com.verby.indp.domain.playlist.service.PlaylistService;
+import com.verby.indp.domain.playlist.service.OwnerPlaylistService;
 import com.verby.indp.global.resolver.LoginOwner;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class OwnerPlaylistController {
 
-    private final PlaylistService playlistService;
+    private final OwnerPlaylistService playlistService;
 
     @GetMapping("/stores/{storeId}/playlist")
     public ResponseEntity<FindStorePlaylistByOwnerResponse> findStorePlaylist(@LoginOwner Owner owner, @PathVariable long storeId) {
-        return ResponseEntity.ok(playlistService.getStorePlaylistByOwner(owner, storeId));
+        return ResponseEntity.ok(playlistService.getStorePlaylist(owner, storeId));
     }
 
     @PostMapping("/stores/{storeId}/playlist/regenerate")

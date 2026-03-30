@@ -1,7 +1,6 @@
 package com.verby.indp.domain.playlist;
 
 import com.verby.indp.domain.recommendation.SongRecommendation;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -30,7 +29,7 @@ public class PlaylistSong {
     @JoinColumn(name = "playlist_id")
     private Playlist playlist;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "song_recommendation_id")
     private SongRecommendation songRecommendation;
 

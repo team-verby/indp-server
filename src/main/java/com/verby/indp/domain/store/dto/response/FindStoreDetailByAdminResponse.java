@@ -6,7 +6,7 @@ import com.verby.indp.domain.store.StorePhoto;
 import java.time.LocalTime;
 import java.util.List;
 
-public record FindStoreDetailResponse(
+public record FindStoreDetailByAdminResponse(
     Long storeId,
     String name,
     String industry,
@@ -16,7 +16,7 @@ public record FindStoreDetailResponse(
     List<PhotoItem> photos
 ) {
 
-    public static FindStoreDetailResponse from(Store store) {
+    public static FindStoreDetailByAdminResponse from(Store store) {
         List<BusinessHourItem> hours = store.getBusinessHours().stream()
             .map(BusinessHourItem::from)
             .toList();
@@ -27,7 +27,7 @@ public record FindStoreDetailResponse(
 
         String playedMusic = store.getStoreMusic() != null ? store.getStoreMusic().getPlayedMusic() : null;
 
-        return new FindStoreDetailResponse(
+        return new FindStoreDetailByAdminResponse(
             store.getStoreId(), store.getName(), store.getIndustry(),
             store.getAddress(), playedMusic, hours, photos
         );

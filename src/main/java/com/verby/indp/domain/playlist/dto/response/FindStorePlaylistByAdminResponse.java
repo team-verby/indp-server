@@ -4,14 +4,14 @@ import com.verby.indp.domain.playlist.PlaylistSong;
 
 import java.util.List;
 
-public record FindStorePlaylistByOwnerResponse(
+public record FindStorePlaylistByAdminResponse(
     CurrentSongResponse currentSong,
     PlaylistInfo playlist
 ) {
 
-    public static FindStorePlaylistByOwnerResponse from(List<PlaylistSong> songs, CurrentSongResponse currentSong) {
+    public static FindStorePlaylistByAdminResponse from(List<PlaylistSong> songs, CurrentSongResponse currentSong) {
         PlaylistInfo playlistInfo = PlaylistInfo.from(songs);
-        return new FindStorePlaylistByOwnerResponse(currentSong, playlistInfo);
+        return new FindStorePlaylistByAdminResponse(currentSong, playlistInfo);
     }
 
     private record PlaylistInfo(

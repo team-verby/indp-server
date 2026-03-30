@@ -10,14 +10,19 @@ import com.verby.indp.domain.plan.service.PlanService;
 import com.verby.indp.domain.store.*;
 import com.verby.indp.domain.store.dto.request.ApplyStoreRequest;
 import com.verby.indp.domain.store.dto.response.ApplyStoreResponse;
+import com.verby.indp.domain.store.dto.response.FindStoreDetailByAdminResponse;
+import com.verby.indp.domain.store.dto.response.FindStoresResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
 import com.verby.indp.domain.subscription.StoreSubscription;
+import com.verby.indp.domain.subscription.SubscriptionStatus;
+import com.verby.indp.domain.subscription.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -34,6 +39,7 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final OwnerRepository ownerRepository;
     private final PlanService planService;
+    private final SubscriptionService subscriptionService;
 
     @Transactional
     public ApplyStoreResponse applyStore(ApplyStoreRequest request) {
@@ -48,12 +54,15 @@ public class StoreService {
         return ApplyStoreResponse.from(storeSubscription);
     }
 
-    public Page<Store> findStores(Pageable pageable) {
-        return storeRepository.findAllByOrderByStoreIdAsc(pageable);
+    public FindStoresResponse findStores(Pageable pageable) {
+        Page<Store> storePage = storeRepository.findAllBySubscriptionStatus(SubscriptionStatus.ACTIVE, pageable);
+        return FindStoresResponse.from(storePage.getContent());
     }
 
-    public Store findStore(long storeId) {
-        return getStoreById(storeId);
+    public FindStoreDetailByAdminResponse findStore(long storeId) {
+        Store store = getStoreById(storeId);
+        subscriptionService.validateActiveSubscription(store);
+        return FindStoreDetailByAdminResponse.from(store);
     }
 
     public Store getStoreById(long storeId) {
@@ -97,12 +106,42 @@ public class StoreService {
         List<MusicGenre> musicGenres = request.preferenceGenres().stream()
             .map(preferenceGenre -> new MusicGenre(preferenceGenre.genre(), preferenceGenre.preferenceType()))
             .toList();
-        List<MusicTimePreference> musicTimePreferences = request.timePreferences().stream()
-            .map(timePreference -> new MusicTimePreference(timePreference.startTime(), timePreference.endTime(), timePreference.mood()))
-            .toList();
+        List<MusicTimePreference> musicTimePreferences = buildMusicTimePreferences(request);
 
         return new StoreMusic(request.platform(), request.playedMusic(), request.rejectedSongNote(),
             request.playlistType(), request.musicTempo(), request.mood(), playMethods, musicTimePreferences, musicGenres);
+    }
+
+    private List<MusicTimePreference> buildMusicTimePreferences(ApplyStoreRequest request) {
+        StoreMusic.PlaylistType playlistType = request.playlistType();
+        if (playlistType == StoreMusic.PlaylistType.TIME_BASED) {
+            return request.timePreferences().stream()
+                .map(timePreference -> new MusicTimePreference(timePreference.startTime().getHour(), timePreference.endTime().getHour(), timePreference.mood()))
+                .toList();
+        }
+
+        List<ApplyStoreRequest.BusinessHour> openHours = request.businessHours().stream()
+            .filter(bh -> !bh.isClosed())
+            .toList();
+
+        LocalTime openTime = openHours.stream().map(ApplyStoreRequest.BusinessHour::openTime).min(LocalTime::compareTo).orElse(LocalTime.MIN);
+        LocalTime closeTime = openHours.stream().map(ApplyStoreRequest.BusinessHour::closeTime).max(LocalTime::compareTo).orElse(LocalTime.MAX);
+
+        int openHour = openTime.getMinute() > 0 ? openTime.getHour() - 1 : openTime.getHour();
+        int closeHour = closeTime.getMinute() > 0 ? closeTime.getHour() + 1 : closeTime.getHour();
+
+        if (playlistType == StoreMusic.PlaylistType.MUSIC_RECOMMENDED) {
+            return IntStream.range(openHour, closeHour)
+                .mapToObj(hour -> new MusicTimePreference(hour, hour + 1, null))
+                .toList();
+
+        } else if (playlistType == StoreMusic.PlaylistType.CONSISTENT_MOOD) {
+            return IntStream.range(openHour, closeHour)
+                .mapToObj(hour -> new MusicTimePreference(hour, hour + 1, request.mood()))
+                .toList();
+        }
+
+        return List.of();
     }
 
     private int calculateAmount(Plan plan, int usagePeriod) {

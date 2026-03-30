@@ -1,32 +1,23 @@
 package com.verby.indp.domain.playlist.service;
 
-import com.verby.indp.domain.auth.Owner;
-import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.playlist.PlaylistSong;
-import com.verby.indp.domain.playlist.ScheduledPlaylistSong;
 import com.verby.indp.domain.playlist.ScheduledPlaylist;
-import com.verby.indp.domain.playlist.dto.request.SchedulePlaylistsUpdateRequest;
-import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistByOwnerResponse;
+import com.verby.indp.domain.playlist.ScheduledPlaylistSong;
 import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistResponse;
 import com.verby.indp.domain.playlist.repository.PlaylistRepository;
 import com.verby.indp.domain.playlist.repository.PlaylistSongRepository;
 import com.verby.indp.domain.playlist.repository.ScheduledPlaylistUpdateRepository;
 import com.verby.indp.domain.recommendation.SongRecommendation;
 import com.verby.indp.domain.store.Store;
-import com.verby.indp.domain.store.StoreBusinessHour;
 import com.verby.indp.domain.store.service.StoreService;
-import com.verby.indp.global.slack.SlackNotificationService;
+import com.verby.indp.domain.subscription.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -34,14 +25,17 @@ import java.util.stream.IntStream;
 public class PlaylistService {
 
     private static final int RECOMMENDATION_INSERT_OFFSET = 5;
+
     private final PlaylistRepository playlistRepository;
     private final PlaylistSongRepository playlistSongRepository;
     private final ScheduledPlaylistUpdateRepository scheduledPlaylistUpdateRepository;
     private final StoreService storeService;
-    private final SlackNotificationService slackNotificationService;
+    private final SubscriptionService subscriptionService;
+    private final CurrentSongResolver currentSongResolver;
 
     public FindStorePlaylistResponse getStorePlaylist(long storeId) {
         Store store = storeService.getStoreById(storeId);
+        subscriptionService.validateActiveSubscription(store);
         Playlist playlist = store.getPlaylist();
         if (playlist == null) {
             return new FindStorePlaylistResponse(null, null);
@@ -50,38 +44,12 @@ public class PlaylistService {
         List<PlaylistSong> songs = playlistSongRepository
             .findAllByPlaylistPlaylistIdOrderByPlayOrder(playlist.getPlaylistId());
 
-        return FindStorePlaylistResponse.from(songs, store.currentSong, playlistInfo);
-    }
-
-    public FindStorePlaylistByOwnerResponse getStorePlaylistByOwner(Owner owner, long storeId) {
-        Store store = storeService.getStoreById(storeId);
-
-        validateOwnership(store, owner);
-
-        Playlist playlist = store.getPlaylist();
-        if (playlist == null) {
-            return new FindStorePlaylistByOwnerResponse(null, null);
-        }
-
-        List<PlaylistSong> songs = playlistSongRepository
-                .findAllByPlaylistPlaylistIdOrderByPlayOrder(playlist.getPlaylistId());
-
-        if (songs.isEmpty()) {
-            return new FindStorePlaylistByOwnerResponse(null,
-                    new FindStorePlaylistByOwnerResponse.PlaylistInfo(0, 0, 0, List.of()));
-        }
-
-        PlaylistSong currentSong = store.getPlaylist().getCurrentPlayingSong();
-        int recommendedCount = (int) songs.stream().filter(PlaylistSong::isRecommended).count();
-        int totalPlayTime = songs.stream().mapToInt(s -> s.getPlayTime() != null ? s.getPlayTime() : 0).sum();
-
-        FindStorePlaylistResponse.PlaylistInfo playlistInfo = getPlaylistInfo(songs, recommendedCount, totalPlayTime);
-
-        return FindStorePlaylistByOwnerResponse.from(currentSong, playlistInfo);
+        return FindStorePlaylistResponse.from(songs, currentSongResolver.resolveCurrentSong(store, songs));
     }
 
     @Transactional
     public PlaylistSong addRecommendedSong(Store store, SongRecommendation recommendation) {
+        subscriptionService.validateActiveSubscription(store);
         Playlist playlist = store.getPlaylist();
         if (playlist == null) {
             playlist = playlistRepository.save(new Playlist());
@@ -118,29 +86,6 @@ public class PlaylistService {
     }
 
     @Transactional
-    public void updateCurrentSong(Playlist playlist, long playlistSongId) {
-        PlaylistSong song = getPlaylistSong(playlistSongId);
-        playlist.updateCurrentSong(song);
-    }
-
-    @Transactional
-    public void stopPlaylist(Playlist playlist) {
-        playlist.stop();
-    }
-
-    @Transactional
-    public void addScheduledPlaylists(SchedulePlaylistsUpdateRequest request) {
-        request.schedulePlaylists()
-                .forEach(schedulePlaylist -> {
-                    Store store = storeService.getStoreById(schedulePlaylist.storeId());
-                    List<ScheduledPlaylistSong> songs = schedulePlaylist.songs().stream()
-                            .map(song -> new ScheduledPlaylistSong(song.title(), song.artist(), song.vid(), song.playTime(), song.playOrder()))
-                            .toList();
-                    scheduledPlaylistUpdateRepository.save(new ScheduledPlaylist(store, schedulePlaylist.scheduledAt(), songs));
-                });
-    }
-
-    @Transactional
     public void applyDueScheduledUpdates() {
         List<ScheduledPlaylist> due = scheduledPlaylistUpdateRepository
             .findAllByStatusAndScheduledAtLessThanEqual(
@@ -170,12 +115,6 @@ public class PlaylistService {
         playlistSongRepository.deleteAll(recommended);
     }
 
-    public void regeneratePlaylist(Owner owner, long storeId) {
-        Store store = storeService.getStoreById(storeId);
-        validateOwnership(store, owner);
-        slackNotificationService.sendPlaylistRegenerateRequest(store);
-    }
-
     private void applyScheduledUpdate(ScheduledPlaylist update) {
         Store store = update.getStore();
         Playlist playlist = store.getPlaylist();
@@ -185,7 +124,6 @@ public class PlaylistService {
         }
 
         playlistSongRepository.deleteAllByPlaylist(playlist);
-        playlist.stop();
 
         List<ScheduledPlaylistSong> songs = update.getSongs();
         for (int i = 0; i < songs.size(); i++) {
@@ -195,26 +133,6 @@ public class PlaylistService {
                     s.getTitle(), s.getArtist(), (i + 1) * 10.0)
             );
         }
-    }
-
-    private PlaylistSong getPlaylistSong(long id) {
-        return playlistSongRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException("존재하지 않은 플레이리스트 곡입니다."));
-    }
-
-    private FindStorePlaylistResponse.PlaylistInfo getPlaylistInfo(List<PlaylistSong> songs, int recommendedCount, int totalPlayTime) {
-        List<FindStorePlaylistResponse.SongItem> songItems = new ArrayList<>();
-        for (int i = 0; i < songs.size(); i++) {
-            PlaylistSong song = songs.get(i);
-            String refereeName = song.getSongRecommendation() != null
-                    ? song.getSongRecommendation().getRefereeName() : null;
-            songItems.add(new FindStorePlaylistResponse.SongItem(
-                    song.getPlaylistSongId(), i + 1, song.getTitle(), song.getArtist(),
-                    song.getPlayTime(), song.isRecommended(), refereeName
-            ));
-        }
-
-        return new FindStorePlaylistResponse.PlaylistInfo(songs.size(), recommendedCount, totalPlayTime, songItems);
     }
 
     private int resolveInsertIndex(Store store, List<PlaylistSong> songs) {
@@ -247,7 +165,7 @@ public class PlaylistService {
     }
 
     private int findCurrentSongIndex(Store store, List<PlaylistSong> songs) {
-        long elapsedSeconds = calcElapsedSeconds(store);
+        long elapsedSeconds = currentSongResolver.calcElapsedSeconds(store);
         if (elapsedSeconds < 0) {
             return 0;
         }
@@ -262,33 +180,5 @@ public class PlaylistService {
         }
 
         return songs.size() - 1;
-    }
-
-    private long calcElapsedSeconds(Store store) {
-        LocalDateTime now = LocalDateTime.now();
-        int todayDayOfWeek = now.getDayOfWeek().getValue();
-
-        Optional<StoreBusinessHour> todayHour = store.getBusinessHours().stream()
-            .filter(h -> h.getDayOfWeek() == todayDayOfWeek && !h.isClosed())
-            .findFirst();
-
-        if (todayHour.isEmpty()) {
-            return -1;
-        }
-
-        LocalTime startTime = todayHour.get().getOpenTime().minusMinutes(30);
-        LocalTime nowTime = now.toLocalTime();
-
-        if (nowTime.isBefore(startTime)) {
-            return -1;
-        }
-
-        return java.time.Duration.between(startTime, nowTime).getSeconds();
-    }
-
-    private void validateOwnership(Store store, Owner owner) {
-        if (!store.getOwner().getOwnerId().equals(owner.getOwnerId())) {
-            throw new NotFoundException("접근할 수 없는 매장입니다.");
-        }
     }
 }

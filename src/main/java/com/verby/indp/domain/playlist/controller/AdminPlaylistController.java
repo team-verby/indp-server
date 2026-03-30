@@ -1,22 +1,23 @@
 package com.verby.indp.domain.playlist.controller;
 
 import com.verby.indp.domain.playlist.dto.request.SchedulePlaylistsUpdateRequest;
-import com.verby.indp.domain.playlist.service.PlaylistService;
-import com.verby.indp.domain.store.service.StoreService;
+import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistByAdminResponse;
+import com.verby.indp.domain.playlist.service.AdminPlaylistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/admin/playlists")
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor
 public class AdminPlaylistController {
 
-    private final PlaylistService playlistService;
-    private final StoreService storeService;
+    private final AdminPlaylistService playlistService;
+
+    @GetMapping("/stores/{storeId}/playlist")
+    public ResponseEntity<FindStorePlaylistByAdminResponse> findStorePlaylist(@PathVariable long storeId) {
+        return ResponseEntity.ok(playlistService.getStorePlaylist(storeId));
+    }
 
     @PostMapping("/schedule")
     public ResponseEntity<Void> schedulePlaylistUpdates(@RequestBody SchedulePlaylistsUpdateRequest request) {

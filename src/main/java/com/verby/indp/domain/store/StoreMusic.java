@@ -70,7 +70,7 @@ public class StoreMusic {
     public enum PlaylistType {
         MUSIC_RECOMMENDED,
         TIME_BASED,
-        CONSISTENT_VIBE
+        CONSISTENT_MOOD
     }
 
     public enum MusicTempo {

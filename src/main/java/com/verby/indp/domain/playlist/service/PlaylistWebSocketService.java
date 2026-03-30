@@ -21,7 +21,6 @@ public class PlaylistWebSocketService {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final StoreRepository storeRepository;
-    private final PlaylistService playlistService;
 
     public void handleSubscribe(StompHeaderAccessor accessor) {
         String destination = accessor.getDestination();
@@ -58,29 +57,11 @@ public class PlaylistWebSocketService {
         log.debug("Owner disconnected from store {}", storeId);
         storeRepository.findById(storeId).ifPresent(store -> {
             if (store.getPlaylist() != null) {
-                playlistService.stopPlaylist(store.getPlaylist());
+                store.getPlaylist().updatePlayingStatus(false);
             }
         });
     }
-
-    public void handleCurrentSong(long storeId, Long ownerId, Map<String, Object> payload) {
-        if (!validateOwner(ownerId, storeId)) {
-            log.warn("Unauthorized current-song update. ownerId={}, storeId={}", ownerId, storeId);
-            return;
-        }
-
-        Number playlistSongId = (Number) payload.get("playlistSongId");
-        if (playlistSongId == null) {
-            return;
-        }
-
-        storeRepository.findById(storeId).ifPresent(store -> {
-            if (store.getPlaylist() != null) {
-                playlistService.updateCurrentSong(store.getPlaylist(), playlistSongId.longValue());
-            }
-        });
-    }
-
+    
     public void sendSongRecommended(SongRecommendation recommendation, PlaylistSong playlistSong) {
         messagingTemplate.convertAndSend(
             "/topic/stores/" + recommendation.getStore().getStoreId(),

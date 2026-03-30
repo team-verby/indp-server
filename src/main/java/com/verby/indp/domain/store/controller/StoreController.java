@@ -1,13 +1,11 @@
 package com.verby.indp.domain.store.controller;
 
-import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.dto.request.ApplyStoreRequest;
 import com.verby.indp.domain.store.dto.response.ApplyStoreResponse;
-import com.verby.indp.domain.store.dto.response.FindStoreDetailResponse;
+import com.verby.indp.domain.store.dto.response.FindStoreDetailByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresResponse;
 import com.verby.indp.domain.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -31,13 +29,11 @@ public class StoreController {
     public ResponseEntity<FindStoresResponse> findStores(
         @PageableDefault(size = 20) Pageable pageable
     ) {
-        Page<Store> stores = storeService.findStores(pageable);
-        return ResponseEntity.ok(FindStoresResponse.from(stores.getContent()));
+        return ResponseEntity.ok(storeService.findStores(pageable));
     }
 
     @GetMapping("/{storeId}")
-    public ResponseEntity<FindStoreDetailResponse> findStore(@PathVariable long storeId) {
-        Store store = storeService.findStore(storeId);
-        return ResponseEntity.ok(FindStoreDetailResponse.from(store));
+    public ResponseEntity<FindStoreDetailByAdminResponse> findStore(@PathVariable long storeId) {
+        return ResponseEntity.ok(storeService.findStore(storeId));
     }
 }

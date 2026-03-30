@@ -1,6 +1,7 @@
 package com.verby.indp.domain.subscription.service;
 
 import com.verby.indp.domain.auth.Owner;
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.store.Store;
@@ -32,11 +33,24 @@ public class SubscriptionService {
     }
 
     @Transactional
+    public void expireSubscriptions() {
+        List<StoreSubscription> expired = storeSubscriptionRepository
+            .findAllByStatusAndEndDateBefore(SubscriptionStatus.ACTIVE, LocalDate.now());
+        expired.forEach(s -> s.updateStatus(SubscriptionStatus.EXPIRED));
+    }
+
+    @Transactional
     public void confirmPayment(Payment payment) {
         StoreSubscription storeSubscription = getByPayment(payment);
 
         storeSubscription.updateStartDate(LocalDate.now());
         storeSubscription.updateStatus(SubscriptionStatus.ACTIVE);
+    }
+
+    public void validateActiveSubscription(Store store) {
+        if (!storeSubscriptionRepository.existsByStoreAndStatus(store, SubscriptionStatus.ACTIVE)) {
+            throw new BadRequestException("구독이 만료된 매장입니다.");
+        }
     }
 
     private StoreSubscription getByPayment(Payment payment) {
