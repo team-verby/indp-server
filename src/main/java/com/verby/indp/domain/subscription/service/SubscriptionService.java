@@ -3,10 +3,14 @@ package com.verby.indp.domain.subscription.service;
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.payment.Payment;
+import com.verby.indp.domain.plan.Plan;
+import com.verby.indp.domain.plan.PlanDiscount;
+import com.verby.indp.domain.plan.service.PlanService;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.service.StoreService;
 import com.verby.indp.domain.subscription.StoreSubscription;
 import com.verby.indp.domain.subscription.SubscriptionStatus;
+import com.verby.indp.domain.subscription.dto.request.RenewSubscriptionRequest;
 import com.verby.indp.domain.subscription.dto.response.FindSubscriptionsResponse;
 import com.verby.indp.domain.subscription.repository.StoreSubscriptionRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +25,26 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class SubscriptionService {
 
+    private static final String ORDER_NAME_PREFIX = "인디피_구독갱신_";
+
     private final StoreService storeService;
+    private final PlanService planService;
     private final StoreSubscriptionRepository storeSubscriptionRepository;
+
+    @Transactional
+    public StoreSubscription renewSubscription(Owner owner, long storeId, RenewSubscriptionRequest request) {
+        Store store = storeService.getStoreById(storeId);
+        validateOwnership(store, owner);
+
+        Plan plan = planService.getPlan(request.planId());
+        int amount = calculateAmount(plan, request.usagePeriod());
+        Payment payment = new Payment(ORDER_NAME_PREFIX + store.getName(), amount);
+
+        StoreSubscription subscription = new StoreSubscription(plan, payment, request.usagePeriod());
+        store.addSubscription(subscription);
+
+        return subscription;
+    }
 
     public FindSubscriptionsResponse findSubscriptions(Owner owner, long storeId) {
         Store store = storeService.getStoreById(storeId);
@@ -40,10 +62,21 @@ public class SubscriptionService {
 
     @Transactional
     public void confirmPayment(Payment payment) {
-        StoreSubscription storeSubscription = getByPayment(payment);
+        StoreSubscription subscription = getByPayment(payment);
+        StoreSubscription activeSubscription = subscription.getStore().getActiveSubscription();
+        LocalDate startDate = activeSubscription == null ? LocalDate.now() : activeSubscription.getEndDate().plusDays(1);
 
-        storeSubscription.updateStartDate(LocalDate.now());
-        storeSubscription.updateStatus(SubscriptionStatus.ACTIVE);
+        subscription.updateStartDate(startDate);
+        subscription.updateStatus(SubscriptionStatus.ACTIVE);
+    }
+
+    private int calculateAmount(Plan plan, int usagePeriod) {
+        int monthlyPrice = plan.getDiscounts().stream()
+            .filter(PlanDiscount::isActive)
+            .findFirst()
+            .map(d -> plan.getMonthlyPrice() * (100 - d.getDiscountRate()) / 100)
+            .orElse(plan.getMonthlyPrice());
+        return monthlyPrice * usagePeriod;
     }
 
     private StoreSubscription getByPayment(Payment payment) {

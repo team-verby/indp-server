@@ -1,8 +1,11 @@
 package com.verby.indp.domain.playlist.service;
 
+import com.verby.indp.domain.auth.Owner;
+import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.recommendation.SongRecommendation;
-import com.verby.indp.domain.store.repository.StoreRepository;
+import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.MessageHeaders;
@@ -20,7 +23,7 @@ import java.util.Map;
 public class PlaylistWebSocketService {
 
     private final SimpMessagingTemplate messagingTemplate;
-    private final StoreRepository storeRepository;
+    private final StoreService storeService;
 
     public void handleSubscribe(StompHeaderAccessor accessor) {
         String destination = accessor.getDestination();
@@ -55,11 +58,12 @@ public class PlaylistWebSocketService {
         if (storeId == null) return;
 
         log.debug("Owner disconnected from store {}", storeId);
-        storeRepository.findById(storeId).ifPresent(store -> {
-            if (store.getPlaylist() != null) {
-                store.getPlaylist().updatePlayingStatus(false);
-            }
-        });
+
+        Store store = storeService.getStoreById(storeId);
+        Playlist playlist = store.getPlaylist();
+        if (playlist != null) {
+            playlist.updatePlayingStatus(false);
+        }
     }
     
     public void sendSongRecommended(SongRecommendation recommendation, PlaylistSong playlistSong) {
@@ -80,10 +84,8 @@ public class PlaylistWebSocketService {
         if (ownerId == null){
             return false;
         }
-        return storeRepository.findById(storeId)
-            .map(store -> store.getOwner() != null
-                && store.getOwner().getOwnerId().equals(ownerId))
-            .orElse(false);
+        Owner owner = storeService.getStoreById(storeId).getOwner();
+        return owner.getOwnerId().equals(ownerId);
     }
 
     private Long extractStoreId(String destination) {

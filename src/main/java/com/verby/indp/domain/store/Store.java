@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Entity
@@ -112,6 +113,13 @@ public class Store extends BaseTimeEntity {
         this.playlist = playlist;
     }
 
+    public StoreSubscription getActiveSubscription() {
+        return subscriptions.stream()
+            .filter(s -> s.getStatus() == SubscriptionStatus.ACTIVE)
+            .max(Comparator.comparing(StoreSubscription::getStartDate))
+            .orElse(null);
+    }
+
     public boolean isInactive() {
         return subscriptions.stream()
             .noneMatch(s -> s.getStatus() == SubscriptionStatus.ACTIVE);
@@ -121,6 +129,7 @@ public class Store extends BaseTimeEntity {
         this.subscriptions.add(subscription);
         subscription.setStore(this);
     }
+
     private void setStoreMusic(StoreMusic storeMusic) {
         this.storeMusic = storeMusic;
         storeMusic.setStore(this);

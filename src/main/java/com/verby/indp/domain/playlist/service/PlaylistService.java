@@ -31,7 +31,6 @@ public class PlaylistService {
     private final PlaylistSongRepository playlistSongRepository;
     private final ScheduledPlaylistUpdateRepository scheduledPlaylistUpdateRepository;
     private final StoreService storeService;
-    private final SubscriptionService subscriptionService;
     private final CurrentSongResolver currentSongResolver;
 
     public FindStorePlaylistResponse getStorePlaylist(long storeId) {
