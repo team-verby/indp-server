@@ -5,6 +5,7 @@ import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.ScheduledPlaylist;
 import com.verby.indp.domain.playlist.ScheduledPlaylistSong;
+import com.verby.indp.domain.playlist.dto.response.CurrentSong;
 import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistResponse;
 import com.verby.indp.domain.playlist.repository.PlaylistSongRepository;
 import com.verby.indp.domain.playlist.repository.ScheduledPlaylistUpdateRepository;

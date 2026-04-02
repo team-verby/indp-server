@@ -1,16 +1,20 @@
 package com.verby.indp.domain.playlist.service;
 
 import com.verby.indp.domain.playlist.PlaylistSong;
+import com.verby.indp.domain.playlist.dto.response.CurrentSong;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreBusinessHour;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Optional;
 
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class CurrentSongResolver {
 
-    public static Optional<PlaylistSong> resolveCurrentSong(Store store) {
+    public static Optional<CurrentSong> resolveCurrentSong(Store store) {
         long elapsedSeconds = calcElapsedSeconds(store);
         if (elapsedSeconds < 0) {
             return Optional.empty();
@@ -20,9 +24,9 @@ public class CurrentSongResolver {
         for (PlaylistSong song : store.getPlaylist().getSongs()) {
             long duration = song.getPlayTime();
             if (cumulative + duration > elapsedSeconds) {
-                return Optional.of(song);
-//                return new CurrentSongResponse(song.getPlaylistSongId(), (int) (elapsedSeconds - cumulative))
+                return Optional.of(new CurrentSong(song.getPlaylistSongId(), song.getTitle(), song.getArtist(), song.getVid(), (int) (elapsedSeconds - cumulative)));
             }
+
             cumulative += duration;
         }
 

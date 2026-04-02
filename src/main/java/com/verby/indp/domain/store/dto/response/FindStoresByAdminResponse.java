@@ -1,5 +1,6 @@
 package com.verby.indp.domain.store.dto.response;
 
+import com.verby.indp.domain.playlist.dto.response.CurrentSong;
 import com.verby.indp.domain.playlist.service.CurrentSongResolver;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.subscription.StoreSubscription;
@@ -19,15 +20,17 @@ public record FindStoresByAdminResponse(List<StoreItem> stores) {
         Long storeId,
         String name,
         SubscriptionItem subscription,
-        PlayingSong playingSong
+        CurrentSongItem currentSong
     ) {
         private static StoreItem from(Store store) {
             SubscriptionItem subscription = store.getRecentSubscription()
                     .map(SubscriptionItem::from)
                     .orElse(null);
-            CurrentSongResolver.resolveCurrentSong(store);
-            PlayingSong playingSong = store.getPlaylist().isPlaying() ? PlayingSong.from()
-            return new StoreItem(store.getStoreId(), store.getName(), subscription);
+            CurrentSongItem currentSong = CurrentSongResolver.resolveCurrentSong(store)
+                .map(CurrentSongItem::from)
+                .orElse(null);
+
+            return new StoreItem(store.getStoreId(), store.getName(), subscription, currentSong);
         }
     }
 
@@ -38,9 +41,9 @@ public record FindStoresByAdminResponse(List<StoreItem> stores) {
         }
     }
 
-    private record PlayingSong(String title, String artist) {
-        private static PlayingSong from(CurrentSong song) {
-            return new PlayingSong(song.getTitle(), song.getArtist());
+    private record CurrentSongItem(long playlistSongId, String title, String artist, String vid, int elapsedSeconds) {
+        private static CurrentSongItem from(CurrentSong song) {
+            return new CurrentSongItem(song.playlistSongId(), song.title(), song.artist(), song.vid(), song.elapsedSeconds());
         }
     }
 }

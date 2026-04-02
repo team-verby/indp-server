@@ -5,13 +5,20 @@ import com.verby.indp.domain.playlist.PlaylistSong;
 import java.util.List;
 
 public record FindStorePlaylistResponse(
-    CurrentSong currentSong,
+    CurrentSongItem currentSong,
     PlaylistInfo playlist
 ) {
 
     public static FindStorePlaylistResponse from(List<PlaylistSong> songs, CurrentSong currentSong) {
         PlaylistInfo playlistInfo = PlaylistInfo.from(songs);
-        return new FindStorePlaylistResponse(currentSong, playlistInfo);
+        CurrentSongItem song = CurrentSongItem.from(currentSong);
+        return new FindStorePlaylistResponse(song, playlistInfo);
+    }
+
+    private record CurrentSongItem(long playlistSongId, String title, String artist, int elapsedSeconds) {
+        private static CurrentSongItem from(CurrentSong song) {
+            return new CurrentSongItem(song.playlistSongId(), song.title(), song.artist(), song.elapsedSeconds());
+        }
     }
 
     private record PlaylistInfo(
