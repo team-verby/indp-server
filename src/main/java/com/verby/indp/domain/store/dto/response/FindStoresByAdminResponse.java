@@ -23,9 +23,7 @@ public record FindStoresByAdminResponse(List<StoreItem> stores) {
         CurrentSongItem currentSong
     ) {
         private static StoreItem from(Store store) {
-            SubscriptionItem subscription = store.getRecentSubscription()
-                    .map(SubscriptionItem::from)
-                    .orElse(null);
+            SubscriptionItem subscription = SubscriptionItem.from(store.getLatestSubscription());
             CurrentSongItem currentSong = CurrentSongResolver.resolveCurrentSong(store)
                 .map(CurrentSongItem::from)
                 .orElse(null);

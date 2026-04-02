@@ -2,6 +2,7 @@ package com.verby.indp.domain.store.controller;
 
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.store.dto.request.UpdateStoreRequest;
+import com.verby.indp.domain.store.dto.response.FindLatestSubscriptionResponse;
 import com.verby.indp.domain.store.dto.response.FindOwnerStoreResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresResponse;
 import com.verby.indp.domain.store.service.OwnerStoreService;
@@ -17,18 +18,23 @@ public class OwnerStoreController {
     private final OwnerStoreService ownerStoreService;
 
     @GetMapping
-    public ResponseEntity<FindStoresResponse> findMyStores(@RequestAttribute("ownerId") Owner owner) {
+    public ResponseEntity<FindStoresResponse> findMyStores(@RequestAttribute("owner") Owner owner) {
         return ResponseEntity.ok(ownerStoreService.getMyStores(owner));
     }
 
     @GetMapping("/{storeId}")
-    public ResponseEntity<FindOwnerStoreResponse> findMyStore(@RequestAttribute("ownerId") Owner owner, @PathVariable long storeId) {
+    public ResponseEntity<FindOwnerStoreResponse> findMyStore(@RequestAttribute("owner") Owner owner, @PathVariable long storeId) {
         return ResponseEntity.ok(ownerStoreService.getMyStore(owner, storeId));
+    }
+
+    @GetMapping("/{storeId}/subscription")
+    public ResponseEntity<FindLatestSubscriptionResponse> findLatestSubscription(@RequestAttribute("owner") Owner owner, @PathVariable long storeId) {
+        return ResponseEntity.ok(ownerStoreService.getLatestSubscription(owner, storeId));
     }
 
     @PutMapping("/{storeId}")
     public ResponseEntity<Void> updateStore(
-        @RequestAttribute("ownerId") Owner owner,
+        @RequestAttribute("owner") Owner owner,
         @PathVariable long storeId,
         @RequestBody UpdateStoreRequest request
     ) {

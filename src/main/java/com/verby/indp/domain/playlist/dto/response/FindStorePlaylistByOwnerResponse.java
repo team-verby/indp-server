@@ -1,17 +1,22 @@
 package com.verby.indp.domain.playlist.dto.response;
 
 import com.verby.indp.domain.playlist.PlaylistSong;
+import com.verby.indp.domain.playlist.service.CurrentSongResolver;
+import com.verby.indp.domain.store.Store;
 
 import java.util.List;
 
 public record FindStorePlaylistByOwnerResponse(
-    CurrentSong currentSong,
-    PlaylistInfo playlist
+    PlaylistInfo playlist,
+    CurrentSongItem currentSong
 ) {
 
-    public static FindStorePlaylistByOwnerResponse from(List<PlaylistSong> songs, PlaylistSong currentSong) {
-        PlaylistInfo playlistInfo = PlaylistInfo.from(songs);
-        return new FindStorePlaylistByOwnerResponse(currentSong, playlistInfo);
+    public static FindStorePlaylistByOwnerResponse from(List<PlaylistSong> sortedSongs, Store store) {
+        PlaylistInfo playlistInfo = PlaylistInfo.from(sortedSongs);
+        CurrentSongItem currentSong = CurrentSongResolver.resolveCurrentSong(store)
+            .map(CurrentSongItem::from)
+            .orElse(null);
+        return new FindStorePlaylistByOwnerResponse(playlistInfo, currentSong);
     }
 
     private record PlaylistInfo(
@@ -47,7 +52,9 @@ public record FindStorePlaylistByOwnerResponse(
         }
     }
 
-    private record CurrentSongItem() {
-
+    private record CurrentSongItem(long playlistSongId, String title, String artist, String vid, int elapsedSeconds) {
+        private static CurrentSongItem from(CurrentSong song) {
+            return new CurrentSongItem(song.playlistSongId(), song.title(), song.artist(), song.vid(), song.elapsedSeconds());
+        }
     }
 }

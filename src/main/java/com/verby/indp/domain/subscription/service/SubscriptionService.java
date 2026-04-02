@@ -63,10 +63,9 @@ public class SubscriptionService {
     @Transactional
     public void confirmPayment(Payment payment) {
         StoreSubscription subscription = getByPayment(payment);
-        LocalDate startDate = subscription.getStore()
-                .getActiveSubscription()
-                .map(s -> s.getEndDate().plusDays(1))
-                .orElse(LocalDate.now());
+        LocalDate endDate = subscription.getStore()
+                .getLatestSubscription().getEndDate();
+        LocalDate startDate = endDate.isBefore(LocalDate.now()) ? LocalDate.now() : endDate.plusDays(1);
 
         subscription.updateStartDate(startDate);
         subscription.updateStatus(SubscriptionStatus.ACTIVE);

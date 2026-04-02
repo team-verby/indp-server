@@ -1,11 +1,8 @@
 package com.verby.indp.domain.playlist.service;
 
-import com.verby.indp.domain.playlist.Playlist;
-import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.ScheduledPlaylist;
 import com.verby.indp.domain.playlist.ScheduledPlaylistSong;
 import com.verby.indp.domain.playlist.dto.request.SchedulePlaylistsUpdateRequest;
-import com.verby.indp.domain.playlist.repository.PlaylistSongRepository;
 import com.verby.indp.domain.playlist.repository.ScheduledPlaylistUpdateRepository;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.service.StoreService;
@@ -19,7 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AdminPlaylistService {
-    private final PlaylistSongRepository playlistSongRepository;
     private final StoreService storeService;
     private final ScheduledPlaylistUpdateRepository scheduledPlaylistUpdateRepository;
 

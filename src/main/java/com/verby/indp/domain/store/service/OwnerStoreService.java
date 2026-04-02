@@ -4,6 +4,7 @@ import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.store.*;
 import com.verby.indp.domain.store.dto.request.UpdateStoreRequest;
+import com.verby.indp.domain.store.dto.response.FindLatestSubscriptionResponse;
 import com.verby.indp.domain.store.dto.response.FindOwnerStoreResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
@@ -62,6 +63,12 @@ public class OwnerStoreService {
 
         store.getStoreMusic().update(request.platform(), request.playedMusic(), request.rejectedSongNote(),
             request.playlistType(), request.musicTempo(), request.mood(), playMethods, timePreferences, genres);
+    }
+
+    public FindLatestSubscriptionResponse getLatestSubscription(Owner owner, long storeId) {
+        Store store = getStoreById(storeId);
+        validateOwnership(store, owner);
+        return FindLatestSubscriptionResponse.from(store.getLatestSubscription());
     }
 
     private void validateOwnership(Store store, Owner owner) {

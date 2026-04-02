@@ -44,6 +44,7 @@ public class StoreSubscription extends BaseTimeEntity {
     @Column(name = "usagePeriod")
     private int usagePeriod;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private SubscriptionStatus status = SubscriptionStatus.PENDING_PAYMENT;
 

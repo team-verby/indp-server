@@ -35,10 +35,9 @@ public class OwnerPlaylistService {
             return new FindStorePlaylistByOwnerResponse(null, null);
         }
 
-        List<PlaylistSong> songs = playlistSongRepository
+        List<PlaylistSong> sortedSongs = playlistSongRepository
             .findAllByPlaylistPlaylistIdOrderByPlayOrder(playlist.getPlaylistId());
-        PlaylistSong currentSong = CurrentSongResolver.resolveCurrentSong(store).orElse(null);
-        return FindStorePlaylistByOwnerResponse.from(songs, currentSong);
+        return FindStorePlaylistByOwnerResponse.from(sortedSongs, store);
     }
 
     public void regeneratePlaylist(Owner owner, long storeId) {

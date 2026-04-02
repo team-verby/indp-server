@@ -2,6 +2,7 @@ package com.verby.indp.domain.store;
 
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.common.entity.BaseTimeEntity;
+import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.subscription.StoreSubscription;
 import com.verby.indp.domain.subscription.SubscriptionStatus;
@@ -121,9 +122,10 @@ public class Store extends BaseTimeEntity {
                 .max(Comparator.comparing(StoreSubscription::getStartDate));
     }
 
-    public Optional<StoreSubscription> getRecentSubscription() {
+    public StoreSubscription getLatestSubscription() {
         return subscriptions.stream()
-                .max(Comparator.comparing(StoreSubscription::getStartDate));
+            .max(Comparator.comparing(StoreSubscription::getStartDate))
+            .orElseThrow(() -> new NotFoundException("구독 정보가 없습니다."));
     }
 
     public boolean isInactive() {
