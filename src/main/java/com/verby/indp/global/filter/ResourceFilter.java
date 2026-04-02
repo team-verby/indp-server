@@ -25,7 +25,8 @@ public class ResourceFilter implements Filter {
         "/frontend-test.html",
         "/profile",
         "/actuator/health",
-        "/ws"
+        "/ws",
+        "/index.html"
     );
 
     @Override

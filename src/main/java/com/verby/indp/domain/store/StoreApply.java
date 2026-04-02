@@ -27,12 +27,8 @@ public class StoreApply extends BaseTimeEntity {
     @Column(name = "applicant_phone")
     private String applicantPhone;
 
-    @Column(name = "inquiry_content", columnDefinition = "TEXT")
-    private String inquiryContent;
-
-    public StoreApply(String applicantName, String applicantPhone, String inquiryContent) {
+    public StoreApply(String applicantName, String applicantPhone) {
         this.applicantName = applicantName;
         this.applicantPhone = applicantPhone;
-        this.inquiryContent = inquiryContent;
     }
 }

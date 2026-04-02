@@ -1,6 +1,6 @@
 package com.verby.indp.domain.store.controller;
 
-import com.verby.indp.domain.store.dto.response.FindStoreDetailByAdminResponse;
+import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse;
 import com.verby.indp.domain.store.service.AdminStoreService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class AdminStoreController {
     }
 
     @GetMapping("/{storeId}")
-    public ResponseEntity<FindStoreDetailByAdminResponse> findStore(@PathVariable long storeId) {
+    public ResponseEntity<FindStoreByAdminResponse> findStore(@PathVariable long storeId) {
         return ResponseEntity.ok(storeService.findStore(storeId));
     }
 }

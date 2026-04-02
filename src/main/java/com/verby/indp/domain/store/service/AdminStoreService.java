@@ -2,7 +2,7 @@ package com.verby.indp.domain.store.service;
 
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.store.Store;
-import com.verby.indp.domain.store.dto.response.FindStoreDetailByAdminResponse;
+import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +23,9 @@ public class AdminStoreService {
         return FindStoresByAdminResponse.from(storePage.getContent());
     }
 
-    public FindStoreDetailByAdminResponse findStore(long storeId) {
+    public FindStoreByAdminResponse findStore(long storeId) {
         Store store = getStoreById(storeId);
-        return FindStoreDetailByAdminResponse.from(store);
+        return FindStoreByAdminResponse.from(store);
     }
 
     public Store getStoreById(long storeId) {

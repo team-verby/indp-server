@@ -54,6 +54,13 @@ public class SubscriptionService {
     }
 
     @Transactional
+    public void activateSubscriptions() {
+        List<StoreSubscription> toActivate = storeSubscriptionRepository
+            .findAllByStatusAndStartDateLessThanEqual(SubscriptionStatus.INACTIVE, LocalDate.now());
+        toActivate.forEach(s -> s.updateStatus(SubscriptionStatus.ACTIVE));
+    }
+
+    @Transactional
     public void expireSubscriptions() {
         List<StoreSubscription> expired = storeSubscriptionRepository
             .findAllByStatusAndEndDateBefore(SubscriptionStatus.ACTIVE, LocalDate.now());
@@ -65,10 +72,11 @@ public class SubscriptionService {
         StoreSubscription subscription = getByPayment(payment);
         LocalDate endDate = subscription.getStore()
                 .getLatestSubscription().getEndDate();
-        LocalDate startDate = endDate.isBefore(LocalDate.now()) ? LocalDate.now() : endDate.plusDays(1);
+        LocalDate startDate = endDate == null || endDate.isBefore(LocalDate.now()) ? LocalDate.now() : endDate.plusDays(1);
 
         subscription.updateStartDate(startDate);
-        subscription.updateStatus(SubscriptionStatus.ACTIVE);
+        SubscriptionStatus status = startDate.isAfter(LocalDate.now()) ? SubscriptionStatus.INACTIVE : SubscriptionStatus.ACTIVE;
+        subscription.updateStatus(status);
     }
 
     private int calculateAmount(Plan plan, int usagePeriod) {

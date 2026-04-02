@@ -2,7 +2,6 @@ package com.verby.indp.domain.store.controller;
 
 import com.verby.indp.domain.store.dto.request.ApplyStoreRequest;
 import com.verby.indp.domain.store.dto.response.ApplyStoreResponse;
-import com.verby.indp.domain.store.dto.response.FindStoreDetailByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresResponse;
 import com.verby.indp.domain.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +29,5 @@ public class StoreController {
         @PageableDefault(size = 20) Pageable pageable
     ) {
         return ResponseEntity.ok(storeService.findStores(pageable));
-    }
-
-    @GetMapping("/{storeId}")
-    public ResponseEntity<FindStoreDetailByAdminResponse> findStore(@PathVariable long storeId) {
-        return ResponseEntity.ok(storeService.findStore(storeId));
     }
 }

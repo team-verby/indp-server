@@ -1,7 +1,6 @@
 package com.verby.indp.domain.playlist.scheduler;
 
 import com.verby.indp.domain.playlist.service.PlaylistService;
-import com.verby.indp.domain.playlist.service.PlaylistWebSocketService;
 import com.verby.indp.domain.store.StoreBusinessHour;
 import com.verby.indp.domain.store.repository.StoreBusinessHourRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,7 @@ public class PlaylistScheduler {
     private final StoreBusinessHourRepository storeBusinessHourRepository;
     private final PlaylistService playlistService;
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void applyScheduledPlaylistUpdates() {
         playlistService.applyDueScheduledUpdates();
     }

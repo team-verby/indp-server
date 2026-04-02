@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INDP Music - 인디피 뮤직</title>
+  <script src="https://js.tosspayments.com/v2/standard"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #3456FF;
+      --blue-dark: #1e2fa8;
+      --black: #111;
+      --gray: #666;
+      --light: #f7f8fa;
+      --border: #e5e7eb;
+      --white: #fff;
+      --radius: 12px;
+      --shadow: 0 2px 16px rgba(0,0,0,.08);
+    }
+    body { font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; color: var(--black); background: #fff; min-height: 100vh; }
+    .hidden { display: none !important; }
+    a { text-decoration: none; color: inherit; cursor: pointer; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 60px;
+      background: #fff; border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-size: 20px; font-weight: 800; cursor: pointer; letter-spacing: -0.5px; }
+    .nav-logo span { color: var(--blue); }
+    .nav-links { display: flex; gap: 32px; align-items: center; font-size: 15px; }
+    .nav-links a { cursor: pointer; color: #444; }
+    .nav-links a:hover { color: var(--blue); }
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; border: none; cursor: pointer; font-size: 14px; font-weight: 600; transition: all .15s; border-radius: 50px; padding: 9px 20px; }
+    .btn-primary { background: var(--black); color: #fff; }
+    .btn-primary:hover { background: #333; }
+    .btn-blue { background: var(--blue); color: #fff; }
+    .btn-blue:hover { background: var(--blue-dark); }
+    .btn-outline { background: #fff; color: var(--black); border: 1.5px solid var(--border); }
+    .btn-outline:hover { background: var(--light); }
+    .btn-sm { padding: 6px 14px; font-size: 13px; }
+    .btn-lg { padding: 14px 32px; font-size: 16px; border-radius: 50px; }
+
+    /* PAGE */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* CONTAINER */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* ======== HOME ======== */
+    .hero {
+      background: linear-gradient(135deg, #f0f4ff 0%, #fff 60%);
+      padding: 80px 40px;
+      text-align: center;
+    }
+    .hero h1 { font-size: 48px; font-weight: 900; line-height: 1.15; letter-spacing: -1px; }
+    .hero h1 span { color: var(--blue); }
+    .hero p { margin-top: 20px; font-size: 18px; color: var(--gray); }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; margin-top: 36px; }
+    .section { padding: 80px 40px; }
+    .section-title { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 12px; }
+    .section-sub { color: var(--gray); font-size: 16px; margin-bottom: 48px; }
+    .plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 780px; margin: 0 auto; }
+    .plan-card {
+      border: 1.5px solid var(--border); border-radius: var(--radius);
+      padding: 28px; position: relative; cursor: pointer;
+    }
+    .plan-card.popular { border-color: var(--blue); }
+    .plan-badge { position: absolute; top: 16px; right: 16px; background: var(--blue); color: #fff; border-radius: 50px; padding: 3px 10px; font-size: 12px; font-weight: 600; }
+    .plan-name { font-size: 20px; font-weight: 700; }
+    .plan-subtitle { color: var(--gray); font-size: 13px; margin-top: 4px; }
+    .plan-discount { color: var(--blue); font-size: 13px; font-weight: 600; margin-top: 12px; }
+    .plan-original { color: #999; text-decoration: line-through; font-size: 13px; }
+    .plan-price { font-size: 28px; font-weight: 800; margin-top: 4px; }
+    .plan-price span { font-size: 14px; font-weight: 400; color: var(--gray); }
+    .plan-features { margin-top: 16px; display: flex; flex-direction: column; gap: 6px; }
+    .plan-feature { font-size: 13px; color: #555; }
+    .plan-feature::before { content: '✓ '; color: var(--blue); font-weight: 700; }
+    .cta-section {
+      background: var(--blue); color: #fff;
+      padding: 80px 40px; text-align: center;
+    }
+    .cta-section h2 { font-size: 36px; font-weight: 800; }
+    .cta-section p { font-size: 18px; margin-top: 12px; opacity: .85; }
+    .footer-cta { margin-top: 32px; display: flex; gap: 12px; justify-content: center; }
+    footer {
+      background: var(--blue); color: rgba(255,255,255,.6);
+      padding: 32px 40px; text-align: center; font-size: 13px;
+    }
+    footer p { line-height: 1.8; }
+    .footer-big { font-size: 96px; font-weight: 900; color: rgba(255,255,255,.15); letter-spacing: -3px; line-height: 1; margin-top: 24px; }
+
+    /* ======== PLAYLIST PAGE ======== */
+    .playlist-header { padding: 48px 40px 24px; }
+    .playlist-header h1 { font-size: 36px; font-weight: 800; }
+    .playlist-header p { color: var(--gray); margin-top: 8px; }
+    .store-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; padding: 0 40px 60px; }
+    .store-card { border-radius: var(--radius); overflow: hidden; cursor: pointer; box-shadow: var(--shadow); transition: transform .2s; }
+    .store-card:hover { transform: translateY(-4px); }
+    .store-thumb { position: relative; aspect-ratio: 4/3; background: #222; overflow: hidden; }
+    .store-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .store-thumb .live-badge {
+      position: absolute; top: 10px; left: 10px;
+      background: rgba(0,0,0,.7); color: #fff;
+      border-radius: 50px; padding: 3px 10px; font-size: 11px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; animation: blink 1.2s infinite; }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+    .store-genre-tags { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; }
+    .genre-tag { background: #bef264; color: #111; border-radius: 4px; padding: 2px 7px; font-size: 11px; font-weight: 600; }
+    .waveform {
+      position: absolute; bottom: 8px; left: 8px; right: 8px;
+      display: flex; align-items: flex-end; gap: 2px; height: 24px;
+    }
+    .wave-bar {
+      flex: 1; background: rgba(255,255,255,.7); border-radius: 2px;
+      animation: wave var(--dur, .8s) ease-in-out infinite alternate;
+      height: var(--h, 40%);
+    }
+    @keyframes wave { to { height: var(--ht, 100%); } }
+    .store-info { padding: 14px 16px; }
+    .store-info h3 { font-size: 16px; font-weight: 700; }
+    .store-info p { font-size: 13px; color: var(--gray); margin-top: 2px; }
+
+    /* ======== STORE DETAIL ======== */
+    .store-detail-wrap { display: grid; grid-template-columns: 1fr 380px; gap: 40px; padding: 40px; max-width: 1200px; margin: 0 auto; }
+    .player-col { }
+    .player-art {
+      background: #111; border-radius: var(--radius); aspect-ratio: 1;
+      max-width: 360px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .player-art img { width: 100%; height: 100%; object-fit: cover; opacity: .5; }
+    .player-art .vinyl { width: 120px; height: 120px; position: absolute; animation: spin 3s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .player-waveform {
+      display: flex; align-items: center; gap: 2px; padding: 16px 24px;
+      background: #111; border-radius: var(--radius); margin-top: 16px;
+    }
+    .now-playing { margin-top: 16px; }
+    .now-playing h2 { font-size: 28px; font-weight: 800; }
+    .now-playing p { color: var(--gray); font-size: 16px; margin-top: 4px; }
+    .elapsed-row { display: flex; justify-content: space-between; margin-top: 8px; font-size: 13px; color: var(--gray); }
+    .playlist-section { margin-top: 32px; }
+    .playlist-section h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .playlist-meta { font-size: 13px; color: var(--gray); margin-bottom: 16px; }
+    .song-list { display: flex; flex-direction: column; gap: 0; }
+    .song-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 8px; transition: background .15s;
+    }
+    .song-item:hover { background: var(--light); }
+    .song-item.current { background: var(--light); }
+    .song-thumb { width: 44px; height: 44px; border-radius: 6px; background: #ddd; object-fit: cover; flex-shrink: 0; }
+    .song-name { flex: 1; }
+    .song-name h4 { font-size: 14px; font-weight: 600; }
+    .song-name p { font-size: 12px; color: var(--gray); }
+    .recommended-badge { background: var(--blue); color: #fff; border-radius: 50px; padding: 2px 8px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .song-duration { font-size: 13px; color: var(--gray); flex-shrink: 0; }
+    .info-col { }
+    .store-name-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .store-name-row h1 { font-size: 28px; font-weight: 800; }
+    .industry-badge { background: var(--light); border: 1px solid var(--border); border-radius: 50px; padding: 3px 10px; font-size: 12px; }
+    .store-meta { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: #444; }
+    .recommend-box {
+      background: var(--light); border-radius: var(--radius); padding: 24px;
+      margin-top: 24px; border: 1px solid var(--border);
+    }
+    .recommend-box h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .recommend-box p { font-size: 13px; color: var(--gray); margin-bottom: 16px; }
+    .recommend-fee { font-size: 12px; color: var(--gray); text-align: center; margin-top: 8px; }
+    .store-photo-thumb { margin-top: 20px; border-radius: var(--radius); overflow: hidden; }
+    .store-photo-thumb img { width: 100%; }
+
+    /* ======== APPLY FLOW ======== */
+    .apply-wrap { max-width: 720px; margin: 0 auto; padding: 48px 24px; }
+    .apply-wrap h1 { font-size: 32px; font-weight: 800; }
+    .apply-wrap .subtitle { color: var(--gray); margin-top: 6px; margin-bottom: 40px; }
+    .step-indicator { display: flex; align-items: center; gap: 0; margin-bottom: 40px; }
+    .step-item { display: flex; flex-direction: column; align-items: center; flex: 1; }
+    .step-num {
+      width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700;
+      background: #fff; color: var(--gray); position: relative; z-index: 1;
+    }
+    .step-num.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .step-num.done { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .step-label { font-size: 12px; color: var(--gray); margin-top: 6px; white-space: nowrap; }
+    .step-label.active { color: var(--blue); font-weight: 600; }
+    .step-line { flex: 1; height: 2px; background: var(--border); margin: 0 -4px; align-self: flex-start; margin-top: 15px; }
+    .step-line.done { background: var(--blue); }
+    .apply-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 24px; }
+    .apply-card h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+    .form-row { margin-bottom: 16px; }
+    label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    label .req { color: var(--blue); }
+    input[type=text], input[type=password], input[type=tel], textarea, select {
+      width: 100%; padding: 11px 14px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 14px; outline: none; transition: border .15s;
+      background: #fff; font-family: inherit;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--blue); }
+    textarea { resize: vertical; min-height: 80px; }
+    .toggle-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .toggle-btn {
+      padding: 8px 16px; border-radius: 50px; border: 1.5px solid var(--border);
+      cursor: pointer; font-size: 13px; font-weight: 600; background: #fff; transition: all .15s; user-select: none;
+    }
+    .toggle-btn.selected { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .hours-grid { display: grid; grid-template-columns: auto 1fr; gap: 8px 12px; align-items: center; }
+    .day-label { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .time-row { display: flex; align-items: center; gap: 8px; }
+    .time-row select { padding: 7px 8px; width: 80px; }
+    .lighting-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+    .lighting-opt {
+      aspect-ratio: 1; border-radius: 8px; display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end; cursor: pointer; overflow: hidden;
+      border: 2px solid transparent; transition: border .15s; padding-bottom: 6px;
+      font-size: 11px; font-weight: 600; color: #fff; position: relative;
+    }
+    .lighting-opt.selected { border-color: var(--blue); }
+    .playlist-type-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .playlist-type-opt {
+      padding: 16px; border-radius: 10px; border: 1.5px solid var(--border);
+      cursor: pointer; font-size: 13px; text-align: center; transition: all .15s; line-height: 1.5;
+    }
+    .playlist-type-opt.selected { border-color: var(--blue); background: #f0f4ff; }
+    .period-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .period-opt {
+      padding: 16px; border-radius: 8px; border: 1.5px solid var(--border);
+      cursor: pointer; text-align: center; transition: all .15s;
+    }
+    .period-opt.selected { border-color: var(--blue); background: #f0f4ff; }
+    .period-opt h4 { font-size: 14px; font-weight: 700; }
+    .period-opt p { font-size: 13px; color: var(--gray); margin-top: 4px; }
+    .amount-row {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--light); border-radius: 10px; padding: 16px 20px; margin: 16px 0;
+    }
+    .amount-label { font-size: 14px; color: var(--gray); }
+    .amount-value { font-size: 24px; font-weight: 800; color: var(--blue); }
+    .terms-list { display: flex; flex-direction: column; gap: 10px; }
+    .term-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
+    }
+    .term-check { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+    .term-check input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--blue); }
+    .complete-box { text-align: center; padding: 40px 20px; }
+    .complete-box h2 { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
+    .complete-msg { background: var(--light); border-radius: 10px; padding: 20px 24px; text-align: left; margin: 20px 0; font-size: 14px; line-height: 1.8; color: #444; }
+    .apply-nav { display: flex; justify-content: center; gap: 12px; margin-top: 32px; }
+
+    /* ======== OWNER LOGIN ======== */
+    .login-wrap {
+      display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 60px);
+    }
+    .login-left { background: #f3f3f3; position: relative; overflow: hidden; }
+    .login-left img { width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
+    .login-right {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 60px 80px;
+    }
+    .login-logo { width: 80px; height: 80px; border-radius: 16px; background: #000; display: flex; align-items: center; justify-content: center; margin-bottom: 28px; }
+    .login-right h1 { font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+    .login-right p { color: var(--gray); font-size: 14px; margin-bottom: 32px; }
+    .login-form { width: 100%; max-width: 360px; }
+    .pw-wrap { position: relative; }
+    .pw-wrap input { padding-right: 40px; }
+    .pw-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--gray); background: none; border: none; font-size: 16px; }
+
+    /* ======== MYPAGE ======== */
+    .mypage-wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px; }
+    .mypage-wrap h1 { font-size: 32px; font-weight: 800; }
+    .mypage-wrap .subtitle { color: var(--gray); margin-top: 6px; margin-bottom: 32px; }
+    .tab-bar { display: flex; border-bottom: 2px solid var(--border); margin-bottom: 32px; }
+    .tab-btn {
+      padding: 10px 20px; font-size: 15px; font-weight: 600; cursor: pointer;
+      border: none; background: none; color: var(--gray); border-bottom: 2px solid transparent; margin-bottom: -2px;
+    }
+    .tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
+    .info-section { margin-bottom: 28px; }
+    .info-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .info-section-header h3 { font-size: 18px; font-weight: 700; }
+    .info-field { margin-bottom: 12px; }
+    .info-field label { color: var(--gray); font-size: 12px; font-weight: 600; margin-bottom: 4px; display: block; }
+    .info-field .value { font-size: 15px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .now-playlist-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 8px;
+    }
+    .now-playlist-header h3 { font-size: 16px; font-weight: 700; }
+    .now-playlist-ts { font-size: 12px; color: var(--gray); margin-bottom: 16px; }
+
+    /* YouTube player (hidden for public, shown for owner) */
+    #yt-player-wrap {
+      position: fixed; bottom: 0; right: 0;
+      width: 1px; height: 1px; overflow: hidden; pointer-events: none; opacity: 0;
+    }
+    #yt-player-wrap.owner-active {
+      width: 1px; height: 1px; opacity: 0; pointer-events: none;
+    }
+    .mute-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 20px; background: #111; color: #fff;
+      border: none; border-radius: 50px; cursor: pointer; font-size: 14px; font-weight: 600; margin-top: 16px;
+    }
+    .mute-btn.unmuted { background: var(--blue); }
+    .sub-info-row { display: flex; justify-content: space-between; align-items: center; }
+    .sub-period { font-size: 15px; padding: 12px 16px; background: var(--light); border-radius: 8px; margin-bottom: 12px; }
+    .sub-paid-at { font-size: 15px; padding: 12px 16px; background: var(--light); border-radius: 8px; }
+
+    /* ======== MODAL ======== */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.5);
+      display: flex; align-items: center; justify-content: center; z-index: 200;
+    }
+    .modal-box {
+      background: #fff; border-radius: 16px; width: 100%; max-width: 440px;
+      padding: 28px; position: relative; max-height: 90vh; overflow-y: auto;
+    }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; font-size: 20px; cursor: pointer; color: var(--gray);
+    }
+    .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; }
+    .modal-step-bar { display: flex; align-items: center; gap: 0; margin-bottom: 24px; }
+    .modal-step { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+    .modal-step-num {
+      width: 24px; height: 24px; border-radius: 50%; background: var(--light); color: var(--gray);
+      display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;
+    }
+    .modal-step-num.active { background: var(--blue); color: #fff; }
+    .modal-step-line { flex: 1; height: 1px; background: var(--border); margin: 0 6px; min-width: 32px; }
+    .song-preview-card {
+      border: 1px solid var(--border); border-radius: 10px; padding: 16px;
+      display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
+    }
+    .song-preview-art { width: 56px; height: 56px; border-radius: 8px; background: #ddd; object-fit: cover; }
+    .song-preview-info h4 { font-size: 16px; font-weight: 700; }
+    .song-preview-info p { font-size: 14px; color: var(--gray); margin-top: 2px; }
+    .fee-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: var(--light); border-radius: 8px; font-size: 14px; }
+    .fee-amount { font-size: 18px; font-weight: 800; }
+    .note-text { font-size: 12px; color: var(--gray); margin-top: 8px; line-height: 1.6; }
+    .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+    .modal-btns .btn { flex: 1; padding: 13px; border-radius: 50px; }
+    .complete-song { border: 1px solid var(--border); border-radius: 10px; padding: 16px; display: flex; align-items: center; gap: 14px; margin: 16px 0; }
+    .complete-note { background: var(--light); border-radius: 8px; padding: 14px 16px; font-size: 13px; color: #444; text-align: center; margin-bottom: 16px; }
+
+    /* LOADING */
+    .loading-overlay {
+      position: fixed; inset: 0; background: rgba(255,255,255,.85);
+      display: flex; align-items: center; justify-content: center; z-index: 300;
+    }
+    .spinner {
+      width: 40px; height: 40px; border: 3px solid var(--border);
+      border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite;
+    }
+    .toast {
+      position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+      background: #222; color: #fff; border-radius: 50px; padding: 12px 24px;
+      font-size: 14px; z-index: 400; opacity: 0; transition: opacity .3s; pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+
+    @media (max-width: 768px) {
+      .store-grid { grid-template-columns: 1fr 1fr; padding: 0 16px 40px; }
+      .store-detail-wrap { grid-template-columns: 1fr; padding: 20px; }
+      .plan-grid { grid-template-columns: 1fr; }
+      .login-wrap { grid-template-columns: 1fr; }
+      .login-left { display: none; }
+      .playlist-type-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="navigate('home')">i<span>n</span>DP</div>
+  <div class="nav-links">
+    <a onclick="navigate('home')">인디피 뮤직</a>
+    <a onclick="navigate('playlist')">플레이리스트</a>
+  </div>
+  <div class="nav-actions" id="nav-actions">
+    <a class="btn btn-outline btn-sm" onclick="navigate('owner-login')">로그인</a>
+    <a class="btn btn-primary btn-sm" onclick="navigate('apply')">도입문의</a>
+  </div>
+</nav>
+
+<!-- ========== HOME ========== -->
+<div id="page-home" class="page">
+  <div class="hero">
+    <h1>내 공간 만의 플레이리스트,<br><span>인디피 뮤직</span></h1>
+    <p>공간, 고객, 브랜드에 어울리는 음악으로 특별한 경험을 만드세요</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary btn-lg" onclick="navigate('apply')">도입 문의하기</button>
+      <button class="btn btn-outline btn-lg" onclick="navigate('playlist')">플레이리스트 보기</button>
+    </div>
+  </div>
+
+  <div class="section" style="background: var(--light);">
+    <div class="container" style="text-align:center;">
+      <div class="section-title">우리 매장에 맞는 플랜을 선택하세요</div>
+      <div class="section-sub">신규 오픈 기념 60% 할인 진행 중</div>
+      <div id="home-plans" class="plan-grid"></div>
+    </div>
+  </div>
+
+  <div class="cta-section">
+    <h2>지금 바로,<br>인디피 뮤직을 도입해 보세요</h2>
+    <p>매장에 어울리는 플레이리스트를 시작하세요</p>
+    <div class="footer-cta">
+      <button class="btn btn-lg" style="background:#fff;color:var(--blue);font-weight:700;" onclick="navigate('apply')">도입 문의하기 →</button>
+    </div>
+    <div class="footer-big">INDP MUSIC</div>
+  </div>
+  <footer>
+    <p>대표: 박완<br>사업자 등록번호: 666-20-01980<br>주소: 03628 서울특별시 서대문구 통일로 484 서대문구창업지원센터 321호 버비컴퍼니<br>고객 문의: verbykorea@gmail.com</p>
+    <div class="footer-big">INDP MUSIC</div>
+  </footer>
+</div>
+
+<!-- ========== PLAYLIST ========== -->
+<div id="page-playlist" class="page">
+  <div class="playlist-header">
+    <h1>플레이리스트</h1>
+    <p>지금, 인디피와 함께하는 매장들을 방문하여 흘러나오는 노래를 청취해 보세요</p>
+  </div>
+  <div id="store-grid" class="store-grid"></div>
+</div>
+
+<!-- ========== STORE DETAIL ========== -->
+<div id="page-store-detail" class="page">
+  <div class="store-detail-wrap">
+    <div class="player-col">
+      <div class="player-art" id="player-art">
+        <img id="player-thumb" src="" alt="">
+        <svg class="vinyl" viewBox="0 0 100 100" style="display:none" id="vinyl-icon">
+          <circle cx="50" cy="50" r="48" fill="#111" stroke="#333" stroke-width="2"/>
+          <circle cx="50" cy="50" r="30" fill="none" stroke="#222" stroke-width="12"/>
+          <circle cx="50" cy="50" r="6" fill="#555"/>
+        </svg>
+      </div>
+      <div class="player-waveform" id="detail-waveform"></div>
+      <div class="now-playing">
+        <h2 id="np-title">-</h2>
+        <p id="np-artist">-</p>
+        <div class="elapsed-row">
+          <span id="np-elapsed">0:00</span>
+          <span id="np-duration">0:00</span>
+        </div>
+      </div>
+      <div class="playlist-section">
+        <h3>오늘의 플레이리스트</h3>
+        <p class="playlist-meta" id="pl-meta"></p>
+        <div class="song-list" id="song-list"></div>
+      </div>
+    </div>
+    <div class="info-col">
+      <div class="store-name-row">
+        <h1 id="det-store-name">-</h1>
+        <span class="industry-badge" id="det-industry"></span>
+      </div>
+      <div class="store-meta">
+        <span id="det-genre"></span>
+        <span id="det-address"></span>
+        <span id="det-hours"></span>
+      </div>
+      <div class="recommend-box">
+        <h3>매장에 노래 추천하기</h3>
+        <p>이 매장 플레이리스트에 어울리는 노래를 추천해 보세요.</p>
+        <button class="btn btn-primary" style="width:100%" onclick="openRecommendModal()">추천하기</button>
+        <p class="recommend-fee">1곡 추천당 500원의 비용이 발생합니다.</p>
+      </div>
+      <div class="store-photo-thumb" id="det-photo"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== APPLY ========== -->
+<div id="page-apply" class="page">
+  <div class="apply-wrap">
+    <h1>매장/플레이리스트 정보 입력</h1>
+    <p class="subtitle">매장과 재생할 플레이리스트 정보를 입력해 주세요</p>
+    <div class="step-indicator" id="apply-steps">
+      <div class="step-item">
+        <div class="step-num active" id="astep-1">1</div>
+        <div class="step-label active">요금제 선택</div>
+      </div>
+      <div class="step-line" id="aline-1"></div>
+      <div class="step-item">
+        <div class="step-num" id="astep-2">2</div>
+        <div class="step-label">정보 입력</div>
+      </div>
+      <div class="step-line" id="aline-2"></div>
+      <div class="step-item">
+        <div class="step-num" id="astep-3">3</div>
+        <div class="step-label">결제 진행</div>
+      </div>
+      <div class="step-line" id="aline-3"></div>
+      <div class="step-item">
+        <div class="step-num" id="astep-4">4</div>
+        <div class="step-label">신청 완료</div>
+      </div>
+    </div>
+    <div id="apply-content"></div>
+  </div>
+</div>
+
+<!-- ========== OWNER LOGIN ========== -->
+<div id="page-owner-login" class="page">
+  <div class="login-wrap">
+    <div class="login-left">
+      <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800" alt="카페">
+    </div>
+    <div class="login-right">
+      <div class="login-logo">
+        <svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#333"/><circle cx="20" cy="20" r="10" fill="none" stroke="#666" stroke-width="6"/><circle cx="20" cy="20" r="3" fill="#888"/></svg>
+      </div>
+      <h1>매장 관리자 로그인</h1>
+      <p>인디피 뮤직 매장 관리 시스템</p>
+      <div class="login-form">
+        <div class="form-row">
+          <label>아이디</label>
+          <input type="text" id="login-id" placeholder="아이디를 입력해 주세요">
+        </div>
+        <div class="form-row">
+          <label>비밀번호</label>
+          <div class="pw-wrap">
+            <input type="password" id="login-pw" placeholder="비밀번호를 입력해 주세요">
+            <button class="pw-toggle" onclick="togglePw()">👁</button>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;padding:14px;font-size:16px;border-radius:10px;margin-top:8px;" onclick="doLogin()">로그인</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== OWNER MYPAGE ========== -->
+<div id="page-owner-mypage" class="page">
+  <div class="mypage-wrap">
+    <h1>마이페이지</h1>
+    <p class="subtitle">지금 내 매장 플레이리스트를 관리해 보세요</p>
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('store-info')">매장 정보</button>
+      <button class="tab-btn" onclick="switchTab('playlist-info')">플레이리스트 정보</button>
+      <button class="tab-btn" onclick="switchTab('payment-info')">결제 정보</button>
+    </div>
+    <div id="tab-store-info"></div>
+    <div id="tab-playlist-info" class="hidden"></div>
+    <div id="tab-payment-info" class="hidden"></div>
+  </div>
+</div>
+
+<!-- ========== RECOMMENDATION MODAL ========== -->
+<div id="modal-recommend" class="modal-overlay hidden">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeRecommendModal()">✕</button>
+    <div class="modal-title">매장에 노래 추천하기</div>
+    <div class="modal-step-bar">
+      <div class="modal-step">
+        <div class="modal-step-num active" id="mstep-1">1</div>
+        <span>노래 추천</span>
+      </div>
+      <div class="modal-step-line"></div>
+      <div class="modal-step">
+        <div class="modal-step-num" id="mstep-2">2</div>
+        <span>결제 진행</span>
+      </div>
+      <div class="modal-step-line"></div>
+      <div class="modal-step">
+        <div class="modal-step-num" id="mstep-3">3</div>
+        <span>추천 완료</span>
+      </div>
+    </div>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- Loading -->
+<div id="loading" class="loading-overlay hidden"><div class="spinner"></div></div>
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+<!-- YouTube hidden player -->
+<div id="yt-player-wrap"><div id="yt-player"></div></div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const API_BASE = 'http://localhost:8080';
+const TOSS_CLIENT_KEY = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq';
+
+// ============================================================
+// STATE
+// ============================================================
+const state = {
+  ownerToken: localStorage.getItem('ownerToken'),
+  ownerStoreId: localStorage.getItem('ownerStoreId'),
+  currentStoreId: null,
+  currentStoreData: null,
+  pendingPayment: JSON.parse(localStorage.getItem('pendingPayment') || 'null'),
+  applyData: {},
+  applyStep: 1,
+  plans: [],
+  modalStep: 1,
+  modalStoreId: null,
+  modalRecommendData: null,
+  isMuted: true,
+  ytPlayer: null,
+  stompClient: null,
+};
+
+// ============================================================
+// UTILS
+// ============================================================
+const $ = id => document.getElementById(id);
+function showLoading() { $('loading').classList.remove('hidden'); }
+function hideLoading() { $('loading').classList.add('hidden'); }
+function showToast(msg, duration = 2500) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+function fmt(sec) {
+  if (!sec) return '0:00';
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return `${m}:${String(s).padStart(2,'0')}`;
+}
+function fmtDate(d) { return d ? d.replace('T', ' ').substring(0, 16) : '-'; }
+
+// ============================================================
+// API
+// ============================================================
+async function api(method, path, body, token) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(API_BASE + path, opts);
+  if (!res.ok) {
+    const err = await res.text().catch(() => '');
+    throw new Error(err || `HTTP ${res.status}`);
+  }
+  const ct = res.headers.get('content-type') || '';
+  if (ct.includes('application/json') && res.status !== 204) return res.json();
+  return null;
+}
+
+// ============================================================
+// ROUTER
+// ============================================================
+function navigate(page, params = {}) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = $(`page-${page}`);
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+  if (page === 'home') loadHomePlans();
+  if (page === 'playlist') loadStores();
+  if (page === 'store-detail' && params.storeId) loadStoreDetail(params.storeId);
+  if (page === 'apply') initApply();
+  if (page === 'owner-mypage') loadMypage();
+}
+
+function updateNav() {
+  const actions = $('nav-actions');
+  if (state.ownerToken) {
+    actions.innerHTML = `
+      <a class="btn btn-outline btn-sm" onclick="doLogout()">로그아웃</a>
+      <a class="btn btn-primary btn-sm" onclick="navigate('owner-mypage')">마이페이지</a>
+    `;
+  } else {
+    actions.innerHTML = `
+      <a class="btn btn-outline btn-sm" onclick="navigate('owner-login')">로그인</a>
+      <a class="btn btn-primary btn-sm" onclick="navigate('apply')">도입문의</a>
+    `;
+  }
+}
+
+// ============================================================
+// HOME
+// ============================================================
+async function loadHomePlans() {
+  try {
+    const data = await api('GET', '/api/plans');
+    if (!data) return;
+    const plans = data.plans || data;
+    state.plans = plans;
+    const grid = $('home-plans');
+    if (!grid) return;
+    grid.innerHTML = plans.map(p => {
+      const discount = p.discounts?.find(d => d.active);
+      const discountRate = discount?.discountRate || 0;
+      const discounted = discountRate > 0 ? Math.round(p.monthlyPrice * (100 - discountRate) / 100) : p.monthlyPrice;
+      return `
+        <div class="plan-card${p.type === 'B' ? ' popular' : ''}" onclick="navigate('apply')">
+          ${p.type === 'B' ? '<div class="plan-badge">인기</div>' : ''}
+          <div class="plan-name">Plan ${p.type || p.planId}</div>
+          <div class="plan-subtitle">${p.subtitle || p.description || ''}</div>
+          ${discountRate > 0 ? `<div class="plan-discount">신규 오픈 기념 ${discountRate}% 할인</div><div class="plan-original">${p.monthlyPrice.toLocaleString()}원</div>` : ''}
+          <div class="plan-price">${discounted.toLocaleString()}원<span> /월 (VAT 포함)</span></div>
+          <div class="plan-features">
+            ${(p.features || []).map(f => `<div class="plan-feature">${f.description || f}</div>`).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+// ============================================================
+// PLAYLIST
+// ============================================================
+async function loadStores() {
+  showLoading();
+  try {
+    const data = await api('GET', '/api/stores?size=20');
+    const stores = data?.stores || data?.content || data || [];
+    const grid = $('store-grid');
+    if (!stores.length) {
+      grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:60px;color:#888">등록된 매장이 없습니다.</p>';
+      return;
+    }
+    grid.innerHTML = stores.map(s => buildStoreCard(s)).join('');
+  } catch (e) {
+    showToast('매장 목록을 불러오지 못했습니다.');
+  } finally {
+    hideLoading();
+  }
+}
+
+function buildStoreCard(s) {
+  const bars = Array.from({length: 18}, (_, i) => {
+    const h = 20 + Math.random() * 70;
+    const ht = 20 + Math.random() * 70;
+    const dur = 0.4 + Math.random() * 0.7;
+    return `<div class="wave-bar" style="--h:${h}%;--ht:${ht}%;--dur:${dur}s"></div>`;
+  }).join('');
+  return `
+    <div class="store-card" onclick="navigate('store-detail', {storeId: ${s.storeId}})">
+      <div class="store-thumb">
+        ${s.mainPhotoUrl ? `<img src="${s.mainPhotoUrl}" alt="${s.name}" onerror="this.style.display='none'">` : ''}
+        <div class="live-badge"><div class="live-dot"></div>지금 재생 중</div>
+        <div class="store-genre-tags"><span class="genre-tag">인디</span><span class="genre-tag">팝</span></div>
+        <div class="waveform">${bars}</div>
+      </div>
+      <div class="store-info">
+        <h3>${s.name}</h3>
+        <p>${s.address || ''}</p>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// STORE DETAIL
+// ============================================================
+async function loadStoreDetail(storeId) {
+  state.currentStoreId = storeId;
+  showLoading();
+  try {
+    const data = await api('GET', `/api/stores/${storeId}/playlist`);
+    if (!data) return;
+    state.currentStoreData = data;
+    renderStoreDetail(data);
+    connectWS(storeId);
+  } catch (e) {
+    showToast('매장 정보를 불러오지 못했습니다: ' + e.message);
+  } finally {
+    hideLoading();
+  }
+}
+
+function renderStoreDetail(data) {
+  const store = data.store || {};
+  const playlist = data.playlistInfo || {};
+  const currentSong = data.currentSong || {};
+
+  $('det-store-name').textContent = store.name || data.name || '매장명';
+  $('det-industry').textContent = store.industry || '';
+  $('det-address').textContent = store.address || '';
+
+  // Now playing
+  $('np-title').textContent = currentSong.title || '-';
+  $('np-artist').textContent = currentSong.artist || '-';
+  $('np-elapsed').textContent = fmt(currentSong.elapsedSeconds || 0);
+  $('np-duration').textContent = fmt(currentSong.playTime || 0);
+
+  // Waveform
+  const wf = $('detail-waveform');
+  wf.innerHTML = Array.from({length: 40}, (_, i) => {
+    const h = 20 + Math.random() * 70;
+    const ht = 20 + Math.random() * 70;
+    const dur = 0.3 + Math.random() * 0.8;
+    return `<div class="wave-bar" style="--h:${h}%;--ht:${ht}%;--dur:${dur}s;background:rgba(255,255,255,.6)"></div>`;
+  }).join('');
+
+  // Photo
+  const photoEl = $('det-photo');
+  if (store.mainPhotoUrl) {
+    photoEl.innerHTML = `<img src="${store.mainPhotoUrl}" alt="" onerror="this.style.display='none'">`;
+  }
+
+  // Playlist
+  const songs = playlist.songs || data.songs || [];
+  $('pl-meta').textContent = `전체 ${playlist.totalCount || songs.length}곡 · 추천곡 ${playlist.recommendedCount || 0}곡 · 재생시간 ${fmt(playlist.totalPlayTime || 0)}`;
+  $('song-list').innerHTML = songs.map(s => buildSongItem(s, currentSong.playlistSongId)).join('');
+}
+
+function buildSongItem(s, currentId) {
+  const isCurrent = s.playlistSongId === currentId;
+  return `
+    <div class="song-item ${isCurrent ? 'current' : ''}">
+      <div class="song-thumb" style="background:#${Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0')}30;display:flex;align-items:center;justify-content:center;font-size:18px;">🎵</div>
+      <div class="song-name">
+        <h4>${s.title} ${s.isRecommended ? `<span class="recommended-badge">${s.refereeName || ''}님 추천곡</span>` : ''}</h4>
+        <p>${s.artist}</p>
+      </div>
+      <div class="song-duration">${fmt(s.playTime)}</div>
+    </div>
+  `;
+}
+
+// ============================================================
+// WEBSOCKET
+// ============================================================
+function connectWS(storeId) {
+  if (state.stompClient) {
+    try { state.stompClient.deactivate(); } catch(e) {}
+  }
+  try {
+    const client = new StompJs.Client({
+      webSocketFactory: () => new SockJS('/ws'),
+      reconnectDelay: 5000,
+      onConnect: () => {
+        client.subscribe(`/topic/stores/${storeId}`, msg => {
+          try {
+            const data = JSON.parse(msg.body);
+            if (data.currentSong) {
+              $('np-title').textContent = data.currentSong.title || '-';
+              $('np-artist').textContent = data.currentSong.artist || '-';
+              if (data.currentSong.vid && state.ytPlayer && !state.isMuted) {
+                state.ytPlayer.loadVideoById(data.currentSong.vid);
+              }
+            }
+            if (data.recommendation) {
+              showToast(`새 추천곡: ${data.recommendation.title} - ${data.recommendation.artist}`);
+            }
+          } catch(e) {}
+        });
+      },
+    });
+    client.activate();
+    state.stompClient = client;
+  } catch(e) { console.warn('WS 연결 실패', e); }
+}
+
+// ============================================================
+// RECOMMENDATION MODAL
+// ============================================================
+function openRecommendModal() {
+  state.modalStep = 1;
+  state.modalStoreId = state.currentStoreId;
+  state.modalRecommendData = null;
+  $('modal-recommend').classList.remove('hidden');
+  renderModalStep(1);
+}
+function closeRecommendModal() {
+  $('modal-recommend').classList.add('hidden');
+}
+
+function renderModalStep(step) {
+  ['mstep-1','mstep-2','mstep-3'].forEach((id, i) => {
+    $(id).className = 'modal-step-num' + (i + 1 <= step ? ' active' : '');
+  });
+  const content = $('modal-content');
+  if (step === 1) {
+    content.innerHTML = `
+      <div class="form-row">
+        <label>가수 <span class="req">*</span></label>
+        <input type="text" id="m-artist" placeholder="가수 이름을 입력해 주세요">
+      </div>
+      <div class="form-row">
+        <label>노래 제목 <span class="req">*</span></label>
+        <input type="text" id="m-title" placeholder="노래 제목을 입력해 주세요">
+      </div>
+      <div class="form-row">
+        <label>추천인 이름 <span class="req">*</span></label>
+        <input type="text" id="m-referee" placeholder="이름을 자유롭게 입력해 주세요">
+      </div>
+      <p class="note-text">추천곡이 채택되면 플레이리스트에 표시됩니다.</p>
+      <div class="modal-btns">
+        <button class="btn btn-primary" onclick="submitRecommendation()">도입 문의하기</button>
+      </div>
+    `;
+  } else if (step === 2) {
+    const r = state.modalRecommendData;
+    content.innerHTML = `
+      <p style="font-size:13px;color:#666;margin-bottom:12px;">추천곡 정보</p>
+      <div class="song-preview-card">
+        <div class="song-preview-art" style="background:#ddd;display:flex;align-items:center;justify-content:center;font-size:24px;">🎵</div>
+        <div class="song-preview-info">
+          <h4>${r.title}</h4>
+          <p>${r.artist}</p>
+        </div>
+      </div>
+      <p class="note-text">추천곡은 매장 컨셉에 맞는지 검토 후 플레이리스트에 추가됩니다.</p>
+      <div class="fee-row">
+        <span>추천 결제 비용(부가세 포함)</span>
+        <span class="fee-amount">500원</span>
+      </div>
+      <div class="modal-btns">
+        <button class="btn btn-outline" onclick="renderModalStep(1)">다시 추천하기</button>
+        <button class="btn btn-primary" onclick="payRecommendation()">결제하기</button>
+      </div>
+    `;
+  } else if (step === 3) {
+    const r = state.modalRecommendData;
+    content.innerHTML = `
+      <p style="font-size:15px;margin-bottom:12px;">추천이 완료되었습니다.</p>
+      <div class="complete-song">
+        <div style="width:48px;height:48px;background:#ddd;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;">🎵</div>
+        <div>
+          <h4>${r?.title || '-'}</h4>
+          <p style="color:#666;font-size:13px;">${r?.artist || '-'}</p>
+        </div>
+      </div>
+      <div class="complete-note">추천곡은 현재 재생 중인 곡에 이어 5번째 이내로 재생됩니다.</div>
+      <button class="btn btn-primary" style="width:100%;padding:13px;" onclick="closeRecommendModal();navigate('store-detail',{storeId:state.currentStoreId})">플레이리스트 보러가기</button>
+    `;
+  }
+}
+
+async function submitRecommendation() {
+  const artist = $('m-artist')?.value?.trim();
+  const title = $('m-title')?.value?.trim();
+  const referee = $('m-referee')?.value?.trim();
+  if (!artist || !title || !referee) { showToast('모든 항목을 입력해 주세요.'); return; }
+  showLoading();
+  try {
+    const res = await api('POST', `/api/stores/${state.modalStoreId}/songs/recommendations`, {
+      artist, title, vid: null, playTime: null, refereeName: referee
+    });
+    state.modalRecommendData = { artist, title, referee, orderId: res.orderId, amount: res.amount, orderName: res.orderName };
+    state.modalStep = 2;
+    renderModalStep(2);
+  } catch(e) {
+    showToast('추천 등록 실패: ' + e.message);
+  } finally {
+    hideLoading();
+  }
+}
+
+async function payRecommendation() {
+  const r = state.modalRecommendData;
+  state.pendingPayment = { type: 'recommendation', orderId: r.orderId, amount: r.amount, orderName: r.orderName, storeId: state.modalStoreId, meta: r };
+  localStorage.setItem('pendingPayment', JSON.stringify(state.pendingPayment));
+  await requestTossPayment(r.orderId, r.amount, r.orderName, 'GUEST_' + Date.now());
+}
+
+// ============================================================
+// APPLY FLOW
+// ============================================================
+async function initApply() {
+  state.applyStep = 1;
+  state.applyData = {};
+  if (!state.plans.length) {
+    try {
+      const data = await api('GET', '/api/plans');
+      state.plans = data?.plans || data || [];
+    } catch(e) {}
+  }
+  renderApplyStep(1);
+}
+
+function updateApplySteps(step) {
+  for (let i = 1; i <= 4; i++) {
+    const el = $(`astep-${i}`);
+    if (!el) continue;
+    el.className = 'step-num' + (i < step ? ' done' : i === step ? ' active' : '');
+    el.parentElement.querySelector('.step-label').className = 'step-label' + (i === step ? ' active' : '');
+  }
+  for (let i = 1; i <= 3; i++) {
+    const el = $(`aline-${i}`);
+    if (el) el.className = 'step-line' + (i < step ? ' done' : '');
+  }
+}
+
+function renderApplyStep(step) {
+  state.applyStep = step;
+  updateApplySteps(step);
+  const content = $('apply-content');
+
+  if (step === 1) {
+    const plans = state.plans;
+    content.innerHTML = `
+      <div class="apply-card">
+        <h2>요금제를 선택해 주세요</h2>
+        <div class="plan-grid" id="apply-plan-grid">
+          ${plans.length ? plans.map(p => {
+            const discount = p.discounts?.find(d => d.active);
+            const rate = discount?.discountRate || 0;
+            const discounted = rate > 0 ? Math.round(p.monthlyPrice * (100 - rate) / 100) : p.monthlyPrice;
+            return `
+              <div class="plan-card${state.applyData.planId === p.planId ? ' popular' : ''}" onclick="selectPlan(${p.planId})" id="plan-opt-${p.planId}">
+                ${p.type === 'B' ? '<div class="plan-badge">인기</div>' : ''}
+                <div class="plan-name">Plan ${p.type || p.planId}</div>
+                <div class="plan-subtitle">${p.subtitle || ''}</div>
+                ${rate > 0 ? `<div class="plan-discount">신규 오픈 기념 ${rate}% 할인</div><div class="plan-original">${p.monthlyPrice.toLocaleString()}원</div>` : ''}
+                <div class="plan-price">${discounted.toLocaleString()}원<span> /월 (VAT 포함)</span></div>
+                <div class="plan-features">${(p.features||[]).map(f=>`<div class="plan-feature">${f.description||f}</div>`).join('')}</div>
+              </div>`;
+          }).join('') : '<p style="color:#888;font-size:14px">요금제를 불러오는 중...</p>'}
+        </div>
+      </div>
+      <div class="apply-nav">
+        <button class="btn btn-primary btn-lg" onclick="nextApplyStep()">다음</button>
+      </div>
+    `;
+  } else if (step === 2) {
+    const d = state.applyData;
+    const days = ['월요일','화요일','수요일','목요일','금요일','토요일','일요일'];
+    const hours = Array.from({length:24},(_,i)=>String(i).padStart(2,'0'));
+    const closedSet = new Set(d.closedDays || []);
+    content.innerHTML = `
+      <div class="apply-card">
+        <h2>신청 정보</h2>
+        <div class="form-row"><label>신청자 성함 <span class="req">*</span></label><input type="text" id="f-name" value="${d.applicantName||''}" placeholder="신청자 성함을 작성해 주세요"></div>
+        <div class="form-row"><label>신청자 연락처 <span class="req">*</span></label><input type="tel" id="f-phone" value="${d.applicantPhone||''}" placeholder="회신을 위해 연락 가능한 휴대폰번호를 작성해 주세요"></div>
+        <div class="form-row"><label>문의 내용</label><textarea id="f-inquiry" placeholder="남기고 싶은 말을 작성해 주세요">${d.inquiryContent||''}</textarea></div>
+      </div>
+      <div class="apply-card">
+        <h2>매장 정보</h2>
+        <div class="form-row"><label>매장 이름 <span class="req">*</span></label><input type="text" id="f-store-name" value="${d.name||''}" placeholder="매장 이름을 작성해 주세요"></div>
+        <div class="form-row"><label>업종 <span class="req">*</span></label><input type="text" id="f-industry" value="${d.industry||''}" placeholder="매장 업종을 입력해 주세요"></div>
+        <div class="form-row"><label>매장 주소 <span class="req">*</span></label><input type="text" id="f-address" value="${d.address||''}" placeholder="매장 주소를 작성해 주세요"></div>
+        <div class="form-row">
+          <label>영업 시간 <span class="req">*</span></label>
+          <div class="hours-grid" id="hours-grid">
+            ${days.map((day, i) => {
+              const bh = (d.businessHours||[]).find(b=>b.dayOfWeek===i+1) || {openTime:'09:00',closeTime:'22:00'};
+              const isClosed = closedSet.has(i+1);
+              return `
+                <div class="day-label">
+                  <input type="checkbox" ${!isClosed ? 'checked' : ''} onchange="toggleDay(${i+1},this.checked)" id="day-${i+1}">
+                  ${day}
+                </div>
+                <div class="time-row" id="time-${i+1}" ${isClosed ? 'style="opacity:.4;pointer-events:none"' : ''}>
+                  <select id="open-h-${i+1}">
+                    ${hours.map(h=>`<option ${bh.openTime?.startsWith(h)?'selected':''}>${h}</option>`).join('')}
+                  </select>
+                  <span>: 00 ~</span>
+                  <select id="close-h-${i+1}">
+                    ${hours.map(h=>`<option ${bh.closeTime?.startsWith(h)?'selected':''}>${h}</option>`).join('')}
+                  </select>
+                  <span>: 00</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+        <div class="form-row">
+          <label>휴무</label>
+          <div class="toggle-group" id="closed-days-group">
+            ${days.map((day,i) => `<div class="toggle-btn ${closedSet.has(i+1)?'selected':''}" onclick="toggleClosedDay(${i+1},this)">${day}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="apply-card">
+        <h2>매장 음악 무드</h2>
+        <div class="form-row"><label>기존 사용했던 음악 플랫폼 <span class="req">*</span></label><input type="text" id="f-platform" value="${d.platform||''}" placeholder="기존에 사용하고 있는 음악 플랫폼을 작성해 주세요 ex) 유튜브 뮤직, 벨론 등"></div>
+        <div class="form-row"><label>매장에서 재생했던 장르 혹은 음악 <span class="req">*</span></label><input type="text" id="f-played" value="${d.playedMusic||''}" placeholder="매장에서 재생하던 노래에 대한 정보를 작성해 주세요 ex) 잔잔한 피아노곡, Chill 무드의 합법곡 등"></div>
+        <div class="form-row"><label>매장 방문 손님 연령대 <span class="req">*</span></label><input type="text" id="f-age" value="${d.customerAgeGroup||''}" placeholder="방문 연령대를 작성해 주세요 ex) 10~30대, 다양한 사람들 방문 등"></div>
+        <div class="form-row">
+          <label>매장에서 음악을 재생하는 방식(복수 선택 가능) <span class="req">*</span></label>
+          <div class="toggle-group">
+            ${['BLUETOOTH','WIRED','ETC'].map(m => `<div class="toggle-btn ${(d.playMethods||[]).includes(m)?'selected':''}" onclick="toggleArr('playMethods','${m}',this)">${m==='BLUETOOTH'?'블루투스':m==='WIRED'?'유선 연결':'기타'}</div>`).join('')}
+          </div>
+        </div>
+        <div class="form-row">
+          <label>매장 분위기(복수 선택 가능) <span class="req">*</span></label>
+          <div class="toggle-group">
+            ${['CALM','MODERN','ELEGANT','DARK','NATURAL','ETC'].map(v => `<div class="toggle-btn ${(d.vibes||[]).includes(v)?'selected':''}" onclick="toggleArr('vibes','${v}',this)">${{CALM:'차분한',MODERN:'모던한',ELEGANT:'우아한',DARK:'다크한',NATURAL:'내추럴한',ETC:'기타'}[v]}</div>`).join('')}
+          </div>
+        </div>
+        <div class="form-row">
+          <label>매장 조명 <span class="req">*</span></label>
+          <div class="lighting-grid">
+            ${[1000,2000,3000,4000,5000,6000,7000,8000,9000,10000].map(k => {
+              const brightness = Math.round((k/10000)*100);
+              return `<div class="lighting-opt ${d.lighting===k?'selected':''}" onclick="selectLighting(${k},this)" style="background:linear-gradient(to bottom, rgb(${255*brightness/100+150*(1-brightness/100)},${200*brightness/100+100*(1-brightness/100)},${50*brightness/100}), #333);">${k.toLocaleString()}</div>`;
+            }).join('')}
+          </div>
+        </div>
+        <div class="form-row">
+          <label>재생하고 싶은 음악을 선택해 주세요 <span class="req">*</span></label>
+          <div class="playlist-type-grid">
+            <div class="playlist-type-opt ${d.playlistType==='MUSIC_RECOMMENDED'?'selected':''}" onclick="selectPlaylistType('MUSIC_RECOMMENDED',this)">음악에 대해 잘 몰라요.<br>편하게 추천받고 싶어요.</div>
+            <div class="playlist-type-opt ${d.playlistType==='TIME_BASED'?'selected':''}" onclick="selectPlaylistType('TIME_BASED',this)">시간대별로 노래 취향을<br>다르게 하고 싶어요.</div>
+            <div class="playlist-type-opt ${d.playlistType==='CONSISTENT_VIBE'?'selected':''}" onclick="selectPlaylistType('CONSISTENT_VIBE',this)">하나의 노래으로 일관되게<br>운영 시간 내내 재생하고 싶어요.</div>
+          </div>
+          <p style="font-size:12px;color:#888;margin-top:8px;">입력해주신 매장 정보를 바탕으로 인디피가 해당 매장에 어울리는 노래를 추천해드릴게요!</p>
+        </div>
+        <div class="form-row">
+          <label>친근한 템포 <span class="req">*</span></label>
+          <div class="toggle-group">
+            ${['SLOW','CALM','MODERATE','ENERGETIC','UPBEAT'].map(t=>`<div class="toggle-btn ${d.musicTempo===t?'selected':''}" onclick="selectTempo('${t}',this)">${{SLOW:'느림',CALM:'잔잔한',MODERATE:'보통',ENERGETIC:'활기찬',UPBEAT:'경쾌한'}[t]}</div>`).join('')}
+          </div>
+        </div>
+        <div class="form-row">
+          <label>추천 거부 장르 설정(복수 선택 가능)</label>
+          <div class="toggle-group">
+            ${['BALLAD','HIP_HOP','INDIE','ROCK','DANCE','CLASSIC','KIDS'].map(g=>`<div class="toggle-btn ${(d.rejectedGenres||[]).includes(g)?'selected':''}" onclick="toggleArr('rejectedGenres','${g}',this)">${{BALLAD:'발라드',HIP_HOP:'힙합',INDIE:'인디',ROCK:'락',DANCE:'댄스',CLASSIC:'클래식',KIDS:'동요'}[g]}</div>`).join('')}
+          </div>
+        </div>
+        <div class="form-row"><label>이런 곡은 받고 싶지 않아요</label><input type="text" id="f-rejected" value="${d.rejectedSongNote||''}" placeholder="댄스 곡은 받고 싶지 않아요."></div>
+      </div>
+      <div class="apply-nav">
+        <button class="btn btn-outline btn-lg" onclick="renderApplyStep(1)">이전</button>
+        <button class="btn btn-primary btn-lg" onclick="nextApplyStep()">다음</button>
+      </div>
+    `;
+  } else if (step === 3) {
+    const d = state.applyData;
+    const plan = state.plans.find(p => p.planId === d.planId);
+    const discount = plan?.discounts?.find(dd => dd.active);
+    const rate = discount?.discountRate || 0;
+    const monthlyPrice = rate > 0 ? Math.round((plan?.monthlyPrice||0) * (100-rate)/100) : (plan?.monthlyPrice||0);
+    const periods = [[1,monthlyPrice],[3,monthlyPrice*3],[6,monthlyPrice*6],[12,monthlyPrice*12]];
+    const selectedPeriod = d.usagePeriod || 1;
+    const totalAmt = monthlyPrice * selectedPeriod;
+
+    content.innerHTML = `
+      <div class="apply-card">
+        <h2>사용 기간 <span class="req">*</span></h2>
+        <div class="period-grid">
+          ${periods.map(([months, amt]) => `
+            <div class="period-opt ${selectedPeriod===months?'selected':''}" onclick="selectPeriod(${months},this)">
+              <h4>${months}개월</h4>
+              <p>${amt.toLocaleString()}원</p>
+            </div>
+          `).join('')}
+        </div>
+        <h3 style="margin-top:24px;margin-bottom:12px;">최종 결제 금액</h3>
+        <div class="amount-row">
+          <div class="amount-label">월 요금제 ${monthlyPrice.toLocaleString()}원 X 사용 기간 ${selectedPeriod}개월</div>
+          <div class="amount-value" id="total-amount">${totalAmt.toLocaleString()}원</div>
+        </div>
+        <h3 style="margin-top:24px;margin-bottom:12px;">이용 약관</h3>
+        <div class="terms-list">
+          <div class="term-item"><div class="term-check"><input type="checkbox" id="term1"> (필수) 서비스 이용 약관</div><span>›</span></div>
+          <div class="term-item"><div class="term-check"><input type="checkbox" id="term2"> (필수) 개인정보 보호방침</div><span>›</span></div>
+        </div>
+      </div>
+      <div class="apply-nav">
+        <button class="btn btn-outline btn-lg" onclick="renderApplyStep(2)">이전</button>
+        <button class="btn btn-primary btn-lg" onclick="nextApplyStep()">다음</button>
+      </div>
+    `;
+  } else if (step === 4) {
+    content.innerHTML = `
+      <div class="apply-card complete-box">
+        <h2>신청이 완료되었습니다!</h2>
+        <div class="complete-msg">
+          상단 PLAYLIST 채널에서 나의 매장을 바로 확인해 보세요!<br>
+          매장 음악은 나의 매장에서 비밀번호 입력으로 관리 가능하며, 신청 시 입력하신 번호로 비밀번호 전송됩니다.
+        </div>
+        <button class="btn btn-primary btn-lg" onclick="navigate('playlist')">나의 PLAYLIST 채널로 가기</button>
+      </div>
+    `;
+    updateApplySteps(4);
+  }
+}
+
+function selectPlan(planId) {
+  state.applyData.planId = planId;
+  document.querySelectorAll('[id^="plan-opt-"]').forEach(el => el.classList.remove('popular'));
+  $(`plan-opt-${planId}`)?.classList.add('popular');
+}
+
+function toggleDay(day, checked) {
+  const timeRow = $(`time-${day}`);
+  if (timeRow) {
+    timeRow.style.opacity = checked ? '1' : '.4';
+    timeRow.style.pointerEvents = checked ? 'auto' : 'none';
+  }
+}
+
+function toggleClosedDay(day, btn) {
+  const closed = state.applyData.closedDays || [];
+  if (closed.includes(day)) {
+    state.applyData.closedDays = closed.filter(d => d !== day);
+    btn.classList.remove('selected');
+  } else {
+    closed.push(day);
+    state.applyData.closedDays = closed;
+    btn.classList.add('selected');
+  }
+}
+
+function toggleArr(key, val, btn) {
+  const arr = state.applyData[key] || [];
+  if (arr.includes(val)) {
+    state.applyData[key] = arr.filter(v => v !== val);
+    btn.classList.remove('selected');
+  } else {
+    arr.push(val);
+    state.applyData[key] = arr;
+    btn.classList.add('selected');
+  }
+}
+
+function selectLighting(val, btn) {
+  state.applyData.lighting = val;
+  document.querySelectorAll('.lighting-opt').forEach(el => el.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function selectPlaylistType(val, btn) {
+  state.applyData.playlistType = val;
+  document.querySelectorAll('.playlist-type-opt').forEach(el => el.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function selectTempo(val, btn) {
+  state.applyData.musicTempo = val;
+  document.querySelectorAll('.toggle-group .toggle-btn').forEach(el => {
+    if (['SLOW','CALM','MODERATE','ENERGETIC','UPBEAT'].some(t => el.getAttribute('onclick')?.includes(t))) {
+      el.classList.remove('selected');
+    }
+  });
+  btn.classList.add('selected');
+}
+
+function selectPeriod(months, btn) {
+  state.applyData.usagePeriod = months;
+  document.querySelectorAll('.period-opt').forEach(el => el.classList.remove('selected'));
+  btn.classList.add('selected');
+  // recalc total
+  const plan = state.plans.find(p => p.planId === state.applyData.planId);
+  const discount = plan?.discounts?.find(dd => dd.active);
+  const rate = discount?.discountRate || 0;
+  const monthly = rate > 0 ? Math.round((plan?.monthlyPrice||0) * (100-rate)/100) : (plan?.monthlyPrice||0);
+  const total = $('total-amount');
+  if (total) total.textContent = (monthly * months).toLocaleString() + '원';
+}
+
+async function nextApplyStep() {
+  const step = state.applyStep;
+  if (step === 1) {
+    if (!state.applyData.planId) { showToast('요금제를 선택해 주세요.'); return; }
+    renderApplyStep(2);
+  } else if (step === 2) {
+    const name = $('f-name')?.value?.trim();
+    const phone = $('f-phone')?.value?.trim();
+    const storeName = $('f-store-name')?.value?.trim();
+    const industry = $('f-industry')?.value?.trim();
+    const address = $('f-address')?.value?.trim();
+    if (!name || !phone || !storeName || !industry || !address) { showToast('필수 항목을 모두 입력해 주세요.'); return; }
+    Object.assign(state.applyData, {
+      applicantName: name,
+      applicantPhone: phone,
+      inquiryContent: $('f-inquiry')?.value,
+      name: storeName,
+      industry,
+      address,
+      platform: $('f-platform')?.value,
+      playedMusic: $('f-played')?.value,
+      customerAgeGroup: $('f-age')?.value,
+      rejectedSongNote: $('f-rejected')?.value,
+    });
+    // Build businessHours
+    const bh = [];
+    for (let i = 1; i <= 7; i++) {
+      const checked = $(`day-${i}`)?.checked;
+      const openH = $(`open-h-${i}`)?.value || '09';
+      const closeH = $(`close-h-${i}`)?.value || '22';
+      bh.push({ dayOfWeek: i, openTime: `${openH}:00:00`, closeTime: `${closeH}:00:00`, isClosed: !checked });
+    }
+    state.applyData.businessHours = bh;
+    renderApplyStep(3);
+  } else if (step === 3) {
+    if (!state.applyData.usagePeriod) { state.applyData.usagePeriod = 1; }
+    if (!$('term1')?.checked || !$('term2')?.checked) { showToast('필수 약관에 동의해 주세요.'); return; }
+    // Build request
+    const d = state.applyData;
+    const preferenceGenres = (d.playMethods || []).map(g => ({ genre: g, preferenceType: 'PREFERRED' })); // simplify
+    const body = {
+      applicantName: d.applicantName,
+      applicantPhone: d.applicantPhone,
+      inquiryContent: d.inquiryContent || '',
+      planId: d.planId,
+      usagePeriod: d.usagePeriod,
+      name: d.name,
+      industry: d.industry,
+      address: d.address,
+      businessHours: d.businessHours || [],
+      photoUrls: [],
+      platform: d.platform || '',
+      playedMusic: d.playedMusic || '',
+      customerAgeGroup: d.customerAgeGroup || '',
+      playMethods: d.playMethods || [],
+      vibes: d.vibes || [],
+      lighting: d.lighting || 5000,
+      playlistType: d.playlistType || 'MUSIC_RECOMMENDED',
+      timePreferences: [],
+      musicTempo: d.musicTempo || 'MODERATE',
+      preferenceGenres: [],
+      rejectedSongNote: d.rejectedSongNote || '',
+      mood: '',
+    };
+    showLoading();
+    try {
+      const res = await api('POST', '/api/stores/apply', body);
+      state.pendingPayment = { type: 'apply', orderId: res.orderId, amount: res.amount, orderName: res.orderName };
+      localStorage.setItem('pendingPayment', JSON.stringify(state.pendingPayment));
+      await requestTossPayment(res.orderId, res.amount, res.orderName, 'APPLY_' + Date.now());
+    } catch(e) {
+      showToast('신청 처리 중 오류: ' + e.message);
+    } finally {
+      hideLoading();
+    }
+  }
+}
+
+// ============================================================
+// TOSS PAYMENT
+// ============================================================
+async function requestTossPayment(orderId, amount, orderName, customerKey) {
+  try {
+    const tossPayments = TossPayments(TOSS_CLIENT_KEY);
+    const payment = tossPayments.payment({ customerKey: customerKey || 'GUEST_' + Date.now() });
+    await payment.requestPayment({
+      method: 'CARD',
+      amount: { currency: 'KRW', value: amount },
+      orderId,
+      orderName,
+      successUrl: 'http://localhost:8080/index.html?payment=success',
+      failUrl: 'http://localhost:8080/index.html?payment=fail',
+    });
+  } catch(e) {
+    if (e.code !== 'USER_CANCEL') showToast('결제 오류: ' + (e.message || e));
+  }
+}
+
+async function handlePaymentCallback() {
+  const params = new URLSearchParams(location.search);
+  const paymentStatus = params.get('payment');
+  if (!paymentStatus) return;
+
+  const paymentKey = params.get('paymentKey');
+  const orderId = params.get('orderId');
+  const amount = params.get('amount');
+
+  // Clean URL
+  history.replaceState({}, '', location.pathname);
+
+  const pending = state.pendingPayment;
+
+  showLoading();
+  try {
+    if (paymentStatus === 'success') {
+      const paymentTypeMap = { recommendation: 'SONG_RECOMMENDATION', apply: 'SUBSCRIPTION', renew: 'SUBSCRIPTION' };
+      await api('POST', '/api/payments/confirm', {
+        paymentType: paymentTypeMap[pending?.type] || 'SUBSCRIPTION',
+        paymentKey,
+        orderId: orderId || pending?.orderId,
+        amount: parseInt(amount) || pending?.amount,
+      });
+      localStorage.removeItem('pendingPayment');
+      state.pendingPayment = null;
+
+      if (pending.type === 'recommendation') {
+        navigate('store-detail', { storeId: pending.storeId });
+        setTimeout(() => {
+          openRecommendModal();
+          state.modalRecommendData = pending.meta;
+          renderModalStep(3);
+        }, 300);
+      } else if (pending.type === 'apply') {
+        navigate('apply');
+        renderApplyStep(4);
+      } else if (pending.type === 'renew') {
+        navigate('owner-mypage');
+        showToast('구독이 갱신되었습니다.');
+      }
+    } else {
+      await api('POST', '/api/payments/fail', { orderId: pending.orderId }).catch(() => {});
+      localStorage.removeItem('pendingPayment');
+      state.pendingPayment = null;
+      showToast('결제가 취소되었습니다.');
+      navigate('home');
+    }
+  } catch(e) {
+    showToast('결제 처리 오류: ' + e.message);
+  } finally {
+    hideLoading();
+  }
+}
+
+// ============================================================
+// OWNER
+// ============================================================
+async function doLogin() {
+  const loginId = $('login-id')?.value?.trim();
+  const password = $('login-pw')?.value;
+  if (!loginId || !password) { showToast('아이디와 비밀번호를 입력해 주세요.'); return; }
+  showLoading();
+  try {
+    const res = await api('POST', '/api/owner/login', { loginId, password });
+    state.ownerToken = res.accessToken;
+    localStorage.setItem('ownerToken', res.accessToken);
+    const stores = await api('GET', '/api/owner/stores', null, res.accessToken);
+    const storeList = stores?.stores || stores?.content || stores || [];
+    if (storeList.length) {
+      state.ownerStoreId = storeList[0].storeId;
+      localStorage.setItem('ownerStoreId', storeList[0].storeId);
+    }
+    updateNav();
+    navigate('owner-mypage');
+  } catch(e) {
+    showToast('로그인 실패: ' + e.message);
+  } finally {
+    hideLoading();
+  }
+}
+
+function doLogout() {
+  state.ownerToken = null;
+  state.ownerStoreId = null;
+  localStorage.removeItem('ownerToken');
+  localStorage.removeItem('ownerStoreId');
+  updateNav();
+  navigate('home');
+}
+
+function togglePw() {
+  const input = $('login-pw');
+  if (input) input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+async function loadMypage() {
+  if (!state.ownerToken) { navigate('owner-login'); return; }
+  await Promise.all([loadStoreInfoTab(), loadPlaylistTab(), loadPaymentTab()]);
+}
+
+async function loadStoreInfoTab() {
+  try {
+    const data = await api('GET', `/api/owner/stores/${state.ownerStoreId}`, null, state.ownerToken);
+    if (!data) return;
+    const si = data.storeInfo || {};
+    const ai = data.applyInfo || {};
+    const days = ['','월','화','수','목','금','토','일'];
+    const busHours = (si.businessHours||[]).filter(b=>!b.isClosed).map(b=>`${days[b.dayOfWeek]}`).join(', ');
+    $('tab-store-info').innerHTML = `
+      <div class="info-section">
+        <div class="info-section-header">
+          <h3>신청 정보</h3>
+          <button class="btn btn-outline btn-sm" onclick="showToast('준비 중입니다.')">정보 수정</button>
+        </div>
+        <div class="info-field"><label>신청자 성함</label><div class="value">${ai.applicantName||'-'}</div></div>
+        <div class="info-field"><label>신청자 연락처</label><div class="value">${ai.applicantPhone||'-'}</div></div>
+      </div>
+      <div class="info-section">
+        <div class="info-section-header">
+          <h3>매장 정보</h3>
+          <button class="btn btn-primary btn-sm" onclick="showToast('준비 중입니다.')">수정 완료</button>
+        </div>
+        <div class="info-field"><label>매장 이름</label><div class="value">${si.name||'-'}</div></div>
+        <div class="info-field"><label>업종</label><div class="value">${si.industry||'-'}</div></div>
+        <div class="info-field"><label>매장 주소</label><div class="value">${si.address||'-'}</div></div>
+        <div class="info-field"><label>영업 시간</label><div class="value">${busHours||'-'}</div></div>
+      </div>
+    `;
+  } catch(e) {
+    $('tab-store-info').innerHTML = `<p style="color:#888;padding:20px">매장 정보를 불러오지 못했습니다.</p>`;
+  }
+}
+
+async function loadPlaylistTab() {
+  try {
+    const data = await api('GET', `/api/owner/stores/${state.ownerStoreId}/playlist`, null, state.ownerToken);
+    if (!data) return;
+    const pl = data.playlist || {};
+    const cs = data.currentSong;
+    const now = new Date().toLocaleString('ko-KR');
+    const songs = pl.songs || [];
+
+    $('tab-playlist-info').innerHTML = `
+      <div class="info-section">
+        <div class="now-playlist-header">
+          <h3>지금 재생되고 있는 플레이리스트</h3>
+          <button class="btn btn-primary btn-sm" onclick="regeneratePlaylist()">플레이리스트 재생성 요청</button>
+        </div>
+        <div class="now-playlist-ts">${now} 기준</div>
+        ${cs ? `
+          <div id="owner-youtube" style="margin-bottom:12px;">
+            <div style="font-size:13px;color:#666;margin-bottom:6px;">현재 재생 중: <strong>${cs.title}</strong> - ${cs.artist}</div>
+            <div id="owner-yt-container" style="display:none;"></div>
+            <button class="mute-btn" id="owner-mute-btn" onclick="toggleOwnerMute('${cs.vid}')">🔇 음소거 해제하기</button>
+          </div>
+        ` : ''}
+        <div class="song-list">
+          ${songs.map(s => buildSongItem(s, cs?.playlistSongId)).join('')}
+        </div>
+      </div>
+    `;
+  } catch(e) {
+    $('tab-playlist-info').innerHTML = `<p style="color:#888;padding:20px">플레이리스트 정보를 불러오지 못했습니다.</p>`;
+  }
+}
+
+async function loadPaymentTab() {
+  try {
+    const data = await api('GET', `/api/owner/stores/${state.ownerStoreId}/subscription`, null, state.ownerToken);
+    const sub = data || {};
+    $('tab-payment-info').innerHTML = `
+      <div class="info-section">
+        <div class="info-section-header">
+          <h3>이용 기간</h3>
+          <button class="btn btn-primary btn-sm" onclick="renewSubscription()">기간 연장</button>
+        </div>
+        <div class="sub-period">${sub.startDate||'-'} ~ ${sub.endDate||'-'}</div>
+      </div>
+      <div class="info-section">
+        <div class="info-section-header"><h3>결제 일시</h3></div>
+        <div class="sub-paid-at">${fmtDate(sub.paidAt) || sub.paidAt || '-'}</div>
+      </div>
+      <div class="info-section">
+        <div class="info-section-header"><h3>구독 상태</h3></div>
+        <div class="sub-period">${sub.status || '-'}</div>
+      </div>
+    `;
+  } catch(e) {
+    $('tab-payment-info').innerHTML = `<p style="color:#888;padding:20px">결제 정보를 불러오지 못했습니다.</p>`;
+  }
+}
+
+async function renewSubscription() {
+  if (!state.plans.length) {
+    try {
+      const data = await api('GET', '/api/plans');
+      state.plans = data?.plans || data || [];
+    } catch(e) {}
+  }
+  const plan = state.plans[0];
+  if (!plan) { showToast('플랜 정보를 불러오지 못했습니다.'); return; }
+  showLoading();
+  try {
+    const res = await api('POST', `/api/owner/subscriptions/stores/${state.ownerStoreId}/renew`, {
+      planId: plan.planId, usagePeriod: 1
+    }, state.ownerToken);
+    state.pendingPayment = { type: 'renew', orderId: res.orderId, amount: res.amount, orderName: res.orderName };
+    localStorage.setItem('pendingPayment', JSON.stringify(state.pendingPayment));
+    await requestTossPayment(res.orderId, res.amount, res.orderName, 'RENEW_' + Date.now());
+  } catch(e) {
+    showToast('갱신 오류: ' + e.message);
+  } finally {
+    hideLoading();
+  }
+}
+
+async function regeneratePlaylist() {
+  showLoading();
+  try {
+    await api('POST', `/api/owner/stores/${state.ownerStoreId}/playlist/regenerate`, null, state.ownerToken);
+    showToast('플레이리스트 재생성을 요청했습니다.');
+    await loadPlaylistTab();
+  } catch(e) {
+    showToast('오류: ' + e.message);
+  } finally {
+    hideLoading();
+  }
+}
+
+function switchTab(tab) {
+  ['store-info','playlist-info','payment-info'].forEach(t => {
+    $(`tab-${t}`)?.classList.toggle('hidden', t !== tab);
+  });
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', ['store-info','playlist-info','payment-info'][i] === tab);
+  });
+}
+
+// ============================================================
+// YOUTUBE
+// ============================================================
+window.onYouTubeIframeAPIReady = function() {
+  state.ytPlayer = new YT.Player('yt-player', {
+    height: '1', width: '1',
+    playerVars: { autoplay: 0, controls: 0 },
+    events: {
+      onReady: () => { state.ytPlayer.mute(); }
+    }
+  });
+};
+
+function toggleOwnerMute(vid) {
+  if (!state.ytPlayer) return;
+  const btn = $('owner-mute-btn');
+  if (state.isMuted) {
+    if (vid) state.ytPlayer.loadVideoById(vid);
+    state.ytPlayer.unMute();
+    state.ytPlayer.playVideo();
+    state.isMuted = false;
+    if (btn) { btn.textContent = '🔊 음소거'; btn.classList.add('unmuted'); }
+    // Show a visual that music is playing
+    const container = $('owner-yt-container');
+    if (container) {
+      container.style.display = 'block';
+      container.innerHTML = `<div style="background:#111;color:#fff;border-radius:8px;padding:10px 16px;font-size:13px;margin-bottom:8px;">🎵 음악 재생 중 (YouTube)...</div>`;
+    }
+  } else {
+    state.ytPlayer.mute();
+    state.ytPlayer.stopVideo();
+    state.isMuted = true;
+    if (btn) { btn.textContent = '🔇 음소거 해제하기'; btn.classList.remove('unmuted'); }
+    const container = $('owner-yt-container');
+    if (container) container.style.display = 'none';
+  }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', async () => {
+  updateNav();
+  await handlePaymentCallback();
+  const params = new URLSearchParams(location.search);
+  if (!params.has('payment')) {
+    navigate('home');
+  }
+});
+</script>
+<!-- YouTube IFrame API (loaded last) -->
+<script src="https://www.youtube.com/iframe_api"></script>
+</body>
+</html>

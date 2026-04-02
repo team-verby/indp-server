@@ -11,7 +11,6 @@ import com.verby.indp.domain.plan.service.PlanService;
 import com.verby.indp.domain.store.*;
 import com.verby.indp.domain.store.dto.request.ApplyStoreRequest;
 import com.verby.indp.domain.store.dto.response.ApplyStoreResponse;
-import com.verby.indp.domain.store.dto.response.FindStoreDetailByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
 import com.verby.indp.domain.subscription.StoreSubscription;
@@ -50,18 +49,14 @@ public class StoreService {
         StoreSubscription storeSubscription = new StoreSubscription(plan, payment, request.usagePeriod());
         store.addSubscription(storeSubscription);
 
+        storeRepository.save(store);
+
         return ApplyStoreResponse.from(storeSubscription);
     }
 
     public FindStoresResponse findStores(Pageable pageable) {
         Page<Store> storePage = storeRepository.findAllBySubscriptionStatus(SubscriptionStatus.ACTIVE, pageable);
         return FindStoresResponse.from(storePage.getContent());
-    }
-
-    public FindStoreDetailByAdminResponse findStore(long storeId) {
-        Store store = getStoreById(storeId);
-        validateSubscribeActive(store);
-        return FindStoreDetailByAdminResponse.from(store);
     }
 
     public Store getStoreById(long storeId) {
@@ -84,7 +79,7 @@ public class StoreService {
         String loginId = generateUniqueLoginId();
         String password = generatePassword();
         Owner owner = new Owner(loginId, password, request.applicantName(), request.applicantPhone());
-        StoreApply storeApply = new StoreApply(request.applicantName(), request.applicantPhone(), request.inquiryContent());
+        StoreApply storeApply = new StoreApply(request.applicantName(), request.applicantPhone());
         List<StoreBusinessHour> storeBusinessHours = request.businessHours().stream()
             .map(bh -> new StoreBusinessHour(bh.dayOfWeek(), bh.openTime(), bh.closeTime(), bh.isClosed()))
             .toList();

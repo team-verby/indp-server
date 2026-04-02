@@ -7,6 +7,7 @@ import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.service.PlaylistService;
 import com.verby.indp.domain.playlist.service.PlaylistWebSocketService;
 import com.verby.indp.domain.recommendation.SongRecommendation;
+import com.verby.indp.domain.recommendation.dto.response.FindStoreRecommendationsResponse;
 import com.verby.indp.domain.recommendation.dto.response.RegisterSongRecommendationResponse;
 import com.verby.indp.domain.recommendation.repository.SongRecommendationRepository;
 import com.verby.indp.domain.store.Store;
@@ -60,6 +61,13 @@ public class SongRecommendationService {
 
     private String createOrderName(String storeName) {
         return ORDER_NAME_PREFIX + storeName;
+    }
+
+    public FindStoreRecommendationsResponse findRecommendedSongs(long storeId) {
+        Store store = storeService.getStoreById(storeId);
+        return FindStoreRecommendationsResponse.from(
+            songRecommendationRepository.findAllByStoreAndStatus(store, SongRecommendation.RecommendationStatus.RECOMMENDED)
+        );
     }
 
     private SongRecommendation getByPayment(Payment payment) {

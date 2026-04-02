@@ -50,6 +50,11 @@ public class PlaylistService {
     public PlaylistSong addRecommendedSong(Store store, SongRecommendation recommendation) {
         validateSubscribeActive(store);
         Playlist playlist = store.getPlaylist();
+        if (playlist == null) {
+            playlist = new Playlist(List.of());
+            store.assignPlaylist(playlist);
+        }
+
         List<PlaylistSong> songs = playlistSongRepository
             .findAllByPlaylistPlaylistIdOrderByPlayOrder(playlist.getPlaylistId());
 
@@ -63,7 +68,7 @@ public class PlaylistService {
             insertAfterIndex = resolveInsertIndex(store, songs);
             positions = resolvePositions(songs, insertAfterIndex);
         }
-
+        // TODO: OOB발생
         double newPosition = (positions[0] + positions[1]) / 2.0;
         PlaylistSong playlistSong = new PlaylistSong(recommendation, true, recommendation.getVid(), recommendation.getPlayTime(),
                 recommendation.getTitle(), recommendation.getArtist(), newPosition);

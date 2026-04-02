@@ -30,4 +30,5 @@ public class AdminPlaylistService {
                 scheduledPlaylistUpdateRepository.save(new ScheduledPlaylist(store, schedulePlaylist.scheduledAt(), songs));
             });
     }
+
 }

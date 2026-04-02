@@ -11,7 +11,12 @@ public class SubscriptionScheduler {
 
     private final SubscriptionService subscriptionService;
 
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
+    public void activateSubscriptions() {
+        subscriptionService.activateSubscriptions();
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
     public void expireSubscriptions() {
         subscriptionService.expireSubscriptions();
     }
