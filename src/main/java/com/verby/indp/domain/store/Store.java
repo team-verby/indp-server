@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -32,7 +33,7 @@ public class Store extends BaseTimeEntity {
     @JoinColumn(name = "owner_user_id")
     private Owner owner;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "playlist_id")
     private Playlist playlist;
 
@@ -111,13 +112,18 @@ public class Store extends BaseTimeEntity {
 
     public void assignPlaylist(Playlist playlist) {
         this.playlist = playlist;
+        playlist.setStore(this);
     }
 
-    public StoreSubscription getActiveSubscription() {
+    public Optional<StoreSubscription> getActiveSubscription() {
         return subscriptions.stream()
-            .filter(s -> s.getStatus() == SubscriptionStatus.ACTIVE)
-            .max(Comparator.comparing(StoreSubscription::getStartDate))
-            .orElse(null);
+                .filter(s -> s.getStatus() == SubscriptionStatus.ACTIVE)
+                .max(Comparator.comparing(StoreSubscription::getStartDate));
+    }
+
+    public Optional<StoreSubscription> getRecentSubscription() {
+        return subscriptions.stream()
+                .max(Comparator.comparing(StoreSubscription::getStartDate));
     }
 
     public boolean isInactive() {

@@ -6,18 +6,17 @@ import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.ScheduledPlaylist;
 import com.verby.indp.domain.playlist.ScheduledPlaylistSong;
 import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistResponse;
-import com.verby.indp.domain.playlist.repository.PlaylistRepository;
 import com.verby.indp.domain.playlist.repository.PlaylistSongRepository;
 import com.verby.indp.domain.playlist.repository.ScheduledPlaylistUpdateRepository;
 import com.verby.indp.domain.recommendation.SongRecommendation;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.service.StoreService;
-import com.verby.indp.domain.subscription.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,11 +26,9 @@ public class PlaylistService {
 
     private static final int RECOMMENDATION_INSERT_OFFSET = 5;
 
-    private final PlaylistRepository playlistRepository;
     private final PlaylistSongRepository playlistSongRepository;
     private final ScheduledPlaylistUpdateRepository scheduledPlaylistUpdateRepository;
     private final StoreService storeService;
-    private final CurrentSongResolver currentSongResolver;
 
     public FindStorePlaylistResponse getStorePlaylist(long storeId) {
         Store store = storeService.getStoreById(storeId);
@@ -44,28 +41,16 @@ public class PlaylistService {
 
         List<PlaylistSong> songs = playlistSongRepository
             .findAllByPlaylistPlaylistIdOrderByPlayOrder(playlist.getPlaylistId());
-
-        return FindStorePlaylistResponse.from(songs, currentSongResolver.resolveCurrentSong(store, songs));
+        CurrentSong currentSong = CurrentSongResolver.resolveCurrentSong(store).orElse(null);
+        return FindStorePlaylistResponse.from(songs, currentSong);
     }
 
     @Transactional
     public PlaylistSong addRecommendedSong(Store store, SongRecommendation recommendation) {
         validateSubscribeActive(store);
         Playlist playlist = store.getPlaylist();
-        if (playlist == null) {
-            playlist = playlistRepository.save(new Playlist());
-            store.assignPlaylist(playlist);
-        }
-
         List<PlaylistSong> songs = playlistSongRepository
             .findAllByPlaylistPlaylistIdOrderByPlayOrder(playlist.getPlaylistId());
-
-        if (songs.isEmpty()) {
-            return playlistSongRepository.save(
-                new PlaylistSong(playlist, recommendation, true, recommendation.getVid(), recommendation.getPlayTime(),
-                    recommendation.getTitle(), recommendation.getArtist(), 1.0)
-            );
-        }
 
         int insertAfterIndex = resolveInsertIndex(store, songs);
         double[] positions = resolvePositions(songs, insertAfterIndex);
@@ -79,11 +64,11 @@ public class PlaylistService {
         }
 
         double newPosition = (positions[0] + positions[1]) / 2.0;
+        PlaylistSong playlistSong = new PlaylistSong(recommendation, true, recommendation.getVid(), recommendation.getPlayTime(),
+                recommendation.getTitle(), recommendation.getArtist(), newPosition);
+        playlist.addSong(playlistSong);
 
-        return playlistSongRepository.save(
-            new PlaylistSong(playlist, recommendation, true, recommendation.getVid(), recommendation.getPlayTime(),
-                recommendation.getTitle(), recommendation.getArtist(), newPosition)
-        );
+        return playlistSong;
     }
 
     @Transactional
@@ -118,22 +103,16 @@ public class PlaylistService {
 
     private void applyScheduledUpdate(ScheduledPlaylist update) {
         Store store = update.getStore();
-        Playlist playlist = store.getPlaylist();
-        if (playlist == null) {
-            playlist = playlistRepository.save(new Playlist());
-            store.assignPlaylist(playlist);
+        List<ScheduledPlaylistSong> scheduledSongs = update.getSongs();
+        List<PlaylistSong> songs = new ArrayList<>();
+        for (int i = 0; i < scheduledSongs.size(); i++) {
+            ScheduledPlaylistSong scheduledSong = scheduledSongs.get(i);
+            PlaylistSong song = new PlaylistSong(null, false, scheduledSong.getVid(), scheduledSong.getPlayTime(),
+                    scheduledSong.getTitle(), scheduledSong.getArtist(), (i + 1) * 10.0);
+            songs.add(song);
         }
-
-        playlistSongRepository.deleteAllByPlaylist(playlist);
-
-        List<ScheduledPlaylistSong> songs = update.getSongs();
-        for (int i = 0; i < songs.size(); i++) {
-            ScheduledPlaylistSong s = songs.get(i);
-            playlistSongRepository.save(
-                new PlaylistSong(playlist, null, false, s.getVid(), s.getPlayTime(),
-                    s.getTitle(), s.getArtist(), (i + 1) * 10.0)
-            );
-        }
+        Playlist playlist = new Playlist(songs);
+        store.assignPlaylist(playlist);
     }
 
     private int resolveInsertIndex(Store store, List<PlaylistSong> songs) {
@@ -166,7 +145,7 @@ public class PlaylistService {
     }
 
     private int findCurrentSongIndex(Store store, List<PlaylistSong> songs) {
-        long elapsedSeconds = currentSongResolver.calcElapsedSeconds(store);
+        long elapsedSeconds = CurrentSongResolver.calcElapsedSeconds(store);
         if (elapsedSeconds < 0) {
             return 0;
         }

@@ -9,7 +9,6 @@ import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistByOwnerRespo
 import com.verby.indp.domain.playlist.repository.PlaylistSongRepository;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.service.StoreService;
-import com.verby.indp.domain.subscription.service.SubscriptionService;
 import com.verby.indp.global.slack.SlackNotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,9 +22,7 @@ import java.util.List;
 public class OwnerPlaylistService {
     private final PlaylistSongRepository playlistSongRepository;
     private final StoreService storeService;
-    private final SubscriptionService subscriptionService;
     private final SlackNotificationService slackNotificationService;
-    private final CurrentSongResolver currentSongResolver;
 
     public FindStorePlaylistByOwnerResponse getStorePlaylist(Owner owner, long storeId) {
         Store store = storeService.getStoreById(storeId);
@@ -40,8 +37,8 @@ public class OwnerPlaylistService {
 
         List<PlaylistSong> songs = playlistSongRepository
             .findAllByPlaylistPlaylistIdOrderByPlayOrder(playlist.getPlaylistId());
-
-        return FindStorePlaylistByOwnerResponse.from(songs, currentSongResolver.resolveCurrentSong(store, songs));
+        PlaylistSong currentSong = CurrentSongResolver.resolveCurrentSong(store).orElse(null);
+        return FindStorePlaylistByOwnerResponse.from(songs, currentSong);
     }
 
     public void regeneratePlaylist(Owner owner, long storeId) {

@@ -5,11 +5,11 @@ import com.verby.indp.domain.playlist.PlaylistSong;
 import java.util.List;
 
 public record FindStorePlaylistByOwnerResponse(
-    CurrentSongResponse currentSong,
+    CurrentSong currentSong,
     PlaylistInfo playlist
 ) {
 
-    public static FindStorePlaylistByOwnerResponse from(List<PlaylistSong> songs, CurrentSongResponse currentSong) {
+    public static FindStorePlaylistByOwnerResponse from(List<PlaylistSong> songs, PlaylistSong currentSong) {
         PlaylistInfo playlistInfo = PlaylistInfo.from(songs);
         return new FindStorePlaylistByOwnerResponse(currentSong, playlistInfo);
     }
@@ -45,5 +45,9 @@ public record FindStorePlaylistByOwnerResponse(
                 song.getPlayTime(), song.isRecommended(), song.isRecommended() ? song.getSongRecommendation().getRefereeName() : null,
                 song.getVid());
         }
+    }
+
+    private record CurrentSongItem() {
+
     }
 }

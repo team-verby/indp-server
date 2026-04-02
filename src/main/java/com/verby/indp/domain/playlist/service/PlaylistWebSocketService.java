@@ -37,6 +37,11 @@ public class PlaylistWebSocketService {
 
         if (isOwner) {
             accessor.getSessionAttributes().put("storeId", storeId);
+            Store store = storeService.getStoreById(storeId);
+            Playlist playlist = store.getPlaylist();
+            if (playlist != null) {
+                playlist.connected();
+            }
             log.debug("Owner {} subscribed to store {}", ownerId, storeId);
         }
 
@@ -62,7 +67,7 @@ public class PlaylistWebSocketService {
         Store store = storeService.getStoreById(storeId);
         Playlist playlist = store.getPlaylist();
         if (playlist != null) {
-            playlist.updatePlayingStatus(false);
+            playlist.disconnected();
         }
     }
     

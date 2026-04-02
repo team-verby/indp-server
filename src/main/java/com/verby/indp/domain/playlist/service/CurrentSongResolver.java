@@ -1,38 +1,35 @@
 package com.verby.indp.domain.playlist.service;
 
 import com.verby.indp.domain.playlist.PlaylistSong;
-import com.verby.indp.domain.playlist.dto.response.CurrentSongResponse;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreBusinessHour;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Optional;
 
-@Component
 public class CurrentSongResolver {
 
-    public CurrentSongResponse resolveCurrentSong(Store store, List<PlaylistSong> songs) {
+    public static Optional<PlaylistSong> resolveCurrentSong(Store store) {
         long elapsedSeconds = calcElapsedSeconds(store);
         if (elapsedSeconds < 0) {
-            return null;
+            return Optional.empty();
         }
 
         long cumulative = 0;
-        for (PlaylistSong song : songs) {
+        for (PlaylistSong song : store.getPlaylist().getSongs()) {
             long duration = song.getPlayTime();
             if (cumulative + duration > elapsedSeconds) {
-                return new CurrentSongResponse(song.getPlaylistSongId(), (int) (elapsedSeconds - cumulative));
+                return Optional.of(song);
+//                return new CurrentSongResponse(song.getPlaylistSongId(), (int) (elapsedSeconds - cumulative))
             }
             cumulative += duration;
         }
 
-        return null;
+        return Optional.empty();
     }
 
-    public long calcElapsedSeconds(Store store) {
+    public static long calcElapsedSeconds(Store store) {
         LocalDateTime now = LocalDateTime.now();
         int todayDayOfWeek = now.getDayOfWeek().getValue();
 

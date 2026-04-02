@@ -5,7 +5,6 @@ import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.ScheduledPlaylist;
 import com.verby.indp.domain.playlist.ScheduledPlaylistSong;
 import com.verby.indp.domain.playlist.dto.request.SchedulePlaylistsUpdateRequest;
-import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistByAdminResponse;
 import com.verby.indp.domain.playlist.repository.PlaylistSongRepository;
 import com.verby.indp.domain.playlist.repository.ScheduledPlaylistUpdateRepository;
 import com.verby.indp.domain.store.Store;
@@ -22,7 +21,6 @@ import java.util.List;
 public class AdminPlaylistService {
     private final PlaylistSongRepository playlistSongRepository;
     private final StoreService storeService;
-    private final CurrentSongResolver currentSongResolver;
     private final ScheduledPlaylistUpdateRepository scheduledPlaylistUpdateRepository;
 
     @Transactional
@@ -35,19 +33,5 @@ public class AdminPlaylistService {
                     .toList();
                 scheduledPlaylistUpdateRepository.save(new ScheduledPlaylist(store, schedulePlaylist.scheduledAt(), songs));
             });
-    }
-
-    public FindStorePlaylistByAdminResponse getStorePlaylist(long storeId) {
-        Store store = storeService.getStoreById(storeId);
-
-        Playlist playlist = store.getPlaylist();
-        if (playlist == null) {
-            return new FindStorePlaylistByAdminResponse(null, null);
-        }
-
-        List<PlaylistSong> songs = playlistSongRepository
-            .findAllByPlaylistPlaylistIdOrderByPlayOrder(playlist.getPlaylistId());
-
-        return FindStorePlaylistByAdminResponse.from(songs, currentSongResolver.resolveCurrentSong(store, songs));
     }
 }

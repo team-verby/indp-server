@@ -13,6 +13,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -25,6 +26,7 @@ public class PlaylistSong {
     @Column(name = "playlist_song_id")
     private Long playlistSongId;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "playlist_id")
     private Playlist playlist;
@@ -34,7 +36,7 @@ public class PlaylistSong {
     private SongRecommendation songRecommendation;
 
     @Column(name = "is_recommended")
-    private boolean isRecommended;
+    private boolean isRecommended = false;
 
     @Column(name = "vid")
     private String vid;
@@ -55,8 +57,7 @@ public class PlaylistSong {
         this.playOrder = position;
     }
 
-    public PlaylistSong(Playlist playlist, SongRecommendation songRecommendation, boolean isRecommended, String vid, Integer playTime, String title, String artist, double playOrder) {
-        this.playlist = playlist;
+    public PlaylistSong(SongRecommendation songRecommendation, boolean isRecommended, String vid, Integer playTime, String title, String artist, double playOrder) {
         this.songRecommendation = songRecommendation;
         this.isRecommended = isRecommended;
         this.vid = vid;

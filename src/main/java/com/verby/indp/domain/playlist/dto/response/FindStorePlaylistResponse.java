@@ -5,11 +5,11 @@ import com.verby.indp.domain.playlist.PlaylistSong;
 import java.util.List;
 
 public record FindStorePlaylistResponse(
-    CurrentSongResponse currentSong,
+    CurrentSong currentSong,
     PlaylistInfo playlist
 ) {
 
-    public static FindStorePlaylistResponse from(List<PlaylistSong> songs, CurrentSongResponse currentSong) {
+    public static FindStorePlaylistResponse from(List<PlaylistSong> songs, CurrentSong currentSong) {
         PlaylistInfo playlistInfo = PlaylistInfo.from(songs);
         return new FindStorePlaylistResponse(currentSong, playlistInfo);
     }
