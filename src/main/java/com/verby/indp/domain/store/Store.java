@@ -31,7 +31,7 @@ public class Store extends BaseTimeEntity {
     private StoreApply storeApply;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "owner_user_id")
+    @JoinColumn(name = "owner_id")
     private Owner owner;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)

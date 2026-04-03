@@ -37,6 +37,7 @@ public class Payment extends BaseTimeEntity {
     @Column(name = "amount")
     private int amount;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private PaymentStatus status = PaymentStatus.PENDING;
 

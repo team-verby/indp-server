@@ -41,7 +41,7 @@ public class StoreSubscription extends BaseTimeEntity {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Column(name = "usagePeriod")
+    @Column(name = "usage_period")
     private int usagePeriod;
 
     @Enumerated(EnumType.STRING)

@@ -23,6 +23,7 @@ public class ResourceFilter implements Filter {
         "/api/payments",
         "/docs/index.html",
         "/frontend-test.html",
+        "/admin.html",
         "/profile",
         "/actuator/health",
         "/ws",

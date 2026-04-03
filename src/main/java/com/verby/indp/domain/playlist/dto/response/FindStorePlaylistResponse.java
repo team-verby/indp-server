@@ -11,7 +11,7 @@ public record FindStorePlaylistResponse(
 
     public static FindStorePlaylistResponse from(List<PlaylistSong> songs, CurrentSong currentSong) {
         PlaylistInfo playlistInfo = PlaylistInfo.from(songs);
-        CurrentSongItem song = CurrentSongItem.from(currentSong);
+        CurrentSongItem song = currentSong != null ? CurrentSongItem.from(currentSong) : null;
         return new FindStorePlaylistResponse(song, playlistInfo);
     }
 

@@ -41,7 +41,7 @@ public class StoreMusic {
     @Column(name = "tempo")
     private MusicTempo musicTempo;
 
-    @Column(name = "musicMood")
+    @Column(name = "music_mood")
     private String musicMood;
 
     @OneToMany(mappedBy = "storeMusic", cascade = CascadeType.ALL, orphanRemoval = true)
