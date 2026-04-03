@@ -9,6 +9,4 @@ import java.util.List;
 public interface PlaylistSongRepository extends JpaRepository<PlaylistSong, Long> {
 
     List<PlaylistSong> findAllByPlaylistPlaylistIdOrderByPlayOrder(Long playlistId);
-
-    void deleteAllByPlaylist(Playlist playlist);
 }

@@ -30,16 +30,16 @@ public class PaymentService {
         validatePaymentStatus(payment);
         validatePaymentAmount(payment, request.amount());
 
-        paymentClient.confirmPayment(request.orderId(), request.paymentKey(), request.amount());
-
-        payment.updatePaymentKey(request.paymentKey());
-        payment.success();
-
         if (request.paymentType() == PaymentType.SUBSCRIPTION) {
             subscriptionService.confirmPayment(payment);
         } else if (request.paymentType() == PaymentType.SONG_RECOMMENDATION) {
             songRecommendationService.confirmPayment(payment);
         }
+
+        paymentClient.confirmPayment(request.orderId(), request.paymentKey(), request.amount());
+
+        payment.updatePaymentKey(request.paymentKey());
+        payment.success();
     }
 
     @Transactional

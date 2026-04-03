@@ -50,12 +50,9 @@ public class PlaylistSong {
     @Column(name = "artist")
     private String artist;
 
+    @Setter
     @Column(name = "play_order", nullable = false)
     private double playOrder;
-
-    public void updatePosition(double position) {
-        this.playOrder = position;
-    }
 
     public PlaylistSong(SongRecommendation songRecommendation, boolean isRecommended, String vid, Integer playTime, String title, String artist, double playOrder) {
         this.songRecommendation = songRecommendation;

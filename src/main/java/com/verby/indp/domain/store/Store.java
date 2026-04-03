@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -116,10 +117,15 @@ public class Store extends BaseTimeEntity {
     }
 
     public StoreSubscription getLatestSubscription() {
-        // TODO: 첫 구독일 경우 수정 필요
         return subscriptions.stream()
-            .max(Comparator.comparing(StoreSubscription::getStartDate))
+            .max(Comparator.comparing(StoreSubscription::getCreatedAt))
             .orElseThrow(() -> new NotFoundException("구독 정보가 없습니다."));
+    }
+
+    public Optional<StoreSubscription> findLatestPaidSubscription() {
+        return subscriptions.stream()
+                .filter(s -> s.getStatus() != SubscriptionStatus.PENDING_PAYMENT)
+                .max(Comparator.comparing(StoreSubscription::getStartDate));
     }
 
     public boolean isInactive() {

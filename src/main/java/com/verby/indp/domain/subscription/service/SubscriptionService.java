@@ -71,7 +71,9 @@ public class SubscriptionService {
     public void confirmPayment(Payment payment) {
         StoreSubscription subscription = getByPayment(payment);
         LocalDate endDate = subscription.getStore()
-                .getLatestSubscription().getEndDate();
+                .findLatestPaidSubscription()
+                .map(StoreSubscription::getEndDate)
+                .orElse(null);
         LocalDate startDate = endDate == null || endDate.isBefore(LocalDate.now()) ? LocalDate.now() : endDate.plusDays(1);
 
         subscription.updateStartDate(startDate);

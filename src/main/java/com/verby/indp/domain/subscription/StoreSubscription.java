@@ -52,6 +52,8 @@ public class StoreSubscription extends BaseTimeEntity {
         this.plan = plan;
         this.payment = payment;
         this.usagePeriod = usagePeriod;
+        this.startDate = LocalDate.now();
+        this.endDate = startDate.plusMonths(usagePeriod);
     }
 
     public void updateStatus(SubscriptionStatus status) {

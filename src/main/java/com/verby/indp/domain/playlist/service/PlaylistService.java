@@ -1,6 +1,8 @@
 package com.verby.indp.domain.playlist.service;
 
 import com.verby.indp.domain.common.exception.BadRequestException;
+import com.verby.indp.domain.common.exception.NotFoundException;
+import com.verby.indp.domain.common.exception.ServiceUnavailableException;
 import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.ScheduledPlaylist;
@@ -26,6 +28,7 @@ import java.util.List;
 public class PlaylistService {
 
     private static final int RECOMMENDATION_INSERT_OFFSET = 5;
+    private static final double MIN_GAP = 0.0001;
 
     private final PlaylistSongRepository playlistSongRepository;
     private final ScheduledPlaylistUpdateRepository scheduledPlaylistUpdateRepository;
@@ -40,8 +43,7 @@ public class PlaylistService {
             return new FindStorePlaylistResponse(null, null);
         }
 
-        List<PlaylistSong> songs = playlistSongRepository
-            .findAllByPlaylistPlaylistIdOrderByPlayOrder(playlist.getPlaylistId());
+        List<PlaylistSong> songs = getSortedSongs(playlist.getPlaylistId());
         CurrentSong currentSong = CurrentSongResolver.resolveCurrentSong(store).orElse(null);
         return FindStorePlaylistResponse.from(songs, currentSong);
     }
@@ -49,32 +51,24 @@ public class PlaylistService {
     @Transactional
     public PlaylistSong addRecommendedSong(Store store, SongRecommendation recommendation) {
         validateSubscribeActive(store);
+
         Playlist playlist = store.getPlaylist();
-        if (playlist == null) {
-            playlist = new Playlist(List.of());
-            store.assignPlaylist(playlist);
-        }
+        validatePlaylistExits(playlist);
 
-        List<PlaylistSong> songs = playlistSongRepository
-            .findAllByPlaylistPlaylistIdOrderByPlayOrder(playlist.getPlaylistId());
+        List<PlaylistSong> songs = getSortedSongs(playlist.getPlaylistId());
 
-        int insertAfterIndex = resolveInsertIndex(store, songs);
-        double[] positions = resolvePositions(songs, insertAfterIndex);
+        double order = calculateOrder(store, songs);
 
-        if (positions[1] - positions[0] < 0.0001) {
-            renormalize(songs);
-            songs = playlistSongRepository
-                .findAllByPlaylistPlaylistIdOrderByPlayOrder(playlist.getPlaylistId());
-            insertAfterIndex = resolveInsertIndex(store, songs);
-            positions = resolvePositions(songs, insertAfterIndex);
-        }
-        // TODO: OOB발생
-        double newPosition = (positions[0] + positions[1]) / 2.0;
         PlaylistSong playlistSong = new PlaylistSong(recommendation, true, recommendation.getVid(), recommendation.getPlayTime(),
-                recommendation.getTitle(), recommendation.getArtist(), newPosition);
+                recommendation.getTitle(), recommendation.getArtist(), order);
         playlist.addSong(playlistSong);
 
         return playlistSong;
+    }
+
+    public List<PlaylistSong> getSortedSongs(long playlistId) {
+        return playlistSongRepository
+                .findAllByPlaylistPlaylistIdOrderByPlayOrder(playlistId);
     }
 
     @Transactional
@@ -98,13 +92,64 @@ public class PlaylistService {
             return;
         }
 
-        List<PlaylistSong> recommended = playlistSongRepository
-                .findAllByPlaylistPlaylistIdOrderByPlayOrder(playlist.getPlaylistId())
+        List<PlaylistSong> recommended = playlist.getSongs()
                 .stream()
                 .filter(PlaylistSong::isRecommended)
                 .toList();
 
         playlistSongRepository.deleteAll(recommended);
+    }
+
+    private double calculateOrder(Store store, List<PlaylistSong> songs) {
+        CurrentSong currentSong = getCurrentSong(store);
+
+        Double prevOrder = null;
+        Double nextOrder = null;
+        for (int i = 0 ; i < songs.size(); i++) {
+            if (songs.get(i).getPlaylistSongId() == currentSong.playlistSongId()) {
+                int nextSongIndex = Math.min(songs.size() - 1, i + RECOMMENDATION_INSERT_OFFSET);
+                if (nextSongIndex == i) {
+                    prevOrder = songs.get(i).getPlayOrder();
+                } else {
+                    nextOrder = songs.get(nextSongIndex).getPlayOrder();
+                    prevOrder = songs.get(nextSongIndex - 1).getPlayOrder();
+
+                    if (nextSongIndex - prevOrder < MIN_GAP) {
+                        rebalancePlayOrder(songs);
+                        nextOrder = songs.get(nextSongIndex).getPlayOrder();
+                        prevOrder = songs.get(nextSongIndex - 1).getPlayOrder();
+                    }
+                }
+                break;
+            }
+        }
+
+        if (prevOrder == null) {
+            return nextOrder - 1;
+        }
+
+        if (nextOrder == null) {
+            return prevOrder + 1;
+        }
+
+        return (prevOrder + nextOrder) / 2;
+    }
+
+    private CurrentSong getCurrentSong(Store store) {
+        return CurrentSongResolver.resolveCurrentSong(store)
+                .orElseThrow(() -> new ServiceUnavailableException("음악 신청에 실패했습니다. 잠시 후 다시 시도해주세요."));
+    }
+
+    private void rebalancePlayOrder(List<PlaylistSong> songs) {
+        for (int i = 0; i < songs.size(); i++) {
+            songs.get(i).setPlayOrder(i + 1);
+        }
+    }
+
+    private void validatePlaylistExits(Playlist playlist) {
+        if (playlist == null) {
+            throw new NotFoundException("플레이리스트가 존재하지 않습니다.");
+        }
     }
 
     private void applyScheduledUpdate(ScheduledPlaylist update) {
@@ -119,53 +164,6 @@ public class PlaylistService {
         }
         Playlist playlist = new Playlist(songs);
         store.assignPlaylist(playlist);
-    }
-
-    private int resolveInsertIndex(Store store, List<PlaylistSong> songs) {
-        int currentIndex = findCurrentSongIndex(store, songs);
-        int insertAfterIndex = Math.min(
-            currentIndex + RECOMMENDATION_INSERT_OFFSET - 1,
-            songs.size() - 1
-        );
-
-        while (insertAfterIndex < songs.size() - 1
-            && songs.get(insertAfterIndex + 1).isRecommended()) {
-            insertAfterIndex++;
-        }
-
-        return insertAfterIndex;
-    }
-
-    private double[] resolvePositions(List<PlaylistSong> songs, int insertAfterIndex) {
-        double prev = songs.get(insertAfterIndex).getPlayOrder();
-        double next = insertAfterIndex + 1 < songs.size()
-            ? songs.get(insertAfterIndex + 1).getPlayOrder()
-            : prev + 1.0;
-        return new double[]{prev, next};
-    }
-
-    private void renormalize(List<PlaylistSong> songs) {
-        for (int i = 0; i < songs.size(); i++) {
-            songs.get(i).updatePosition((i + 1) * 10.0);
-        }
-    }
-
-    private int findCurrentSongIndex(Store store, List<PlaylistSong> songs) {
-        long elapsedSeconds = CurrentSongResolver.calcElapsedSeconds(store);
-        if (elapsedSeconds < 0) {
-            return 0;
-        }
-
-        long cumulative = 0;
-        for (int i = 0; i < songs.size(); i++) {
-            long duration = (long) (songs.get(i).getPlayTime() != null ? songs.get(i).getPlayTime() : 0);
-            if (cumulative + duration > elapsedSeconds) {
-                return i;
-            }
-            cumulative += duration;
-        }
-
-        return songs.size() - 1;
     }
 
     private void validateSubscribeActive(Store store) {

@@ -162,10 +162,4 @@ public class StoreService {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 10);
     }
 
-    private void validateSubscribeActive(Store store) {
-        if (store.isInactive()) {
-            throw new BadRequestException("구독 정보가 없습니다.");
-        }
-    }
-
 }

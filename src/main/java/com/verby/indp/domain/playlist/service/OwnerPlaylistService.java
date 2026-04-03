@@ -20,9 +20,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class OwnerPlaylistService {
-    private final PlaylistSongRepository playlistSongRepository;
     private final StoreService storeService;
     private final SlackNotificationService slackNotificationService;
+    private final PlaylistService playlistService;
 
     public FindStorePlaylistByOwnerResponse getStorePlaylist(Owner owner, long storeId) {
         Store store = storeService.getStoreById(storeId);
@@ -35,8 +35,7 @@ public class OwnerPlaylistService {
             return new FindStorePlaylistByOwnerResponse(null, null);
         }
 
-        List<PlaylistSong> sortedSongs = playlistSongRepository
-            .findAllByPlaylistPlaylistIdOrderByPlayOrder(playlist.getPlaylistId());
+        List<PlaylistSong> sortedSongs = playlistService.getSortedSongs(playlist.getPlaylistId());
         return FindStorePlaylistByOwnerResponse.from(sortedSongs, store);
     }
 
