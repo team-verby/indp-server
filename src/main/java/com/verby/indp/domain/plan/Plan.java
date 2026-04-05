@@ -21,18 +21,10 @@ public class Plan {
     @Column(name = "type")
     private String type;
 
-    @Column(name = "subtitle")
-    private String subtitle;
-
-    @Column(name = "description", columnDefinition = "TEXT")
-    private String description;
-
     @Column(name = "monthly_price")
     private int monthlyPrice;
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlanDiscount> discounts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlanFeature> features = new ArrayList<>();
 }

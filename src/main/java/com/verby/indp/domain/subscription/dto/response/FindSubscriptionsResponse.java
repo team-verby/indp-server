@@ -22,8 +22,7 @@ public record FindSubscriptionsResponse(
         LocalDate startDate,
         LocalDate endDate,
         LocalDateTime paidAt,
-        String planType,
-        String planSubtitle
+        String planType
     ) {
 
         private static SubscriptionItem from(StoreSubscription subscription) {
@@ -35,8 +34,7 @@ public record FindSubscriptionsResponse(
                 subscription.getStartDate(),
                 subscription.getEndDate(),
                 paidAt,
-                subscription.getPlan().getType(),
-                subscription.getPlan().getSubtitle()
+                subscription.getPlan().getType()
             );
         }
     }
