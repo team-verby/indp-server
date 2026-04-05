@@ -2,6 +2,7 @@ package com.verby.indp.domain.store.service;
 
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.store.dto.response.FindStoreSummaryResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
 import com.verby.indp.domain.subscription.SubscriptionStatus;
@@ -21,6 +22,11 @@ public class StoreService {
     public FindStoresResponse findStores(Pageable pageable) {
         Page<Store> storePage = storeRepository.findAllBySubscriptionStatus(SubscriptionStatus.ACTIVE, pageable);
         return FindStoresResponse.from(storePage.getContent());
+    }
+
+    public FindStoreSummaryResponse findStoreSummary(long storeId) {
+        Store store = getStoreById(storeId);
+        return FindStoreSummaryResponse.from(store);
     }
 
     public Store getStoreById(long storeId) {

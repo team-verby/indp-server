@@ -1,7 +1,9 @@
 package com.verby.indp.domain.store.controller;
 
+import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.store.dto.request.ApplyStoreRequest;
 import com.verby.indp.domain.store.dto.response.AddSubscriptionResponse;
+import com.verby.indp.domain.store.dto.response.FindStoreSummaryResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresResponse;
 import com.verby.indp.domain.store.service.ApplyStoreService;
 import com.verby.indp.domain.store.service.StoreService;
@@ -31,5 +33,10 @@ public class StoreController {
         @PageableDefault(size = 20) Pageable pageable
     ) {
         return ResponseEntity.ok(storeService.findStores(pageable));
+    }
+
+    @GetMapping("/{storeId}/summary")
+    public ResponseEntity<FindStoreSummaryResponse> findStoreSummary(@RequestAttribute("owner") Owner owner, @PathVariable long storeId) {
+        return ResponseEntity.ok(storeService.findStoreSummary(storeId));
     }
 }
