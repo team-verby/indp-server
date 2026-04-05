@@ -35,7 +35,8 @@ public class StoreBusinessHour {
     @Column(name = "is_closed")
     private boolean isClosed;
 
-    public StoreBusinessHour(int dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isClosed) {
+    public StoreBusinessHour(Store store, int dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isClosed) {
+        this.store = store;
         this.dayOfWeek = dayOfWeek;
         this.openTime = openTime;
         this.closeTime = closeTime;

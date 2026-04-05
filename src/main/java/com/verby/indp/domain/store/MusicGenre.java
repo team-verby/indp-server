@@ -1,5 +1,6 @@
 package com.verby.indp.domain.store;
 
+import com.verby.indp.domain.store.vo.Genre;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,8 @@ public class MusicGenre {
     @Column(name = "preference_type", nullable = false)
     private PreferenceType preferenceType;
 
-    public MusicGenre(Genre genre, PreferenceType preferenceType) {
+    public MusicGenre(StoreMusic storeMusic, Genre genre, PreferenceType preferenceType) {
+        this.storeMusic = storeMusic;
         this.genre = genre;
         this.preferenceType = preferenceType;
     }
@@ -40,16 +42,6 @@ public class MusicGenre {
 
     public boolean isRejected() {
         return preferenceType == PreferenceType.DISLIKE;
-    }
-
-    public enum Genre {
-        BALLAD,
-        HIPHOP,
-        INDIE,
-        ROCK,
-        DANCE,
-        CLASSIC,
-        CHILDREN
     }
 
     public enum PreferenceType {

@@ -38,7 +38,8 @@ public class StorePhoto {
     @Column(name = "is_main")
     private boolean isMain;
 
-    public StorePhoto(String imageUrl, int sortOrder, boolean isMain) {
+    public StorePhoto(Store store, String imageUrl, int sortOrder, boolean isMain) {
+        this.store = store;
         this.imageUrl = imageUrl;
         this.sortOrder = sortOrder;
         this.isMain = isMain;

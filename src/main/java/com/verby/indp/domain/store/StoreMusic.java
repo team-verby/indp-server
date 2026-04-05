@@ -1,12 +1,18 @@
 package com.verby.indp.domain.store;
 
+import com.verby.indp.domain.store.dto.request.BusinessHour;
+import com.verby.indp.domain.store.dto.request.GenreItem;
+import com.verby.indp.domain.store.dto.request.TimePreference;
+import com.verby.indp.domain.store.vo.Tempo;
+import com.verby.indp.domain.store.vo.PlaylistType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Entity
 @Getter
@@ -18,11 +24,6 @@ public class StoreMusic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "store_music_id")
     private Long storeMusicId;
-
-    @Setter
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id")
-    private Store store;
 
     @Column(name = "platform")
     private String platform;
@@ -39,7 +40,7 @@ public class StoreMusic {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tempo")
-    private MusicTempo musicTempo;
+    private Tempo musicTempo;
 
     @Column(name = "music_mood")
     private String musicMood;
@@ -54,74 +55,53 @@ public class StoreMusic {
     private List<MusicGenre> genres = new ArrayList<>();
 
     public StoreMusic(String platform, String playedMusic, String rejectedSongNote, PlaylistType playlistType,
-                      MusicTempo musicTempo, String musicMood, List<PlayMethod> playMethods,
-                      List<MusicTimePreference> musicTimePreferences, List<MusicGenre> genres) {
+                      Tempo musicTempo, String musicMood, List<PlayMethod.Method> playMethods,
+                      List<TimePreference> timePreferences, List<GenreItem> genreItems, List<BusinessHour> businessHours) {
         this.platform = platform;
         this.playedMusic = playedMusic;
         this.rejectedSongNote = rejectedSongNote;
         this.playlistType = playlistType;
         this.musicTempo = musicTempo;
         this.musicMood = musicMood;
-        setPlayMethods(playMethods);
-        setMusicTimePreferences(musicTimePreferences);
-        setGenres(genres);
+        this.playMethods = playMethods.stream()
+            .map(playMethod -> new PlayMethod(this, playMethod))
+            .toList();
+        this.genres = genreItems.stream()
+            .map(preferenceGenre -> new MusicGenre(this, preferenceGenre.genre(), preferenceGenre.preferenceType()))
+            .toList();
+        this.musicTimePreferences = buildMusicTimePreferences(playlistType, timePreferences, musicMood, businessHours);
+
     }
 
-    public enum PlaylistType {
-        MUSIC_RECOMMENDED,
-        TIME_BASED,
-        CONSISTENT_MOOD
-    }
+    private List<MusicTimePreference> buildMusicTimePreferences(PlaylistType playlistType, List<TimePreference> timePreferences,
+                                                                String mood, List<BusinessHour> businessHours) {
+        if (playlistType == PlaylistType.TIME_BASED) {
+            return timePreferences.stream()
+                .map(timePreference -> new MusicTimePreference(this, timePreference.startTime().getHour(), timePreference.endTime().getHour(), timePreference.mood()))
+                .toList();
+        }
 
-    public enum MusicTempo {
-        SLOW,
-        CALM,
-        NORMAL,
-        LIVELY,
-        UPBEAT
-    }
+        List<BusinessHour> openHours = businessHours.stream()
+            .filter(bh -> !bh.isClosed())
+            .toList();
 
-    public void update(String platform, String playedMusic, String rejectedSongNote, PlaylistType playlistType,
-                       MusicTempo musicTempo, String musicMood, List<PlayMethod> playMethods,
-                       List<MusicTimePreference> musicTimePreferences, List<MusicGenre> genres) {
-        this.platform = platform;
-        this.playedMusic = playedMusic;
-        this.rejectedSongNote = rejectedSongNote;
-        this.playlistType = playlistType;
-        this.musicTempo = musicTempo;
-        this.musicMood = musicMood;
+        LocalTime openTime = openHours.stream().map(BusinessHour::openTime).min(LocalTime::compareTo).orElse(LocalTime.MIN);
+        LocalTime closeTime = openHours.stream().map(BusinessHour::closeTime).max(LocalTime::compareTo).orElse(LocalTime.MAX);
 
-        this.playMethods.clear();
-        playMethods.forEach(pm -> {
-            pm.setStoreMusic(this);
-            this.playMethods.add(pm);
-        });
+        int openHour = openTime.getMinute() > 0 ? openTime.getHour() - 1 : openTime.getHour();
+        int closeHour = closeTime.getMinute() > 0 ? closeTime.getHour() + 1 : closeTime.getHour();
 
-        this.musicTimePreferences.clear();
-        musicTimePreferences.forEach(mtp -> {
-            mtp.setStoreMusic(this);
-            this.musicTimePreferences.add(mtp);
-        });
+        if (playlistType == PlaylistType.MUSIC_RECOMMENDED) {
+            return IntStream.range(openHour, closeHour)
+                .mapToObj(hour -> new MusicTimePreference(this, hour, hour + 1, null))
+                .toList();
 
-        this.genres.clear();
-        genres.forEach(g -> {
-            g.setStoreMusic(this);
-            this.genres.add(g);
-        });
-    }
+        } else if (playlistType == PlaylistType.CONSISTENT_MOOD) {
+            return IntStream.range(openHour, closeHour)
+                .mapToObj(hour -> new MusicTimePreference(this, hour, hour + 1, mood))
+                .toList();
+        }
 
-    private void setPlayMethods(List<PlayMethod> playMethods) {
-        this.playMethods = playMethods;
-        playMethods.forEach(playMethod -> playMethod.setStoreMusic(this));
-    }
-
-    private void setMusicTimePreferences(List<MusicTimePreference> musicTimePreferences) {
-        this.musicTimePreferences = musicTimePreferences;
-        musicTimePreferences.forEach(musicTimePreference -> musicTimePreference.setStoreMusic(this));
-    }
-
-    private void setGenres(List<MusicGenre> genres) {
-        this.genres = genres;
-        genres.forEach(genre -> genre.setStoreMusic(this));
+        return List.of();
     }
 }

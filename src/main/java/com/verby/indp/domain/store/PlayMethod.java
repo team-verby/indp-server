@@ -35,7 +35,8 @@ public class PlayMethod {
     @Column(name = "method")
     private Method method;
 
-    public PlayMethod(Method method) {
+    public PlayMethod(StoreMusic storeMusic, Method method) {
+        this.storeMusic = storeMusic;
         this.method = method;
     }
 

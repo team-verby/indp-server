@@ -30,7 +30,8 @@ public class MusicTimePreference {
     @Column(name = "mood")
     private String mood;
 
-    public MusicTimePreference(int startTimeHour, int endTimeHour, String mood) {
+    public MusicTimePreference(StoreMusic storeMusic, int startTimeHour, int endTimeHour, String mood) {
+        this.storeMusic = storeMusic;
         this.startTimeHour = startTimeHour;
         this.endTimeHour = endTimeHour;
         this.mood = mood;

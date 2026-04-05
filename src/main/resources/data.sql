@@ -35,21 +35,21 @@ INSERT INTO playlist (created_at) VALUES (NOW());
 INSERT INTO playlist (created_at) VALUES (NOW());
 INSERT INTO playlist (created_at) VALUES (NOW());
 
--- store (매장)
-INSERT INTO store (store_apply_id, owner_id, playlist_id, name, industry, address, customer_age_group, lighting, created_at)
-VALUES (1, 1, 1, '카페 공명 홍대점', '카페', '서울 마포구 와우산로17길 11-8', '20대 중반 ~ 30대 초반', 3, NOW());
-INSERT INTO store (store_apply_id, owner_id, playlist_id, name, industry, address, customer_age_group, lighting, created_at)
-VALUES (2, 2, 2, '더블유오엔 1층', '바/라운지', '서울 마포구 서교동 335-11', '20대 후반 ~ 40대', 2, NOW());
-INSERT INTO store (store_apply_id, owner_id, playlist_id, name, industry, address, customer_age_group, lighting, created_at)
-VALUES (3, 3, 3, '스모어사이트', '카페', '서울 용산구 한남동 55-9', '20대 초반 ~ 30대', 4, NOW());
-
 -- store_music (음악 설정)
-INSERT INTO store_music (store_id, platform, played_music, rejected_song_note, playlist_type, tempo, music_mood)
-VALUES (1, '유튜브 뮤직', '인디, 어쿠스틱', null, 'CONSISTENT_MOOD', 'CALM', '아늑하고 조용한');
-INSERT INTO store_music (store_id, platform, played_music, rejected_song_note, playlist_type, tempo, music_mood)
-VALUES (2, '스포티파이', 'R&B, 팝', null, 'TIME_BASED', 'NORMAL', '세련되고 활기찬');
-INSERT INTO store_music (store_id, platform, played_music, rejected_song_note, playlist_type, tempo, music_mood)
-VALUES (3, '유튜브 뮤직', '팝, 댄스', null, 'MUSIC_RECOMMENDED', 'LIVELY', '밝고 트렌디한');
+INSERT INTO store_music (platform, played_music, rejected_song_note, playlist_type, tempo, music_mood)
+VALUES ('유튜브 뮤직', '인디, 어쿠스틱', null, 'CONSISTENT_MOOD', 'CALM', '아늑하고 조용한');
+INSERT INTO store_music (platform, played_music, rejected_song_note, playlist_type, tempo, music_mood)
+VALUES ('스포티파이', 'R&B, 팝', null, 'TIME_BASED', 'NORMAL', '세련되고 활기찬');
+INSERT INTO store_music (platform, played_music, rejected_song_note, playlist_type, tempo, music_mood)
+VALUES ('유튜브 뮤직', '팝, 댄스', null, 'MUSIC_RECOMMENDED', 'LIVELY', '밝고 트렌디한');
+
+-- store (매장)
+INSERT INTO store (store_apply_id, owner_id, playlist_id, store_music_id, name, industry, address, customer_age_group, lighting, created_at)
+VALUES (1, 1, 1, 1, '카페 공명 홍대점', '카페', '서울 마포구 와우산로17길 11-8', '20대 중반 ~ 30대 초반', 3, NOW());
+INSERT INTO store (store_apply_id, owner_id, playlist_id, store_music_id, name, industry, address, customer_age_group, lighting, created_at)
+VALUES (2, 2, 2, 2, '더블유오엔 1층', '바/라운지', '서울 마포구 서교동 335-11', '20대 후반 ~ 40대', 2, NOW());
+INSERT INTO store (store_apply_id, owner_id, playlist_id, store_music_id, name, industry, address, customer_age_group, lighting, created_at)
+VALUES (3, 3, 3, 3, '스모어사이트', '카페', '서울 용산구 한남동 55-9', '20대 초반 ~ 30대', 4, NOW());
 
 -- play_method (재생 방식)
 INSERT INTO play_method (store_music_id, method) VALUES (1, 'BLUETOOTH');

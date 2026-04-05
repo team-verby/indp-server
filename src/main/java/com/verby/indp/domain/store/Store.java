@@ -4,6 +4,8 @@ import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.common.entity.BaseTimeEntity;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.playlist.Playlist;
+import com.verby.indp.domain.store.dto.request.BusinessHour;
+import com.verby.indp.domain.store.vo.Vibe;
 import com.verby.indp.domain.subscription.StoreSubscription;
 import com.verby.indp.domain.subscription.SubscriptionStatus;
 import jakarta.persistence.*;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 @Entity
 @Getter
@@ -53,7 +56,8 @@ public class Store extends BaseTimeEntity {
     @Column(name = "lighting")
     private int lighting;
 
-    @OneToOne(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "store_music_id")
     private StoreMusic storeMusic;
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -69,46 +73,35 @@ public class Store extends BaseTimeEntity {
     private List<StoreSubscription> subscriptions = new ArrayList<>();
 
     public Store(StoreApply storeApply, Owner owner, String name, String industry, String address,
-                 String customerAgeGroup, int lighting, StoreMusic storeMusic, List<StoreVibe> vibes,
-                 List<StoreBusinessHour> businessHours, List<StorePhoto> photos) {
+                 String customerAgeGroup, Integer lighting, StoreMusic storeMusic, List<Vibe> vibes,
+                 List<BusinessHour> businessHours, List<String> photoUrls) {
         this.storeApply = storeApply;
+        this.storeMusic = storeMusic;
         this.owner = owner;
         this.name = name;
         this.industry = industry;
         this.address = address;
         this.customerAgeGroup = customerAgeGroup;
         this.lighting = lighting;
-        setStoreMusic(storeMusic);
-        setVibes(vibes);
+
         setBusinessHours(businessHours);
-        setPhotos(photos);
+        setPhotos(photoUrls);
+        setVibes(vibes);
     }
 
-    public void update(String name, String industry, String address, String customerAgeGroup, int lighting,
-                       List<StoreBusinessHour> businessHours, List<StorePhoto> photos, List<StoreVibe> vibes) {
+    public void update(String name, String industry, String address, String customerAgeGroup, Integer lighting,
+                       StoreMusic storeMusic, List<Vibe> vibes, List<BusinessHour> businessHours, List<String> photoUrls) {
+        this.storeMusic = storeMusic;
         this.name = name;
         this.industry = industry;
         this.address = address;
         this.customerAgeGroup = customerAgeGroup;
         this.lighting = lighting;
-
         this.businessHours.clear();
-        businessHours.forEach(bh -> {
-            bh.setStore(this);
-            this.businessHours.add(bh);
-        });
 
-        this.photos.clear();
-        photos.forEach(p -> {
-            p.setStore(this);
-            this.photos.add(p);
-        });
-
-        this.vibes.clear();
-        vibes.forEach(v -> {
-            v.setStore(this);
-            this.vibes.add(v);
-        });
+        setBusinessHours(businessHours);
+        setPhotos(photoUrls);
+        setVibes(vibes);
     }
 
     public void assignPlaylist(Playlist playlist) {
@@ -138,23 +131,21 @@ public class Store extends BaseTimeEntity {
         subscription.setStore(this);
     }
 
-    private void setStoreMusic(StoreMusic storeMusic) {
-        this.storeMusic = storeMusic;
-        storeMusic.setStore(this);
+    private void setVibes(List<Vibe> vibes) {
+        this.vibes = vibes.stream()
+            .map(vibe -> new StoreVibe(this, vibe))
+            .toList();
     }
 
-    private void setVibes(List<StoreVibe> vibes) {
-        this.vibes = vibes;
-        vibes.forEach(vibe -> vibe.setStore(this));
+    private void setPhotos(List<String> photoUrls) {
+        this.photos = IntStream.range(0, photoUrls.size())
+            .mapToObj(i -> new StorePhoto(this, photoUrls.get(i), i, i == 0))
+            .toList();
     }
 
-    private void setBusinessHours(List<StoreBusinessHour> businessHours) {
-        this.businessHours = businessHours;
-        businessHours.forEach(businessHour -> businessHour.setStore(this));
-    }
-
-    private void setPhotos(List<StorePhoto> photos) {
-        this.photos = photos;
-        photos.forEach(photo -> photo.setStore(this));
+    private void setBusinessHours(List<BusinessHour> businessHours) {
+        this.businessHours = businessHours.stream()
+            .map(bh -> new StoreBusinessHour(this, bh.dayOfWeek(), bh.openTime(), bh.closeTime(), bh.isClosed()))
+            .toList();
     }
 }
