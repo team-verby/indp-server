@@ -1,6 +1,6 @@
 package com.verby.indp.domain.subscription.dto.request;
 
-public record RenewSubscriptionRequest(
+public record AddSubscriptionRequest(
     Long planId,
     int usagePeriod
 ) {

@@ -1,11 +1,9 @@
 package com.verby.indp.domain.store.dto.request;
 
-import com.verby.indp.domain.store.MusicGenre;
 import com.verby.indp.domain.store.PlayMethod;
 import com.verby.indp.domain.store.StoreMusic;
 import com.verby.indp.domain.store.StoreVibe;
 
-import java.time.LocalTime;
 import java.util.List;
 
 public record UpdateStoreRequest(
@@ -27,21 +25,4 @@ public record UpdateStoreRequest(
     String rejectedSongNote,
     String mood
 ) {
-    public record BusinessHour(
-        int dayOfWeek,
-        LocalTime openTime,
-        LocalTime closeTime,
-        boolean isClosed
-    ) {}
-
-    public record TimePreference(
-        LocalTime startTime,
-        LocalTime endTime,
-        String mood
-    ) {}
-
-    public record GenreItem(
-        MusicGenre.Genre genre,
-        MusicGenre.PreferenceType preferenceType
-    ) {}
 }

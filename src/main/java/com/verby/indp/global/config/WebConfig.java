@@ -47,6 +47,6 @@ public class WebConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(new OwnerLoginCheckInterceptor(ownerRepository, tokenManager))
             .addPathPatterns("/api/owner/**")
-            .excludePathPatterns("/api/owner/login", "/api/owner/stores/apply");
+            .excludePathPatterns("/api/owner/login");
     }
 }

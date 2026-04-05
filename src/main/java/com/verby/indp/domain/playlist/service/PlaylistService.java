@@ -73,15 +73,15 @@ public class PlaylistService {
 
     @Transactional
     public void applyDueScheduledUpdates() {
-        List<ScheduledPlaylist> due = scheduledPlaylistUpdateRepository
+        List<ScheduledPlaylist> scheduledPlaylists = scheduledPlaylistUpdateRepository
             .findAllByStatusAndScheduledAtLessThanEqual(
                 ScheduledPlaylist.UpdateStatus.PENDING,
                 LocalDateTime.now()
             );
 
-        for (ScheduledPlaylist update : due) {
-            applyScheduledUpdate(update);
-            update.markApplied();
+        for (ScheduledPlaylist scheduledPlaylist : scheduledPlaylists) {
+            applyScheduledUpdate(scheduledPlaylist);
+            scheduledPlaylist.markApplied();
         }
     }
 

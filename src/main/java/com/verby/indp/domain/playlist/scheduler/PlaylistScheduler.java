@@ -18,19 +18,20 @@ public class PlaylistScheduler {
     private final StoreBusinessHourRepository storeBusinessHourRepository;
     private final PlaylistService playlistService;
 
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 0/30 * * * *")
     public void applyScheduledPlaylistUpdates() {
         playlistService.applyDueScheduledUpdates();
     }
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0/30 * * * *")
     public void deleteRecommendedSongsAtClose() {
         LocalDateTime now = LocalDateTime.now();
         int dayOfWeek = now.getDayOfWeek().getValue();
         LocalTime closeTime = now.toLocalTime().withSecond(0).withNano(0);
+        LocalTime fromCloseTime = closeTime.minusMinutes(30);
 
         List<StoreBusinessHour> closingStores = storeBusinessHourRepository
-            .findByDayOfWeekAndCloseTime(dayOfWeek, closeTime);
+            .findByDayOfWeekAndCloseTimeBetween(dayOfWeek, fromCloseTime, closeTime);
 
         for (StoreBusinessHour businessHour : closingStores) {
             playlistService.deleteRecommendedSongs(businessHour.getStore());

@@ -10,10 +10,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Random;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class OwnerService {
+
+    private static final String OWNER_LOGIN_ID_PREFIX = "store";
 
     private final OwnerRepository ownerRepository;
     private final TokenManager tokenManager;
@@ -28,4 +33,26 @@ public class OwnerService {
         String token = tokenManager.createOwnerToken(owner.getOwnerId());
         return new LoginResponse(token);
     }
+
+    public Owner createOwner(String name, String phone) {
+        String loginId = generateUniqueLoginId();
+        String password = generatePassword();
+        Owner owner = new Owner(loginId, password, name, phone);
+        return ownerRepository.save(owner);
+    }
+
+    private String generateUniqueLoginId() {
+        String loginId;
+        Random random = new Random();
+        do {
+            loginId = OWNER_LOGIN_ID_PREFIX + String.format("%04d", random.nextInt(10000));
+        } while (ownerRepository.existsByLoginId(loginId));
+
+        return loginId;
+    }
+
+    private String generatePassword() {
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+    }
+
 }

@@ -1,9 +1,8 @@
 package com.verby.indp.domain.subscription.controller;
 
 import com.verby.indp.domain.auth.Owner;
-import com.verby.indp.domain.store.dto.response.ApplyStoreResponse;
-import com.verby.indp.domain.subscription.StoreSubscription;
-import com.verby.indp.domain.subscription.dto.request.RenewSubscriptionRequest;
+import com.verby.indp.domain.store.dto.response.AddSubscriptionResponse;
+import com.verby.indp.domain.subscription.dto.request.AddSubscriptionRequest;
 import com.verby.indp.domain.subscription.dto.response.FindSubscriptionsResponse;
 import com.verby.indp.domain.subscription.service.SubscriptionService;
 import com.verby.indp.global.resolver.LoginOwner;
@@ -25,13 +24,12 @@ public class SubscriptionController {
         return ResponseEntity.ok(subscriptionService.findSubscriptions(owner, storeId));
     }
 
-    @PostMapping("/stores/{storeId}/renew")
-    public ResponseEntity<ApplyStoreResponse> renewSubscription(
+    @PostMapping("/stores/{storeId}")
+    public ResponseEntity<AddSubscriptionResponse> addSubscription(
         @LoginOwner Owner owner,
         @PathVariable long storeId,
-        @RequestBody RenewSubscriptionRequest request
+        @RequestBody AddSubscriptionRequest request
     ) {
-        StoreSubscription subscription = subscriptionService.renewSubscription(owner, storeId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApplyStoreResponse.from(subscription));
+        return ResponseEntity.status(HttpStatus.CREATED).body(subscriptionService.addSubscription(owner, storeId, request));
     }
 }
