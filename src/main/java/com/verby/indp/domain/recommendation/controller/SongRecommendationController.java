@@ -1,6 +1,6 @@
 package com.verby.indp.domain.recommendation.controller;
 
-import com.verby.indp.domain.config.PricePolicyService;
+import com.verby.indp.domain.policy.PricePolicyService;
 import com.verby.indp.domain.recommendation.dto.request.RegisterSongRecommendationRequest;
 import com.verby.indp.domain.recommendation.dto.response.RegisterSongRecommendationResponse;
 import com.verby.indp.domain.recommendation.service.SongRecommendationService;

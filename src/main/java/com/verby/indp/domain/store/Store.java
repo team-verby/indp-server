@@ -2,6 +2,7 @@ package com.verby.indp.domain.store;
 
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.common.entity.BaseTimeEntity;
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.store.dto.request.BusinessHour;
@@ -75,6 +76,15 @@ public class Store extends BaseTimeEntity {
     public Store(StoreApply storeApply, Owner owner, String name, String industry, String address,
                  String customerAgeGroup, Integer lighting, StoreMusic storeMusic, List<Vibe> vibes,
                  List<BusinessHour> businessHours, List<String> photoUrls) {
+        validateStoreApply(storeApply);
+        validateOwner(owner);
+        validateName(name);
+        validateAddress(address);
+        validateCustomerAgeGroup(customerAgeGroup);
+        validateLighting(lighting);
+        validateStoreMusic(storeMusic);
+        validateVibes(vibes);
+        validateBusinessHours(businessHours);
         this.storeApply = storeApply;
         this.storeMusic = storeMusic;
         this.owner = owner;
@@ -147,5 +157,41 @@ public class Store extends BaseTimeEntity {
         this.businessHours = businessHours.stream()
             .map(bh -> new StoreBusinessHour(this, bh.dayOfWeek(), bh.openTime(), bh.closeTime(), bh.isClosed()))
             .toList();
+    }
+
+    private void validateStoreApply(StoreApply storeApply) {
+        if (storeApply == null) throw new BadRequestException("storeApply는 필수입니다.");
+    }
+
+    private void validateOwner(Owner owner) {
+        if (owner == null) throw new BadRequestException("owner는 필수입니다.");
+    }
+
+    private void validateName(String name) {
+        if (name == null || name.isBlank()) throw new BadRequestException("name은 필수입니다.");
+    }
+
+    private void validateAddress(String address) {
+        if (address == null || address.isBlank()) throw new BadRequestException("address는 필수입니다.");
+    }
+
+    private void validateCustomerAgeGroup(String customerAgeGroup) {
+        if (customerAgeGroup == null || customerAgeGroup.isBlank()) throw new BadRequestException("customerAgeGroup은 필수입니다.");
+    }
+
+    private void validateLighting(Integer lighting) {
+        if (lighting == null || lighting < 0) throw new BadRequestException("lighting은 0 이상이어야 합니다.");
+    }
+
+    private void validateStoreMusic(StoreMusic storeMusic) {
+        if (storeMusic == null) throw new BadRequestException("storeMusic은 필수입니다.");
+    }
+
+    private void validateVibes(List<Vibe> vibes) {
+        if (vibes == null || vibes.isEmpty()) throw new BadRequestException("vibes는 필수이며 비어있을 수 없습니다.");
+    }
+
+    private void validateBusinessHours(List<BusinessHour> businessHours) {
+        if (businessHours == null || businessHours.isEmpty()) throw new BadRequestException("businessHours는 필수이며 비어있을 수 없습니다.");
     }
 }

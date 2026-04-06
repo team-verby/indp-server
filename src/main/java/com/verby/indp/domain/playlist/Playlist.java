@@ -1,6 +1,7 @@
 package com.verby.indp.domain.playlist;
 
 import com.verby.indp.domain.common.entity.BaseTimeEntity;
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.store.Store;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class Playlist extends BaseTimeEntity {
     private Store store;
 
     public Playlist(List<PlaylistSong> songs) {
+        validateSongs(songs);
         this.songs = songs;
         songs.forEach(song -> song.setPlaylist(this));
     }
@@ -36,5 +38,9 @@ public class Playlist extends BaseTimeEntity {
     public void addSong(PlaylistSong song) {
         songs.add(song);
         song.setPlaylist(this);
+    }
+
+    private void validateSongs(List<PlaylistSong> songs) {
+        if (songs == null || songs.isEmpty()) throw new BadRequestException("songs는 필수이며 비어있을 수 없습니다.");
     }
 }

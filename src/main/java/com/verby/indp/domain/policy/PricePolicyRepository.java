@@ -1,4 +1,4 @@
-package com.verby.indp.domain.config;
+package com.verby.indp.domain.policy;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

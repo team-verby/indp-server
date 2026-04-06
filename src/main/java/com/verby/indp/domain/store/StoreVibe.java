@@ -1,5 +1,6 @@
 package com.verby.indp.domain.store;
 
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.store.vo.Vibe;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -27,7 +28,17 @@ public class StoreVibe {
     private Vibe vibe;
 
     public StoreVibe(Store store, Vibe vibe) {
+        validateStore(store);
+        validateVibe(vibe);
         this.store = store;
         this.vibe = vibe;
+    }
+
+    private void validateStore(Store store) {
+        if (store == null) throw new BadRequestException("store는 필수입니다.");
+    }
+
+    private void validateVibe(Vibe vibe) {
+        if (vibe == null) throw new BadRequestException("vibe는 필수입니다.");
     }
 }

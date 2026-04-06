@@ -1,6 +1,7 @@
 package com.verby.indp.domain.payment;
 
 import com.verby.indp.domain.common.entity.BaseTimeEntity;
+import com.verby.indp.domain.common.exception.BadRequestException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,12 +43,15 @@ public class Payment extends BaseTimeEntity {
     private PaymentStatus status = PaymentStatus.PENDING;
 
     public Payment(String orderName, int amount) {
+        validateOrderName(orderName);
+        validateAmount(amount);
         this.orderId = UUID.randomUUID().toString();
         this.orderName = orderName;
         this.amount = amount;
     }
 
     public void updatePaymentKey(String paymentKey) {
+        validatePaymentKey(paymentKey);
         this.paymentKey = paymentKey;
     }
 
@@ -70,5 +74,17 @@ public class Payment extends BaseTimeEntity {
 
     public boolean isDifferentAmount(int amount) {
         return this.amount != amount;
+    }
+
+    private void validateOrderName(String orderName) {
+        if (orderName == null || orderName.isBlank()) throw new BadRequestException("orderName은 필수입니다.");
+    }
+
+    private void validateAmount(int amount) {
+        if (amount <= 0) throw new BadRequestException("amount는 양수여야 합니다.");
+    }
+
+    private void validatePaymentKey(String paymentKey) {
+        if (paymentKey == null || paymentKey.isBlank()) throw new BadRequestException("paymentKey는 필수입니다.");
     }
 }

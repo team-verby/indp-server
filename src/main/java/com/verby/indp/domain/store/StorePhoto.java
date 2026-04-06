@@ -1,5 +1,6 @@
 package com.verby.indp.domain.store;
 
+import com.verby.indp.domain.common.exception.BadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -39,9 +40,24 @@ public class StorePhoto {
     private boolean isMain;
 
     public StorePhoto(Store store, String imageUrl, int sortOrder, boolean isMain) {
+        validateStore(store);
+        validateImageUrl(imageUrl);
+        validateSortOrder(sortOrder);
         this.store = store;
         this.imageUrl = imageUrl;
         this.sortOrder = sortOrder;
         this.isMain = isMain;
+    }
+
+    private void validateStore(Store store) {
+        if (store == null) throw new BadRequestException("store는 필수입니다.");
+    }
+
+    private void validateImageUrl(String imageUrl) {
+        if (imageUrl == null || imageUrl.isBlank()) throw new BadRequestException("imageUrl은 필수입니다.");
+    }
+
+    private void validateSortOrder(int sortOrder) {
+        if (sortOrder < 0) throw new BadRequestException("sortOrder는 0 이상이어야 합니다.");
     }
 }

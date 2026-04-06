@@ -1,4 +1,4 @@
-package com.verby.indp.domain.config;
+package com.verby.indp.domain.policy;
 
 import com.verby.indp.domain.common.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;

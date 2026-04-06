@@ -1,5 +1,6 @@
 package com.verby.indp.domain.playlist;
 
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.recommendation.SongRecommendation;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,6 +56,11 @@ public class PlaylistSong {
     private double playOrder;
 
     public PlaylistSong(SongRecommendation songRecommendation, boolean isRecommended, String vid, Integer playTime, String title, String artist, double playOrder) {
+        validateVid(vid);
+        validatePlayTime(playTime);
+        validateTitle(title);
+        validateArtist(artist);
+        validatePlayOrder(playOrder);
         this.songRecommendation = songRecommendation;
         this.isRecommended = isRecommended;
         this.vid = vid;
@@ -62,5 +68,25 @@ public class PlaylistSong {
         this.title = title;
         this.artist = artist;
         this.playOrder = playOrder;
+    }
+
+    private void validateVid(String vid) {
+        if (vid == null || vid.isBlank()) throw new BadRequestException("vid는 필수입니다.");
+    }
+
+    private void validatePlayTime(Integer playTime) {
+        if (playTime == null || playTime <= 0) throw new BadRequestException("playTime은 양수여야 합니다.");
+    }
+
+    private void validateTitle(String title) {
+        if (title == null || title.isBlank()) throw new BadRequestException("title은 필수입니다.");
+    }
+
+    private void validateArtist(String artist) {
+        if (artist == null || artist.isBlank()) throw new BadRequestException("artist는 필수입니다.");
+    }
+
+    private void validatePlayOrder(double playOrder) {
+        if (playOrder <= 0) throw new BadRequestException("playOrder는 양수여야 합니다.");
     }
 }

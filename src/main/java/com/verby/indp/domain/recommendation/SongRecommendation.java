@@ -1,6 +1,7 @@
 package com.verby.indp.domain.recommendation;
 
 import com.verby.indp.domain.common.entity.BaseTimeEntity;
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.store.Store;
 import jakarta.persistence.*;
@@ -50,6 +51,13 @@ public class SongRecommendation extends BaseTimeEntity {
     }
 
     public SongRecommendation(Store store, String title, String artist, String vid, Integer playTime, String refereeName, Payment payment) {
+        validateStore(store);
+        validateTitle(title);
+        validateArtist(artist);
+        validateVid(vid);
+        validatePlayTime(playTime);
+        validateRefereeName(refereeName);
+        validatePayment(payment);
         this.store = store;
         this.title = title;
         this.artist = artist;
@@ -60,6 +68,39 @@ public class SongRecommendation extends BaseTimeEntity {
     }
 
     public void updateStatus(RecommendationStatus status) {
+        validateStatus(status);
         this.status = status;
+    }
+
+    private void validateStore(Store store) {
+        if (store == null) throw new BadRequestException("store는 필수입니다.");
+    }
+
+    private void validateTitle(String title) {
+        if (title == null || title.isBlank()) throw new BadRequestException("title은 필수입니다.");
+    }
+
+    private void validateArtist(String artist) {
+        if (artist == null || artist.isBlank()) throw new BadRequestException("artist는 필수입니다.");
+    }
+
+    private void validateVid(String vid) {
+        if (vid == null || vid.isBlank()) throw new BadRequestException("vid는 필수입니다.");
+    }
+
+    private void validatePlayTime(Integer playTime) {
+        if (playTime != null && playTime <= 0) throw new BadRequestException("playTime은 양수여야 합니다.");
+    }
+
+    private void validateRefereeName(String refereeName) {
+        if (refereeName == null || refereeName.isBlank()) throw new BadRequestException("refereeName은 필수입니다.");
+    }
+
+    private void validatePayment(Payment payment) {
+        if (payment == null) throw new BadRequestException("payment는 필수입니다.");
+    }
+
+    private void validateStatus(RecommendationStatus status) {
+        if (status == null) throw new BadRequestException("status는 필수입니다.");
     }
 }

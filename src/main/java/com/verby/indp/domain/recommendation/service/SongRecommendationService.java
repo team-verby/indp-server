@@ -1,7 +1,7 @@
 package com.verby.indp.domain.recommendation.service;
 
 import com.verby.indp.domain.common.exception.NotFoundException;
-import com.verby.indp.domain.config.PricePolicyService;
+import com.verby.indp.domain.policy.PricePolicyService;
 import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.service.PlaylistService;

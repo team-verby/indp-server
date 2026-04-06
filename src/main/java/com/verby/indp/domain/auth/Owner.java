@@ -1,5 +1,6 @@
 package com.verby.indp.domain.auth;
 
+import com.verby.indp.domain.common.exception.BadRequestException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,10 @@ public class Owner {
     private String phone;
 
     public Owner(String loginId, String password, String name, String phone) {
+        validateLoginId(loginId);
+        validatePassword(password);
+        validateName(name);
+        validatePhone(phone);
         this.loginId = loginId;
         this.password = password;
         this.name = name;
@@ -36,5 +41,21 @@ public class Owner {
 
     public boolean mismatchPassword(String password) {
         return !this.password.equals(password);
+    }
+
+    private void validateLoginId(String loginId) {
+        if (loginId == null || loginId.isBlank()) throw new BadRequestException("loginId는 필수입니다.");
+    }
+
+    private void validatePassword(String password) {
+        if (password == null || password.isBlank()) throw new BadRequestException("password는 필수입니다.");
+    }
+
+    private void validateName(String name) {
+        if (name == null || name.isBlank()) throw new BadRequestException("name은 필수입니다.");
+    }
+
+    private void validatePhone(String phone) {
+        if (phone == null || phone.isBlank()) throw new BadRequestException("phone은 필수입니다.");
     }
 }

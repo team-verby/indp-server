@@ -1,5 +1,6 @@
 package com.verby.indp.domain.store;
 
+import com.verby.indp.domain.common.exception.BadRequestException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,10 +37,30 @@ public class StoreBusinessHour {
     private boolean isClosed;
 
     public StoreBusinessHour(Store store, int dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isClosed) {
+        validateStore(store);
+        validateDayOfWeek(dayOfWeek);
+        validateOpenTime(openTime);
+        validateCloseTime(closeTime);
         this.store = store;
         this.dayOfWeek = dayOfWeek;
         this.openTime = openTime;
         this.closeTime = closeTime;
         this.isClosed = isClosed;
+    }
+
+    private void validateStore(Store store) {
+        if (store == null) throw new BadRequestException("store는 필수입니다.");
+    }
+
+    private void validateDayOfWeek(int dayOfWeek) {
+        if (dayOfWeek < 1 || dayOfWeek > 7) throw new BadRequestException("dayOfWeek는 1~7 사이여야 합니다.");
+    }
+
+    private void validateOpenTime(LocalTime openTime) {
+        if (openTime == null) throw new BadRequestException("openTime은 필수입니다.");
+    }
+
+    private void validateCloseTime(LocalTime closeTime) {
+        if (closeTime == null) throw new BadRequestException("closeTime은 필수입니다.");
     }
 }

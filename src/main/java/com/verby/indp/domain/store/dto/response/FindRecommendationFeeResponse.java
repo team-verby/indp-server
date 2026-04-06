@@ -1,6 +1,6 @@
 package com.verby.indp.domain.store.dto.response;
 
-import com.verby.indp.domain.config.PricePolicy;
+import com.verby.indp.domain.policy.PricePolicy;
 
 public record FindRecommendationFeeResponse(int amount) {
 

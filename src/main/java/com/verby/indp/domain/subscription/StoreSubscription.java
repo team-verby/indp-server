@@ -1,6 +1,7 @@
 package com.verby.indp.domain.subscription;
 
 import com.verby.indp.domain.common.entity.BaseTimeEntity;
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.plan.Plan;
 import com.verby.indp.domain.store.Store;
@@ -49,6 +50,9 @@ public class StoreSubscription extends BaseTimeEntity {
     private SubscriptionStatus status = SubscriptionStatus.PENDING_PAYMENT;
 
     public StoreSubscription(Plan plan, Payment payment, int usagePeriod) {
+        validatePlan(plan);
+        validatePayment(payment);
+        validateUsagePeriod(usagePeriod);
         this.plan = plan;
         this.payment = payment;
         this.usagePeriod = usagePeriod;
@@ -63,5 +67,17 @@ public class StoreSubscription extends BaseTimeEntity {
     public void updateStartDate(LocalDate startDate) {
         this.startDate = startDate;
         this.endDate = startDate.plusMonths(this.usagePeriod);
+    }
+
+    private void validatePlan(Plan plan) {
+        if (plan == null) throw new BadRequestException("plan은 필수입니다.");
+    }
+
+    private void validatePayment(Payment payment) {
+        if (payment == null) throw new BadRequestException("payment는 필수입니다.");
+    }
+
+    private void validateUsagePeriod(int usagePeriod) {
+        if (usagePeriod <= 0) throw new BadRequestException("usagePeriod는 양수여야 합니다.");
     }
 }

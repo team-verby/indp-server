@@ -1,5 +1,6 @@
 package com.verby.indp.domain.store;
 
+import com.verby.indp.domain.common.exception.BadRequestException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,9 +32,29 @@ public class MusicTimePreference {
     private String mood;
 
     public MusicTimePreference(StoreMusic storeMusic, int startTimeHour, int endTimeHour, String mood) {
+        validateStoreMusic(storeMusic);
+        validateStartTimeHour(startTimeHour);
+        validateEndTimeHour(endTimeHour);
+        validateTimeRange(startTimeHour, endTimeHour);
         this.storeMusic = storeMusic;
         this.startTimeHour = startTimeHour;
         this.endTimeHour = endTimeHour;
         this.mood = mood;
+    }
+
+    private void validateStoreMusic(StoreMusic storeMusic) {
+        if (storeMusic == null) throw new BadRequestException("storeMusic은 필수입니다.");
+    }
+
+    private void validateStartTimeHour(int startTimeHour) {
+        if (startTimeHour < 0 || startTimeHour > 23) throw new BadRequestException("startTimeHour는 0~23 사이여야 합니다.");
+    }
+
+    private void validateEndTimeHour(int endTimeHour) {
+        if (endTimeHour < 0 || endTimeHour > 23) throw new BadRequestException("endTimeHour는 0~23 사이여야 합니다.");
+    }
+
+    private void validateTimeRange(int startTimeHour, int endTimeHour) {
+        if (startTimeHour >= endTimeHour) throw new BadRequestException("startTimeHour는 endTimeHour보다 작아야 합니다.");
     }
 }

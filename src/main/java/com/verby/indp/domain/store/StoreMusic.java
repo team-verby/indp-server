@@ -1,5 +1,6 @@
 package com.verby.indp.domain.store;
 
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.store.dto.request.BusinessHour;
 import com.verby.indp.domain.store.dto.request.GenreItem;
 import com.verby.indp.domain.store.dto.request.TimePreference;
@@ -57,6 +58,11 @@ public class StoreMusic {
     public StoreMusic(String platform, String playedMusic, String rejectedSongNote, PlaylistType playlistType,
                       Tempo musicTempo, String musicMood, List<PlayMethod.Method> playMethods,
                       List<TimePreference> timePreferences, List<GenreItem> genreItems, List<BusinessHour> businessHours) {
+        validatePlatform(platform);
+        validatePlayedMusic(playedMusic);
+        validatePlaylistType(playlistType);
+        validateMusicTempo(musicTempo);
+        validatePlayMethods(playMethods);
         this.platform = platform;
         this.playedMusic = playedMusic;
         this.rejectedSongNote = rejectedSongNote;
@@ -71,6 +77,26 @@ public class StoreMusic {
             .toList();
         this.musicTimePreferences = buildMusicTimePreferences(playlistType, timePreferences, musicMood, businessHours);
 
+    }
+
+    private void validatePlatform(String platform) {
+        if (platform == null || platform.isBlank()) throw new BadRequestException("platform은 필수입니다.");
+    }
+
+    private void validatePlayedMusic(String playedMusic) {
+        if (playedMusic == null || playedMusic.isBlank()) throw new BadRequestException("playedMusic은 필수입니다.");
+    }
+
+    private void validatePlaylistType(PlaylistType playlistType) {
+        if (playlistType == null) throw new BadRequestException("playlistType은 필수입니다.");
+    }
+
+    private void validateMusicTempo(Tempo musicTempo) {
+        if (musicTempo == null) throw new BadRequestException("musicTempo는 필수입니다.");
+    }
+
+    private void validatePlayMethods(List<PlayMethod.Method> playMethods) {
+        if (playMethods == null || playMethods.isEmpty()) throw new BadRequestException("playMethods는 필수이며 비어있을 수 없습니다.");
     }
 
     private List<MusicTimePreference> buildMusicTimePreferences(PlaylistType playlistType, List<TimePreference> timePreferences,

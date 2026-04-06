@@ -1,5 +1,6 @@
 package com.verby.indp.domain.store;
 
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.store.vo.Genre;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -31,6 +32,9 @@ public class MusicGenre {
     private PreferenceType preferenceType;
 
     public MusicGenre(StoreMusic storeMusic, Genre genre, PreferenceType preferenceType) {
+        validateStoreMusic(storeMusic);
+        validateGenre(genre);
+        validatePreferenceType(preferenceType);
         this.storeMusic = storeMusic;
         this.genre = genre;
         this.preferenceType = preferenceType;
@@ -47,5 +51,17 @@ public class MusicGenre {
     public enum PreferenceType {
         LIKE,
         DISLIKE
+    }
+
+    private void validateStoreMusic(StoreMusic storeMusic) {
+        if (storeMusic == null) throw new BadRequestException("storeMusic은 필수입니다.");
+    }
+
+    private void validateGenre(Genre genre) {
+        if (genre == null) throw new BadRequestException("genre는 필수입니다.");
+    }
+
+    private void validatePreferenceType(PreferenceType preferenceType) {
+        if (preferenceType == null) throw new BadRequestException("preferenceType은 필수입니다.");
     }
 }

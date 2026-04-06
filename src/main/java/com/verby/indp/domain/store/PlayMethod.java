@@ -1,5 +1,6 @@
 package com.verby.indp.domain.store;
 
+import com.verby.indp.domain.common.exception.BadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -36,6 +37,8 @@ public class PlayMethod {
     private Method method;
 
     public PlayMethod(StoreMusic storeMusic, Method method) {
+        validateStoreMusic(storeMusic);
+        validateMethod(method);
         this.storeMusic = storeMusic;
         this.method = method;
     }
@@ -44,5 +47,13 @@ public class PlayMethod {
         BLUETOOTH,
         WIRED,
         OTHER
+    }
+
+    private void validateStoreMusic(StoreMusic storeMusic) {
+        if (storeMusic == null) throw new BadRequestException("storeMusic은 필수입니다.");
+    }
+
+    private void validateMethod(Method method) {
+        if (method == null) throw new BadRequestException("method는 필수입니다.");
     }
 }
