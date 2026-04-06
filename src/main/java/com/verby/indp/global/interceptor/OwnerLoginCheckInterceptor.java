@@ -2,8 +2,8 @@ package com.verby.indp.global.interceptor;
 
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.auth.repository.OwnerRepository;
+import com.verby.indp.domain.auth.service.AuthTokenService;
 import com.verby.indp.domain.common.exception.AuthException;
-import com.verby.indp.global.jwt.TokenManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class OwnerLoginCheckInterceptor implements HandlerInterceptor {
     private static final String BEARER_PREFIX = "Bearer ";
 
     private final OwnerRepository ownerRepository;
-    private final TokenManager tokenManager;
+    private final AuthTokenService authTokenService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -27,7 +27,7 @@ public class OwnerLoginCheckInterceptor implements HandlerInterceptor {
 
         String authorization = request.getHeader(AUTHORIZATION_HEADER);
         if (authorization != null && authorization.startsWith(BEARER_PREFIX)) {
-            Long ownerId = tokenManager.decodeOwnerToken(authorization.substring(BEARER_PREFIX.length()));
+            Long ownerId = authTokenService.decodeOwnerToken(authorization.substring(BEARER_PREFIX.length()));
 
             Owner owner = ownerRepository.findById(ownerId)
                 .orElseThrow(() -> new AuthException("권한이 없습니다."));

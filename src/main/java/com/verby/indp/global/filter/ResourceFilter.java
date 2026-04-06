@@ -18,6 +18,7 @@ public class ResourceFilter implements Filter {
         "/api/main",
         "/api/admin",
         "/api/owner",
+        "/api/auth",
         "/api/plans",
         "/api/images",
         "/api/payments",

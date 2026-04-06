@@ -1,6 +1,6 @@
 package com.verby.indp.global.interceptor;
 
-import com.verby.indp.global.jwt.TokenManager;
+import com.verby.indp.domain.auth.service.AuthTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.ServerHttpRequest;
@@ -17,7 +17,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
 
-    private final TokenManager tokenManager;
+    private final AuthTokenService authTokenService;
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
@@ -30,7 +30,7 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
 
         if (token != null) {
             try {
-                Long ownerId = tokenManager.decodeOwnerToken(token);
+                Long ownerId = authTokenService.decodeOwnerToken(token);
                 attributes.put("ownerId", ownerId);
                 log.debug("Owner connected: {}", ownerId);
             } catch (Exception e) {

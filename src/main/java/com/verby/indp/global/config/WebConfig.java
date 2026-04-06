@@ -2,9 +2,9 @@ package com.verby.indp.global.config;
 
 import com.verby.indp.domain.auth.repository.AdminRepository;
 import com.verby.indp.domain.auth.repository.OwnerRepository;
+import com.verby.indp.domain.auth.service.AuthTokenService;
 import com.verby.indp.global.interceptor.AdminLoginCheckInterceptor;
 import com.verby.indp.global.interceptor.OwnerLoginCheckInterceptor;
-import com.verby.indp.global.jwt.TokenManager;
 import com.verby.indp.global.resolver.LoginAdminArgumentResolver;
 import com.verby.indp.global.resolver.LoginOwnerArgumentResolver;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
-    private final TokenManager tokenManager;
+    private final AuthTokenService authTokenService;
     private final AdminRepository adminRepository;
     private final OwnerRepository ownerRepository;
 
@@ -41,11 +41,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new AdminLoginCheckInterceptor(adminRepository, tokenManager))
+        registry.addInterceptor(new AdminLoginCheckInterceptor(adminRepository, authTokenService))
             .addPathPatterns("/api/admin/**")
             .excludePathPatterns("/api/admin/login");
 
-        registry.addInterceptor(new OwnerLoginCheckInterceptor(ownerRepository, tokenManager))
+        registry.addInterceptor(new OwnerLoginCheckInterceptor(ownerRepository, authTokenService))
             .addPathPatterns("/api/owner/**")
             .excludePathPatterns("/api/owner/login");
     }

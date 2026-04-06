@@ -1,11 +1,11 @@
 package com.verby.indp.domain.auth.service;
 
 import com.verby.indp.domain.auth.Owner;
+import com.verby.indp.domain.auth.RefreshToken;
 import com.verby.indp.domain.auth.dto.request.LoginRequest;
 import com.verby.indp.domain.auth.dto.response.LoginResponse;
 import com.verby.indp.domain.auth.repository.OwnerRepository;
 import com.verby.indp.domain.common.exception.AuthException;
-import com.verby.indp.global.jwt.TokenManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,8 +21,9 @@ public class OwnerService {
     private static final String OWNER_LOGIN_ID_PREFIX = "store";
 
     private final OwnerRepository ownerRepository;
-    private final TokenManager tokenManager;
+    private final AuthTokenService authTokenService;
 
+    @Transactional
     public LoginResponse login(LoginRequest request) {
         Owner owner = ownerRepository.findByLoginId(request.loginId())
             .orElseThrow(() -> new AuthException("존재하지 않는 계정입니다."));
@@ -30,8 +31,14 @@ public class OwnerService {
             throw new AuthException("비밀번호가 일치하지 않습니다.");
         }
 
-        String token = tokenManager.createOwnerToken(owner.getOwnerId());
-        return new LoginResponse(token);
+        String accessToken = authTokenService.createOwnerToken(owner.getOwnerId());
+        RefreshToken refreshToken = authTokenService.issueOwnerRefreshToken(owner.getOwnerId());
+        return new LoginResponse(accessToken, refreshToken.getToken());
+    }
+
+    @Transactional
+    public void logout(Long ownerId) {
+        authTokenService.revokeOwnerRefreshToken(ownerId);
     }
 
     public Owner createOwner(String name, String phone) {

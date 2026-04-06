@@ -1,11 +1,11 @@
 package com.verby.indp.domain.auth.service;
 
 import com.verby.indp.domain.auth.Admin;
+import com.verby.indp.domain.auth.RefreshToken;
 import com.verby.indp.domain.auth.dto.request.LoginRequest;
 import com.verby.indp.domain.auth.dto.response.LoginResponse;
 import com.verby.indp.domain.auth.repository.AdminRepository;
 import com.verby.indp.domain.common.exception.AuthException;
-import com.verby.indp.global.jwt.TokenManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminService {
 
     private final AdminRepository adminRepository;
-    private final TokenManager tokenManager;
+    private final AuthTokenService authTokenService;
 
+    @Transactional
     public LoginResponse login(LoginRequest request) {
         Admin admin = adminRepository.findByLoginId(request.loginId())
             .orElseThrow(() -> new AuthException("존재하지 않는 계정입니다."));
@@ -25,7 +26,13 @@ public class AdminService {
             throw new AuthException("비밀번호가 일치하지 않습니다.");
         }
 
-        String token = tokenManager.createAdminToken(admin.getAdminId());
-        return new LoginResponse(token);
+        String accessToken = authTokenService.createAdminToken(admin.getAdminId());
+        RefreshToken refreshToken = authTokenService.issueAdminRefreshToken(admin.getAdminId());
+        return new LoginResponse(accessToken, refreshToken.getToken());
+    }
+
+    @Transactional
+    public void logout(Long adminId) {
+        authTokenService.revokeAdminRefreshToken(adminId);
     }
 }

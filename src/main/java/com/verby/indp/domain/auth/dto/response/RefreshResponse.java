@@ -1,8 +1,7 @@
 package com.verby.indp.domain.auth.dto.response;
 
-public record LoginResponse(
+public record RefreshResponse(
     String accessToken,
     String refreshToken
 ) {
-
 }
