@@ -56,6 +56,10 @@ public class StoreSubscription extends BaseTimeEntity {
         this.plan = plan;
         this.payment = payment;
         this.usagePeriod = usagePeriod;
+        // TODO: 구독 활성화 시간
+        // 구독 활성화 pending status 추가 필요
+        // 현재 구독중이 아닐 경우 다음주 화요일 00시부터 시작
+        // 현재 구독중일 경우 구독이 끝나는 날 00시부터 시작
         this.startDate = LocalDate.now();
         this.endDate = startDate.plusMonths(usagePeriod);
     }

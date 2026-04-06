@@ -29,12 +29,15 @@ public class SongRecommendationService {
     private final StoreService storeService;
     private final PricePolicyService pricePolicyService;
     private final PlaylistService playlistService;
-    private final SimpMessagingTemplate messagingTemplate;
     private final PlaylistWebSocketService playlistWebSocketService;
 
     @Transactional
-    public RegisterSongRecommendationResponse register(long storeId, String title, String artist, String vid, Integer playTime, String refereeName) {
+    public RegisterSongRecommendationResponse recommend(long storeId, String title, String artist, String vid, Integer playTime, String refereeName) {
         Store store = storeService.getStoreById(storeId);
+        // TODO: 음악 추천 전 검증 사항
+        // 1. 구독이 활성화된 매장인지, planB를 구독한 매장인지
+        // 2. 현재 시간 기준 영업 중인 매장인지
+        // 3. 플레이리스트가 존재하는지
         Payment payment = buildPayment(store.getName());
 
         SongRecommendation songRecommendation = new SongRecommendation(store, title, artist, vid, playTime, refereeName, payment);

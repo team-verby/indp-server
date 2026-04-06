@@ -50,7 +50,7 @@ public class OwnerPlaylistService {
 
     private void validateSubscribeActive(Store store) {
         if (store.isInactive()) {
-            throw new BadRequestException("구독 정보가 없습니다.");
+            throw new BadRequestException("구독이 활성화되지 않았습니다.");
         }
     }
 

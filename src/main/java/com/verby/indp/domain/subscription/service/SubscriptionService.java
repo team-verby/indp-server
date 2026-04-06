@@ -56,7 +56,7 @@ public class SubscriptionService {
     @Transactional
     public void activateSubscriptions() {
         List<StoreSubscription> toActivate = storeSubscriptionRepository
-            .findAllByStatusAndStartDateLessThanEqual(SubscriptionStatus.INACTIVE, LocalDate.now());
+            .findAllByStatusAndStartDateLessThanEqual(SubscriptionStatus.PENDING_ACTIVE, LocalDate.now());
         toActivate.forEach(s -> s.updateStatus(SubscriptionStatus.ACTIVE));
     }
 
@@ -70,15 +70,7 @@ public class SubscriptionService {
     @Transactional
     public void confirmPayment(Payment payment) {
         StoreSubscription subscription = getByPayment(payment);
-        LocalDate endDate = subscription.getStore()
-                .findLatestPaidSubscription()
-                .map(StoreSubscription::getEndDate)
-                .orElse(null);
-        LocalDate startDate = endDate == null || endDate.isBefore(LocalDate.now()) ? LocalDate.now() : endDate.plusDays(1);
-
-        subscription.updateStartDate(startDate);
-        SubscriptionStatus status = startDate.isAfter(LocalDate.now()) ? SubscriptionStatus.INACTIVE : SubscriptionStatus.ACTIVE;
-        subscription.updateStatus(status);
+        subscription.updateStatus(SubscriptionStatus.PENDING_ACTIVE);
     }
 
     private Payment buildPayment(String storeName, Plan plan, int usagePeriod) {
