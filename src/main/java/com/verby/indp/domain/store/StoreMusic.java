@@ -80,23 +80,33 @@ public class StoreMusic {
     }
 
     private void validatePlatform(String platform) {
-        if (platform == null || platform.isBlank()) throw new BadRequestException("platform은 필수입니다.");
+        if (platform == null || platform.isBlank()) {
+            throw new BadRequestException("platform은 필수입니다.");
+        }
     }
 
     private void validatePlayedMusic(String playedMusic) {
-        if (playedMusic == null || playedMusic.isBlank()) throw new BadRequestException("playedMusic은 필수입니다.");
+        if (playedMusic == null || playedMusic.isBlank()) {
+            throw new BadRequestException("playedMusic은 필수입니다.");
+        }
     }
 
     private void validatePlaylistType(PlaylistType playlistType) {
-        if (playlistType == null) throw new BadRequestException("playlistType은 필수입니다.");
+        if (playlistType == null) {
+            throw new BadRequestException("playlistType은 필수입니다.");
+        }
     }
 
     private void validateMusicTempo(Tempo musicTempo) {
-        if (musicTempo == null) throw new BadRequestException("musicTempo는 필수입니다.");
+        if (musicTempo == null) {
+            throw new BadRequestException("musicTempo는 필수입니다.");
+        }
     }
 
     private void validatePlayMethods(List<PlayMethod.Method> playMethods) {
-        if (playMethods == null || playMethods.isEmpty()) throw new BadRequestException("playMethods는 필수이며 비어있을 수 없습니다.");
+        if (playMethods == null || playMethods.isEmpty()) {
+            throw new BadRequestException("playMethods는 필수이며 비어있을 수 없습니다.");
+        }
     }
 
     private List<MusicTimePreference> buildMusicTimePreferences(PlaylistType playlistType, List<TimePreference> timePreferences,

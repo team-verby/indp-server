@@ -56,14 +56,20 @@ public class ScheduledPlaylist {
     }
 
     private void validateStore(Store store) {
-        if (store == null) throw new BadRequestException("store는 필수입니다.");
+        if (store == null) {
+            throw new BadRequestException("store는 필수입니다.");
+        }
     }
 
     private void validateScheduledAt(LocalDateTime scheduledAt) {
-        if (scheduledAt == null) throw new BadRequestException("scheduledAt은 필수입니다.");
+        if (scheduledAt == null) {
+            throw new BadRequestException("scheduledAt은 필수입니다.");
+        }
     }
 
     private void validateSongs(List<ScheduledPlaylistSong> songs) {
-        if (songs == null || songs.isEmpty()) throw new BadRequestException("songs는 필수이며 비어있을 수 없습니다.");
+        if (songs == null || songs.isEmpty()) {
+            throw new BadRequestException("songs는 필수이며 비어있을 수 없습니다.");
+        }
     }
 }

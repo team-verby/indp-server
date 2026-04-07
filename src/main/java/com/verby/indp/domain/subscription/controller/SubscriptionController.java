@@ -30,6 +30,6 @@ public class SubscriptionController {
         @PathVariable long storeId,
         @RequestBody AddSubscriptionRequest request
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(subscriptionService.addSubscription(owner, storeId, request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(subscriptionService.orderSubscription(owner, storeId, request));
     }
 }

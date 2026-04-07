@@ -50,18 +50,26 @@ public class RefreshToken {
     }
 
     private void validateToken(String token) {
-        if (token == null || token.isBlank()) throw new BadRequestException("token은 필수입니다.");
+        if (token == null || token.isBlank()) {
+            throw new BadRequestException("token은 필수입니다.");
+        }
     }
 
     private void validateSubjectType(SubjectType subjectType) {
-        if (subjectType == null) throw new BadRequestException("subjectType은 필수입니다.");
+        if (subjectType == null) {
+            throw new BadRequestException("subjectType은 필수입니다.");
+        }
     }
 
     private void validateSubjectId(Long subjectId) {
-        if (subjectId == null) throw new BadRequestException("subjectId는 필수입니다.");
+        if (subjectId == null) {
+            throw new BadRequestException("subjectId는 필수입니다.");
+        }
     }
 
     private void validateExpiresAt(LocalDateTime expiresAt) {
-        if (expiresAt == null) throw new BadRequestException("expiresAt은 필수입니다.");
+        if (expiresAt == null) {
+            throw new BadRequestException("expiresAt은 필수입니다.");
+        }
     }
 }

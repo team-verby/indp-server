@@ -1,6 +1,7 @@
 package com.verby.indp.domain.subscription.service;
 
 import com.verby.indp.domain.auth.Owner;
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.plan.Plan;
@@ -18,7 +19,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 @Service
@@ -27,20 +30,22 @@ import java.util.List;
 public class SubscriptionService {
 
     private static final String ORDER_NAME_PREFIX = "인디피_구독_";
+    private static final DayOfWeek SUBSCRIPTION_START_DAY = DayOfWeek.TUESDAY;
 
     private final StoreService storeService;
     private final PlanService planService;
     private final StoreSubscriptionRepository storeSubscriptionRepository;
 
     @Transactional
-    public AddSubscriptionResponse addSubscription(Owner owner, long storeId, AddSubscriptionRequest request) {
+    public AddSubscriptionResponse orderSubscription(Owner owner, long storeId, AddSubscriptionRequest request) {
         Store store = storeService.getStoreById(storeId);
         validateOwnership(store, owner);
 
         Plan plan = planService.getPlan(request.planId());
         Payment payment = buildPayment(store.getName(), plan, request.usagePeriod());
 
-        StoreSubscription subscription = new StoreSubscription(plan, payment, request.usagePeriod());
+        LocalDate startDate = resolveStartDate(store);
+        StoreSubscription subscription = new StoreSubscription(plan, payment, request.usagePeriod(), startDate);
         store.addSubscription(subscription);
 
         return AddSubscriptionResponse.from(subscription);
@@ -96,6 +101,18 @@ public class SubscriptionService {
     private StoreSubscription getByPayment(Payment payment) {
         return storeSubscriptionRepository.findByPayment(payment)
             .orElseThrow(() -> new NotFoundException("결제에 대한 구독이 존재하지 않습니다."));
+    }
+
+    private LocalDate resolveStartDate(Store store) {
+        return store.findLatestPaidSubscription()
+            .map(subscription -> subscription.getEndDate().plusDays(1))
+            .orElseGet(this::nextSubscriptionStartDay);
+    }
+
+    private LocalDate nextSubscriptionStartDay() {
+        LocalDate thisMonday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        int daysUntilStartDay = SUBSCRIPTION_START_DAY.getValue() - DayOfWeek.MONDAY.getValue();
+        return thisMonday.plusWeeks(1).plusDays(daysUntilStartDay);
     }
 
     private void validateOwnership(Store store, Owner owner) {

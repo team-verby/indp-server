@@ -35,10 +35,14 @@ public class StoreVibe {
     }
 
     private void validateStore(Store store) {
-        if (store == null) throw new BadRequestException("store는 필수입니다.");
+        if (store == null) {
+            throw new BadRequestException("store는 필수입니다.");
+        }
     }
 
     private void validateVibe(Vibe vibe) {
-        if (vibe == null) throw new BadRequestException("vibe는 필수입니다.");
+        if (vibe == null) {
+            throw new BadRequestException("vibe는 필수입니다.");
+        }
     }
 }

@@ -36,10 +36,14 @@ public class StoreApply extends BaseTimeEntity {
     }
 
     private void validateApplicantName(String applicantName) {
-        if (applicantName == null || applicantName.isBlank()) throw new BadRequestException("applicantName은 필수입니다.");
+        if (applicantName == null || applicantName.isBlank()) {
+            throw new BadRequestException("applicantName은 필수입니다.");
+        }
     }
 
     private void validateApplicantPhone(String applicantPhone) {
-        if (applicantPhone == null || applicantPhone.isBlank()) throw new BadRequestException("applicantPhone은 필수입니다.");
+        if (applicantPhone == null || applicantPhone.isBlank()) {
+            throw new BadRequestException("applicantPhone은 필수입니다.");
+        }
     }
 }

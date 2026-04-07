@@ -50,10 +50,14 @@ public class PlayMethod {
     }
 
     private void validateStoreMusic(StoreMusic storeMusic) {
-        if (storeMusic == null) throw new BadRequestException("storeMusic은 필수입니다.");
+        if (storeMusic == null) {
+            throw new BadRequestException("storeMusic은 필수입니다.");
+        }
     }
 
     private void validateMethod(Method method) {
-        if (method == null) throw new BadRequestException("method는 필수입니다.");
+        if (method == null) {
+            throw new BadRequestException("method는 필수입니다.");
+        }
     }
 }

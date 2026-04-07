@@ -44,18 +44,26 @@ public class Owner {
     }
 
     private void validateLoginId(String loginId) {
-        if (loginId == null || loginId.isBlank()) throw new BadRequestException("loginId는 필수입니다.");
+        if (loginId == null || loginId.isBlank()) {
+            throw new BadRequestException("loginId는 필수입니다.");
+        }
     }
 
     private void validatePassword(String password) {
-        if (password == null || password.isBlank()) throw new BadRequestException("password는 필수입니다.");
+        if (password == null || password.isBlank()) {
+            throw new BadRequestException("password는 필수입니다.");
+        }
     }
 
     private void validateName(String name) {
-        if (name == null || name.isBlank()) throw new BadRequestException("name은 필수입니다.");
+        if (name == null || name.isBlank()) {
+            throw new BadRequestException("name은 필수입니다.");
+        }
     }
 
     private void validatePhone(String phone) {
-        if (phone == null || phone.isBlank()) throw new BadRequestException("phone은 필수입니다.");
+        if (phone == null || phone.isBlank()) {
+            throw new BadRequestException("phone은 필수입니다.");
+        }
     }
 }

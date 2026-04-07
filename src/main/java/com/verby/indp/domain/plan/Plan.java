@@ -18,8 +18,13 @@ public class Plan {
     @Column(name = "plan_id")
     private Long planId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "type")
-    private String type;
+    private PlanType type;
+
+    public enum PlanType {
+        PLAN_A, PLAN_B
+    }
 
     @Column(name = "monthly_price")
     private int monthlyPrice;

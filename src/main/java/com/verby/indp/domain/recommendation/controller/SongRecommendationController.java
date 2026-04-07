@@ -23,7 +23,7 @@ public class SongRecommendationController {
         @PathVariable long storeId,
         @RequestBody RegisterSongRecommendationRequest request
     ) {
-        RegisterSongRecommendationResponse response = songRecommendationService.recommend(
+        RegisterSongRecommendationResponse response = songRecommendationService.orderSongRecommendation(
             storeId, request.title(), request.artist(), request.vid(), request.playTime(), request.refereeName());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

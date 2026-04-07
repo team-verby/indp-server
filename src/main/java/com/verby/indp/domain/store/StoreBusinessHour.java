@@ -39,8 +39,7 @@ public class StoreBusinessHour {
     public StoreBusinessHour(Store store, int dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isClosed) {
         validateStore(store);
         validateDayOfWeek(dayOfWeek);
-        validateOpenTime(openTime);
-        validateCloseTime(closeTime);
+        validateOpenHour(isClosed, openTime, closeTime);
         this.store = store;
         this.dayOfWeek = dayOfWeek;
         this.openTime = openTime;
@@ -49,18 +48,29 @@ public class StoreBusinessHour {
     }
 
     private void validateStore(Store store) {
-        if (store == null) throw new BadRequestException("store는 필수입니다.");
+        if (store == null) {
+            throw new BadRequestException("store는 필수입니다.");
+        }
     }
 
     private void validateDayOfWeek(int dayOfWeek) {
-        if (dayOfWeek < 1 || dayOfWeek > 7) throw new BadRequestException("dayOfWeek는 1~7 사이여야 합니다.");
+        if (dayOfWeek < 1 || dayOfWeek > 7) {
+            throw new BadRequestException("dayOfWeek는 1~7 사이여야 합니다.");
+        }
     }
 
-    private void validateOpenTime(LocalTime openTime) {
-        if (openTime == null) throw new BadRequestException("openTime은 필수입니다.");
-    }
-
-    private void validateCloseTime(LocalTime closeTime) {
-        if (closeTime == null) throw new BadRequestException("closeTime은 필수입니다.");
+    private void validateOpenHour(boolean isClosed, LocalTime openTime, LocalTime closeTime) {
+        if (isClosed) {
+            return;
+        }
+        if (openTime == null) {
+            throw new BadRequestException("openTime은 필수입니다.");
+        }
+        if (closeTime == null) {
+            throw new BadRequestException("closeTime은 필수입니다.");
+        }
+        if (!openTime.isBefore(closeTime)) {
+            throw new BadRequestException("openTime은 closeTime보다 빨라야 합니다.");
+        }
     }
 }

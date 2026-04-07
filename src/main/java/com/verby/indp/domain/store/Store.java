@@ -85,6 +85,7 @@ public class Store extends BaseTimeEntity {
         validateStoreMusic(storeMusic);
         validateVibes(vibes);
         validateBusinessHours(businessHours);
+        validateNoDuplicateDayOfWeek(businessHours);
         this.storeApply = storeApply;
         this.storeMusic = storeMusic;
         this.owner = owner;
@@ -160,38 +161,66 @@ public class Store extends BaseTimeEntity {
     }
 
     private void validateStoreApply(StoreApply storeApply) {
-        if (storeApply == null) throw new BadRequestException("storeApply는 필수입니다.");
+        if (storeApply == null) {
+            throw new BadRequestException("storeApply는 필수입니다.");
+        }
     }
 
     private void validateOwner(Owner owner) {
-        if (owner == null) throw new BadRequestException("owner는 필수입니다.");
+        if (owner == null) {
+            throw new BadRequestException("owner는 필수입니다.");
+        }
     }
 
     private void validateName(String name) {
-        if (name == null || name.isBlank()) throw new BadRequestException("name은 필수입니다.");
+        if (name == null || name.isBlank()) {
+            throw new BadRequestException("name은 필수입니다.");
+        }
     }
 
     private void validateAddress(String address) {
-        if (address == null || address.isBlank()) throw new BadRequestException("address는 필수입니다.");
+        if (address == null || address.isBlank()) {
+            throw new BadRequestException("address는 필수입니다.");
+        }
     }
 
     private void validateCustomerAgeGroup(String customerAgeGroup) {
-        if (customerAgeGroup == null || customerAgeGroup.isBlank()) throw new BadRequestException("customerAgeGroup은 필수입니다.");
+        if (customerAgeGroup == null || customerAgeGroup.isBlank()) {
+            throw new BadRequestException("customerAgeGroup은 필수입니다.");
+        }
     }
 
     private void validateLighting(Integer lighting) {
-        if (lighting == null || lighting < 0) throw new BadRequestException("lighting은 0 이상이어야 합니다.");
+        if (lighting == null || lighting < 0) {
+            throw new BadRequestException("lighting은 0 이상이어야 합니다.");
+        }
     }
 
     private void validateStoreMusic(StoreMusic storeMusic) {
-        if (storeMusic == null) throw new BadRequestException("storeMusic은 필수입니다.");
+        if (storeMusic == null) {
+            throw new BadRequestException("storeMusic은 필수입니다.");
+        }
     }
 
     private void validateVibes(List<Vibe> vibes) {
-        if (vibes == null || vibes.isEmpty()) throw new BadRequestException("vibes는 필수이며 비어있을 수 없습니다.");
+        if (vibes == null || vibes.isEmpty()) {
+            throw new BadRequestException("vibes는 필수이며 비어있을 수 없습니다.");
+        }
     }
 
     private void validateBusinessHours(List<BusinessHour> businessHours) {
-        if (businessHours == null || businessHours.isEmpty()) throw new BadRequestException("businessHours는 필수이며 비어있을 수 없습니다.");
+        if (businessHours == null || businessHours.isEmpty()) {
+            throw new BadRequestException("businessHours는 필수이며 비어있을 수 없습니다.");
+        }
+    }
+
+    private void validateNoDuplicateDayOfWeek(List<BusinessHour> businessHours) {
+        long distinctCount = businessHours.stream()
+            .map(BusinessHour::dayOfWeek)
+            .distinct()
+            .count();
+        if (distinctCount != businessHours.size()) {
+            throw new BadRequestException("중복된 요일이 존재합니다.");
+        }
     }
 }

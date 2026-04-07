@@ -29,7 +29,7 @@ public class ApplyStoreService {
         storeRepository.save(store);
 
         AddSubscriptionRequest addSubscriptionRequest = new AddSubscriptionRequest(request.planId(), request.usagePeriod());
-        return subscriptionService.addSubscription(store.getOwner(), store.getStoreId(), addSubscriptionRequest);
+        return subscriptionService.orderSubscription(store.getOwner(), store.getStoreId(), addSubscriptionRequest);
     }
 
     private Store buildStore(ApplyStoreRequest request) {

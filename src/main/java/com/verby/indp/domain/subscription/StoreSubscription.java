@@ -49,39 +49,44 @@ public class StoreSubscription extends BaseTimeEntity {
     @Column(name = "status")
     private SubscriptionStatus status = SubscriptionStatus.PENDING_PAYMENT;
 
-    public StoreSubscription(Plan plan, Payment payment, int usagePeriod) {
+    public StoreSubscription(Plan plan, Payment payment, int usagePeriod, LocalDate startDate) {
         validatePlan(plan);
         validatePayment(payment);
         validateUsagePeriod(usagePeriod);
+        validateStartDate(startDate);
         this.plan = plan;
         this.payment = payment;
         this.usagePeriod = usagePeriod;
-        // TODO: 구독 활성화 시간
-        // 구독 활성화 pending status 추가 필요
-        // 현재 구독중이 아닐 경우 다음주 화요일 00시부터 시작
-        // 현재 구독중일 경우 구독이 끝나는 날 00시부터 시작
-        this.startDate = LocalDate.now();
+        this.startDate = startDate;
         this.endDate = startDate.plusMonths(usagePeriod);
     }
+
 
     public void updateStatus(SubscriptionStatus status) {
         this.status = status;
     }
 
-    public void updateStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-        this.endDate = startDate.plusMonths(this.usagePeriod);
-    }
-
     private void validatePlan(Plan plan) {
-        if (plan == null) throw new BadRequestException("plan은 필수입니다.");
+        if (plan == null) {
+            throw new BadRequestException("plan은 필수입니다.");
+        }
     }
 
     private void validatePayment(Payment payment) {
-        if (payment == null) throw new BadRequestException("payment는 필수입니다.");
+        if (payment == null) {
+            throw new BadRequestException("payment는 필수입니다.");
+        }
     }
 
     private void validateUsagePeriod(int usagePeriod) {
-        if (usagePeriod <= 0) throw new BadRequestException("usagePeriod는 양수여야 합니다.");
+        if (usagePeriod <= 0) {
+            throw new BadRequestException("usagePeriod는 양수여야 합니다.");
+        }
+    }
+
+    private void validateStartDate(LocalDate startDate) {
+        if (startDate == null) {
+            throw new BadRequestException("startDate는 필수입니다.");
+        }
     }
 }

@@ -54,14 +54,20 @@ public class MusicGenre {
     }
 
     private void validateStoreMusic(StoreMusic storeMusic) {
-        if (storeMusic == null) throw new BadRequestException("storeMusic은 필수입니다.");
+        if (storeMusic == null) {
+            throw new BadRequestException("storeMusic은 필수입니다.");
+        }
     }
 
     private void validateGenre(Genre genre) {
-        if (genre == null) throw new BadRequestException("genre는 필수입니다.");
+        if (genre == null) {
+            throw new BadRequestException("genre는 필수입니다.");
+        }
     }
 
     private void validatePreferenceType(PreferenceType preferenceType) {
-        if (preferenceType == null) throw new BadRequestException("preferenceType은 필수입니다.");
+        if (preferenceType == null) {
+            throw new BadRequestException("preferenceType은 필수입니다.");
+        }
     }
 }

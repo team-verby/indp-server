@@ -76,14 +76,20 @@ public class Payment extends BaseTimeEntity {
     }
 
     private void validateOrderName(String orderName) {
-        if (orderName == null || orderName.isBlank()) throw new BadRequestException("orderName은 필수입니다.");
+        if (orderName == null || orderName.isBlank()) {
+            throw new BadRequestException("orderName은 필수입니다.");
+        }
     }
 
     private void validateAmount(int amount) {
-        if (amount <= 0) throw new BadRequestException("amount는 양수여야 합니다.");
+        if (amount <= 0) {
+            throw new BadRequestException("amount는 양수여야 합니다.");
+        }
     }
 
     private void validatePaymentKey(String paymentKey) {
-        if (paymentKey == null || paymentKey.isBlank()) throw new BadRequestException("paymentKey는 필수입니다.");
+        if (paymentKey == null || paymentKey.isBlank()) {
+            throw new BadRequestException("paymentKey는 필수입니다.");
+        }
     }
 }

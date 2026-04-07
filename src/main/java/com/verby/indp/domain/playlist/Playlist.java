@@ -41,6 +41,8 @@ public class Playlist extends BaseTimeEntity {
     }
 
     private void validateSongs(List<PlaylistSong> songs) {
-        if (songs == null || songs.isEmpty()) throw new BadRequestException("songs는 필수이며 비어있을 수 없습니다.");
+        if (songs == null || songs.isEmpty()) {
+            throw new BadRequestException("songs는 필수이며 비어있을 수 없습니다.");
+        }
     }
 }
