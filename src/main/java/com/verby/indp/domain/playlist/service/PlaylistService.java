@@ -28,7 +28,7 @@ import java.util.List;
 public class PlaylistService {
 
     private static final int RECOMMENDATION_INSERT_OFFSET = 5;
-    private static final double MIN_GAP = 0.0001;
+    private static final double MIN_GAP = 0.000000001;
 
     private final PlaylistSongRepository playlistSongRepository;
     private final ScheduledPlaylistUpdateRepository scheduledPlaylistUpdateRepository;
