@@ -16,12 +16,14 @@ public class OwnerPlaylistController {
     private final OwnerPlaylistService playlistService;
 
     @GetMapping("/stores/{storeId}/playlist")
-    public ResponseEntity<FindStorePlaylistByOwnerResponse> findStorePlaylist(@LoginOwner Owner owner, @PathVariable long storeId) {
+    public ResponseEntity<FindStorePlaylistByOwnerResponse> findStorePlaylist(
+        @LoginOwner Owner owner, @PathVariable long storeId) {
         return ResponseEntity.ok(playlistService.getStorePlaylist(owner, storeId));
     }
 
     @PostMapping("/stores/{storeId}/playlist/regenerate")
-    public ResponseEntity<Void> regeneratePlaylist(@LoginOwner Owner owner, @PathVariable long storeId) {
+    public ResponseEntity<Void> regeneratePlaylist(@LoginOwner Owner owner,
+        @PathVariable long storeId) {
         playlistService.regeneratePlaylist(owner, storeId);
         return ResponseEntity.ok().build();
     }

@@ -4,4 +4,5 @@ public record ConfirmApplyPaymentResponse(
     String loginId,
     String password
 ) {
+
 }

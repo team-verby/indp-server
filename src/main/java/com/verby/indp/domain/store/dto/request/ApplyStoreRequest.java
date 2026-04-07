@@ -30,4 +30,5 @@ public record ApplyStoreRequest(
     String rejectedSongNote,
     String mood
 ) {
+
 }

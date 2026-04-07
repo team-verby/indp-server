@@ -86,7 +86,8 @@ public class AuthTokenService {
         Long subjectId = refreshToken.getSubjectId();
 
         String newAccessToken = createAccessToken(subjectType, subjectId);
-        RefreshToken newRefreshToken = refreshTokenRepository.save(buildRefreshToken(subjectType, subjectId));
+        RefreshToken newRefreshToken = refreshTokenRepository.save(
+            buildRefreshToken(subjectType, subjectId));
 
         return new RefreshResponse(newAccessToken, newRefreshToken.getToken());
     }

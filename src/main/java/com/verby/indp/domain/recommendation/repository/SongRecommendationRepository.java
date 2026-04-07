@@ -12,5 +12,6 @@ public interface SongRecommendationRepository extends JpaRepository<SongRecommen
 
     Optional<SongRecommendation> findByPayment(Payment payment);
 
-    List<SongRecommendation> findAllByStoreAndStatus(Store store, SongRecommendation.RecommendationStatus status);
+    List<SongRecommendation> findAllByStoreAndStatus(Store store,
+        SongRecommendation.RecommendationStatus status);
 }

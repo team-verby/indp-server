@@ -50,7 +50,8 @@ public class SongRecommendation extends BaseTimeEntity {
         PENDING_PAYMENT, RECOMMENDED, PAYMENT_FAILED
     }
 
-    public SongRecommendation(Store store, String title, String artist, String vid, Integer playTime, String refereeName, Payment payment) {
+    public SongRecommendation(Store store, String title, String artist, String vid,
+        Integer playTime, String refereeName, Payment payment) {
         validateStore(store);
         validateTitle(title);
         validateArtist(artist);

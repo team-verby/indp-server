@@ -74,8 +74,8 @@ public class Store extends BaseTimeEntity {
     private List<StoreSubscription> subscriptions = new ArrayList<>();
 
     public Store(StoreApply storeApply, Owner owner, String name, String industry, String address,
-                 String customerAgeGroup, Integer lighting, StoreMusic storeMusic, List<Vibe> vibes,
-                 List<BusinessHour> businessHours, List<String> photoUrls) {
+        String customerAgeGroup, Integer lighting, StoreMusic storeMusic, List<Vibe> vibes,
+        List<BusinessHour> businessHours, List<String> photoUrls) {
         validateStoreApply(storeApply);
         validateOwner(owner);
         validateName(name);
@@ -100,8 +100,10 @@ public class Store extends BaseTimeEntity {
         setVibes(vibes);
     }
 
-    public void update(String name, String industry, String address, String customerAgeGroup, Integer lighting,
-                       StoreMusic storeMusic, List<Vibe> vibes, List<BusinessHour> businessHours, List<String> photoUrls) {
+    public void update(String name, String industry, String address, String customerAgeGroup,
+        Integer lighting,
+        StoreMusic storeMusic, List<Vibe> vibes, List<BusinessHour> businessHours,
+        List<String> photoUrls) {
         this.storeMusic = storeMusic;
         this.name = name;
         this.industry = industry;
@@ -128,8 +130,8 @@ public class Store extends BaseTimeEntity {
 
     public Optional<StoreSubscription> findLatestPaidSubscription() {
         return subscriptions.stream()
-                .filter(s -> s.getStatus() != SubscriptionStatus.PENDING_PAYMENT)
-                .max(Comparator.comparing(StoreSubscription::getStartDate));
+            .filter(s -> s.getStatus() != SubscriptionStatus.PENDING_PAYMENT)
+            .max(Comparator.comparing(StoreSubscription::getStartDate));
     }
 
     public boolean isInactive() {
@@ -156,7 +158,8 @@ public class Store extends BaseTimeEntity {
 
     private void setBusinessHours(List<BusinessHour> businessHours) {
         this.businessHours = businessHours.stream()
-            .map(bh -> new StoreBusinessHour(this, bh.dayOfWeek(), bh.openTime(), bh.closeTime(), bh.isClosed()))
+            .map(bh -> new StoreBusinessHour(this, bh.dayOfWeek(), bh.openTime(), bh.closeTime(),
+                bh.isClosed()))
             .toList();
     }
 

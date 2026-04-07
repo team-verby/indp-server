@@ -39,7 +39,8 @@ public class ScheduledPlaylist {
         PENDING, APPLIED
     }
 
-    public ScheduledPlaylist(Store store, LocalDateTime scheduledAt, List<ScheduledPlaylistSong> songs) {
+    public ScheduledPlaylist(Store store, LocalDateTime scheduledAt,
+        List<ScheduledPlaylistSong> songs) {
         validateStore(store);
         validateScheduledAt(scheduledAt);
         validateSongs(songs);

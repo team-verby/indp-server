@@ -23,12 +23,14 @@ public class OwnerStoreController {
     }
 
     @GetMapping("/{storeId}")
-    public ResponseEntity<FindOwnerStoreResponse> findMyStore(@RequestAttribute("owner") Owner owner, @PathVariable long storeId) {
+    public ResponseEntity<FindOwnerStoreResponse> findMyStore(
+        @RequestAttribute("owner") Owner owner, @PathVariable long storeId) {
         return ResponseEntity.ok(ownerStoreService.getMyStore(owner, storeId));
     }
 
     @GetMapping("/{storeId}/subscription")
-    public ResponseEntity<FindLatestSubscriptionResponse> findLatestSubscription(@RequestAttribute("owner") Owner owner, @PathVariable long storeId) {
+    public ResponseEntity<FindLatestSubscriptionResponse> findLatestSubscription(
+        @RequestAttribute("owner") Owner owner, @PathVariable long storeId) {
         return ResponseEntity.ok(ownerStoreService.getLatestSubscription(owner, storeId));
     }
 

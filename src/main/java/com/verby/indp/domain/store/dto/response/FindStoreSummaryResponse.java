@@ -15,9 +15,12 @@ public record FindStoreSummaryResponse(
     String planType
 ) {
 
-    public record BusinessHourItem(int dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isClosed) {
+    public record BusinessHourItem(int dayOfWeek, LocalTime openTime, LocalTime closeTime,
+                                   boolean isClosed) {
+
         static BusinessHourItem from(StoreBusinessHour bh) {
-            return new BusinessHourItem(bh.getDayOfWeek(), bh.getOpenTime(), bh.getCloseTime(), bh.isClosed());
+            return new BusinessHourItem(bh.getDayOfWeek(), bh.getOpenTime(), bh.getCloseTime(),
+                bh.isClosed());
         }
     }
 

@@ -38,12 +38,14 @@ public class OwnerStoreService {
         Store store = getStoreById(storeId);
         validateOwnership(store, owner);
 
-        StoreMusic storeMusic = new StoreMusic(request.platform(), request.playedMusic(), request.rejectedSongNote(),
+        StoreMusic storeMusic = new StoreMusic(request.platform(), request.playedMusic(),
+            request.rejectedSongNote(),
             request.playlistType(), request.musicTempo(), request.mood(), request.playMethods(),
             request.timePreferences(), request.preferenceGenres(), request.businessHours());
 
         store.update(request.name(), request.industry(), request.address(),
-            request.customerAgeGroup(), request.lighting(), storeMusic, request.vibes(), request.businessHours(), request.photoUrls());
+            request.customerAgeGroup(), request.lighting(), storeMusic, request.vibes(),
+            request.businessHours(), request.photoUrls());
     }
 
     public FindLatestSubscriptionResponse getLatestSubscription(Owner owner, long storeId) {

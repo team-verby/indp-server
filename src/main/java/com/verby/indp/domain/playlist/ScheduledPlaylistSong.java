@@ -37,7 +37,8 @@ public class ScheduledPlaylistSong {
     @Column(name = "play_order", nullable = false)
     private double playOrder;
 
-    public ScheduledPlaylistSong(String title, String artist, String vid, Integer playTime, Double playOrder) {
+    public ScheduledPlaylistSong(String title, String artist, String vid, Integer playTime,
+        Double playOrder) {
         validateVid(vid);
         validatePlayTime(playTime);
         validateTitle(title);

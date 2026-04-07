@@ -55,9 +55,11 @@ public class StoreMusic {
     @OneToMany(mappedBy = "storeMusic", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MusicGenre> genres = new ArrayList<>();
 
-    public StoreMusic(String platform, String playedMusic, String rejectedSongNote, PlaylistType playlistType,
-                      Tempo musicTempo, String musicMood, List<PlayMethod.Method> playMethods,
-                      List<TimePreference> timePreferences, List<GenreItem> genreItems, List<BusinessHour> businessHours) {
+    public StoreMusic(String platform, String playedMusic, String rejectedSongNote,
+        PlaylistType playlistType,
+        Tempo musicTempo, String musicMood, List<PlayMethod.Method> playMethods,
+        List<TimePreference> timePreferences, List<GenreItem> genreItems,
+        List<BusinessHour> businessHours) {
         validatePlatform(platform);
         validatePlayedMusic(playedMusic);
         validatePlaylistType(playlistType);
@@ -73,9 +75,11 @@ public class StoreMusic {
             .map(playMethod -> new PlayMethod(this, playMethod))
             .toList();
         this.genres = genreItems.stream()
-            .map(preferenceGenre -> new MusicGenre(this, preferenceGenre.genre(), preferenceGenre.preferenceType()))
+            .map(preferenceGenre -> new MusicGenre(this, preferenceGenre.genre(),
+                preferenceGenre.preferenceType()))
             .toList();
-        this.musicTimePreferences = buildMusicTimePreferences(playlistType, timePreferences, musicMood, businessHours);
+        this.musicTimePreferences = buildMusicTimePreferences(playlistType, timePreferences,
+            musicMood, businessHours);
 
     }
 
@@ -109,11 +113,14 @@ public class StoreMusic {
         }
     }
 
-    private List<MusicTimePreference> buildMusicTimePreferences(PlaylistType playlistType, List<TimePreference> timePreferences,
-                                                                String mood, List<BusinessHour> businessHours) {
+    private List<MusicTimePreference> buildMusicTimePreferences(PlaylistType playlistType,
+        List<TimePreference> timePreferences,
+        String mood, List<BusinessHour> businessHours) {
         if (playlistType == PlaylistType.TIME_BASED) {
             return timePreferences.stream()
-                .map(timePreference -> new MusicTimePreference(this, timePreference.startTime().getHour(), timePreference.endTime().getHour(), timePreference.mood()))
+                .map(timePreference -> new MusicTimePreference(this,
+                    timePreference.startTime().getHour(), timePreference.endTime().getHour(),
+                    timePreference.mood()))
                 .toList();
         }
 
@@ -121,8 +128,10 @@ public class StoreMusic {
             .filter(bh -> !bh.isClosed())
             .toList();
 
-        LocalTime openTime = openHours.stream().map(BusinessHour::openTime).min(LocalTime::compareTo).orElse(LocalTime.MIN);
-        LocalTime closeTime = openHours.stream().map(BusinessHour::closeTime).max(LocalTime::compareTo).orElse(LocalTime.MAX);
+        LocalTime openTime = openHours.stream().map(BusinessHour::openTime)
+            .min(LocalTime::compareTo).orElse(LocalTime.MIN);
+        LocalTime closeTime = openHours.stream().map(BusinessHour::closeTime)
+            .max(LocalTime::compareTo).orElse(LocalTime.MAX);
 
         int openHour = openTime.getMinute() > 0 ? openTime.getHour() - 1 : openTime.getHour();
         int closeHour = closeTime.getMinute() > 0 ? closeTime.getHour() + 1 : closeTime.getHour();

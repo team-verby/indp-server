@@ -7,5 +7,6 @@ public record CurrentSong(
     String vid,
     int elapsedSeconds
 ) {
+
 }
 

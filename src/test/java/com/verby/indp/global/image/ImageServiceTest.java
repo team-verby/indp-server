@@ -35,9 +35,11 @@ class ImageServiceTest {
         @DisplayName("성공 : 이미지가 업로드된다.")
         void uploadImage() throws MalformedURLException {
             // given
-            MockMultipartFile file = new MockMultipartFile("image", "image.png", IMAGE_PNG_VALUE, "content".getBytes());
+            MockMultipartFile file = new MockMultipartFile("image", "image.png", IMAGE_PNG_VALUE,
+                "content".getBytes());
 
-            when(amazonS3.getUrl(any(), any())).thenReturn(new URL("https://s3.amazonaws.com/imageUrl"));
+            when(amazonS3.getUrl(any(), any())).thenReturn(
+                new URL("https://s3.amazonaws.com/imageUrl"));
 
             // when
             imageService.uploadImage(file);

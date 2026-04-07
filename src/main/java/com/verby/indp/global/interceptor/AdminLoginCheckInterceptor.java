@@ -20,14 +20,16 @@ public class AdminLoginCheckInterceptor implements HandlerInterceptor {
     private final AuthTokenService authTokenService;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
+        Object handler) {
         if (request.getMethod().equals(HttpMethod.OPTIONS.name())) {
             return true;
         }
 
         String authorization = request.getHeader(AUTHORIZATION_HEADER);
         if (authorization != null && authorization.startsWith(BEARER_PREFIX)) {
-            Long adminId = authTokenService.decodeAdminToken(authorization.substring(BEARER_PREFIX.length()));
+            Long adminId = authTokenService.decodeAdminToken(
+                authorization.substring(BEARER_PREFIX.length()));
 
             Admin admin = adminRepository.findById(adminId)
                 .orElseThrow(() -> new AuthException("권한이 없습니다."));

@@ -8,4 +8,5 @@ public record BusinessHour(
     LocalTime closeTime,
     boolean isClosed
 ) {
+
 }

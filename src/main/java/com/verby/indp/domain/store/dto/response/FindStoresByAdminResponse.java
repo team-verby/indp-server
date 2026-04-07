@@ -22,6 +22,7 @@ public record FindStoresByAdminResponse(List<StoreItem> stores) {
         SubscriptionItem subscription,
         CurrentSongItem currentSong
     ) {
+
         private static StoreItem from(Store store) {
             SubscriptionItem subscription = SubscriptionItem.from(store.getLatestSubscription());
             CurrentSongItem currentSong = CurrentSongResolver.resolveCurrentSong(store)
@@ -32,16 +33,22 @@ public record FindStoresByAdminResponse(List<StoreItem> stores) {
         }
     }
 
-    private record SubscriptionItem(String plan, LocalDate startDate, LocalDate endDate, String status) {
+    private record SubscriptionItem(String plan, LocalDate startDate, LocalDate endDate,
+                                    String status) {
+
         private static SubscriptionItem from(StoreSubscription subscription) {
-            return new SubscriptionItem(subscription.getPlan().getType(), subscription.getStartDate(), subscription.getEndDate(),
-                    subscription.getStatus().name());
+            return new SubscriptionItem(subscription.getPlan().getType(),
+                subscription.getStartDate(), subscription.getEndDate(),
+                subscription.getStatus().name());
         }
     }
 
-    private record CurrentSongItem(long playlistSongId, String title, String artist, String vid, int elapsedSeconds) {
+    private record CurrentSongItem(long playlistSongId, String title, String artist, String vid,
+                                   int elapsedSeconds) {
+
         private static CurrentSongItem from(CurrentSong song) {
-            return new CurrentSongItem(song.playlistSongId(), song.title(), song.artist(), song.vid(), song.elapsedSeconds());
+            return new CurrentSongItem(song.playlistSongId(), song.title(), song.artist(),
+                song.vid(), song.elapsedSeconds());
         }
     }
 }

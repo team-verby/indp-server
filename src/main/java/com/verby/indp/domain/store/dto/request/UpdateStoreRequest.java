@@ -26,4 +26,5 @@ public record UpdateStoreRequest(
     String rejectedSongNote,
     String mood
 ) {
+
 }

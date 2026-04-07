@@ -17,7 +17,8 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
         value = "SELECT DISTINCT s FROM Store s JOIN s.subscriptions sub WHERE sub.status = :status ORDER BY s.storeId ASC",
         countQuery = "SELECT COUNT(DISTINCT s) FROM Store s JOIN s.subscriptions sub WHERE sub.status = :status"
     )
-    Page<Store> findAllBySubscriptionStatus(@Param("status") SubscriptionStatus status, Pageable pageable);
+    Page<Store> findAllBySubscriptionStatus(@Param("status") SubscriptionStatus status,
+        Pageable pageable);
 
     Page<Store> findAllByOrderByStoreIdAsc(Pageable pageable);
 

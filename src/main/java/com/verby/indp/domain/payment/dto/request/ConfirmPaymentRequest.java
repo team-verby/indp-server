@@ -8,4 +8,5 @@ public record ConfirmPaymentRequest(
     String orderId,
     Integer amount
 ) {
+
 }

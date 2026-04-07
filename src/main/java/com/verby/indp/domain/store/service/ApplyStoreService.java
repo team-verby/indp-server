@@ -28,20 +28,24 @@ public class ApplyStoreService {
         Store store = buildStore(request);
         storeRepository.save(store);
 
-        AddSubscriptionRequest addSubscriptionRequest = new AddSubscriptionRequest(request.planId(), request.usagePeriod());
-        return subscriptionService.orderSubscription(store.getOwner(), store.getStoreId(), addSubscriptionRequest);
+        AddSubscriptionRequest addSubscriptionRequest = new AddSubscriptionRequest(request.planId(),
+            request.usagePeriod());
+        return subscriptionService.orderSubscription(store.getOwner(), store.getStoreId(),
+            addSubscriptionRequest);
     }
 
     private Store buildStore(ApplyStoreRequest request) {
         Owner owner = ownerService.createOwner(request.applicantName(), request.name());
 
         StoreApply storeApply = new StoreApply(request.applicantName(), request.applicantPhone());
-        StoreMusic storeMusic = new StoreMusic(request.platform(), request.playedMusic(), request.rejectedSongNote(),
+        StoreMusic storeMusic = new StoreMusic(request.platform(), request.playedMusic(),
+            request.rejectedSongNote(),
             request.playlistType(), request.musicTempo(), request.mood(), request.playMethods(),
             request.timePreferences(), request.preferenceGenres(), request.businessHours());
 
         return new Store(storeApply, owner, request.name(), request.industry(), request.address(),
-            request.customerAgeGroup(), request.lighting(), storeMusic, request.vibes(), request.businessHours(), request.photoUrls());
+            request.customerAgeGroup(), request.lighting(), storeMusic, request.vibes(),
+            request.businessHours(), request.photoUrls());
     }
 
 }

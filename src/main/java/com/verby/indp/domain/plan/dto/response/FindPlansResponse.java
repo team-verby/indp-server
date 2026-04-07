@@ -17,6 +17,7 @@ public record FindPlansResponse(List<PlanItem> plans) {
         int monthlyPrice,
         int discountRate
     ) {
+
         private static PlanItem from(Plan plan) {
             int discountRate = plan.getDiscounts().stream()
                 .filter(PlanDiscount::isActive)
@@ -24,7 +25,8 @@ public record FindPlansResponse(List<PlanItem> plans) {
                 .map(PlanDiscount::getDiscountRate)
                 .orElse(0);
 
-            return new PlanItem(plan.getPlanId(), plan.getType(), plan.getMonthlyPrice(), discountRate);
+            return new PlanItem(plan.getPlanId(), plan.getType(), plan.getMonthlyPrice(),
+                discountRate);
         }
     }
 }

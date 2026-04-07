@@ -4,4 +4,5 @@ public record AddSubscriptionRequest(
     Long planId,
     int usagePeriod
 ) {
+
 }

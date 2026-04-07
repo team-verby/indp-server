@@ -61,7 +61,7 @@ public class PaymentClient {
     }
 
     private TossPaymentApiResponse requestPaymentApi(HttpHeaders httpHeaders,
-                                                     Map<String, Object> params) {
+        Map<String, Object> params) {
         return apiService.post(
             new HttpEntity<>(params, httpHeaders),
             confirmUrl,

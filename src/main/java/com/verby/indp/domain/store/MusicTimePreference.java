@@ -31,7 +31,8 @@ public class MusicTimePreference {
     @Column(name = "mood")
     private String mood;
 
-    public MusicTimePreference(StoreMusic storeMusic, int startTimeHour, int endTimeHour, String mood) {
+    public MusicTimePreference(StoreMusic storeMusic, int startTimeHour, int endTimeHour,
+        String mood) {
         validateStoreMusic(storeMusic);
         validateStartTimeHour(startTimeHour);
         validateEndTimeHour(endTimeHour);

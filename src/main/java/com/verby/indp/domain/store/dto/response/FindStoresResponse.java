@@ -23,6 +23,7 @@ public record FindStoresResponse(List<StoreItem> stores) {
         String mainPhotoUrl,
         List<BusinessHourItem> businessHours
     ) {
+
         private static StoreItem from(Store store) {
             String mainPhotoUrl = store.getPhotos().stream()
                 .filter(StorePhoto::isMain)
@@ -39,9 +40,12 @@ public record FindStoresResponse(List<StoreItem> stores) {
         }
     }
 
-    private record BusinessHourItem(int dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isClosed) {
+    private record BusinessHourItem(int dayOfWeek, LocalTime openTime, LocalTime closeTime,
+                                    boolean isClosed) {
+
         public static BusinessHourItem from(StoreBusinessHour h) {
-            return new BusinessHourItem(h.getDayOfWeek(), h.getOpenTime(), h.getCloseTime(), h.isClosed());
+            return new BusinessHourItem(h.getDayOfWeek(), h.getOpenTime(), h.getCloseTime(),
+                h.isClosed());
         }
     }
 }

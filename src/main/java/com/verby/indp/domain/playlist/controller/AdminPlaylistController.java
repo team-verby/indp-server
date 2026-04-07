@@ -14,7 +14,8 @@ public class AdminPlaylistController {
     private final AdminPlaylistService playlistService;
 
     @PostMapping("/schedule")
-    public ResponseEntity<Void> schedulePlaylistUpdates(@RequestBody SchedulePlaylistsUpdateRequest request) {
+    public ResponseEntity<Void> schedulePlaylistUpdates(
+        @RequestBody SchedulePlaylistsUpdateRequest request) {
         playlistService.addScheduledPlaylists(request);
         return ResponseEntity.noContent().build();
     }

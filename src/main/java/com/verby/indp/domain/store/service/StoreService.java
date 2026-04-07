@@ -20,7 +20,8 @@ public class StoreService {
     private final StoreRepository storeRepository;
 
     public FindStoresResponse findStores(Pageable pageable) {
-        Page<Store> storePage = storeRepository.findAllBySubscriptionStatus(SubscriptionStatus.ACTIVE, pageable);
+        Page<Store> storePage = storeRepository.findAllBySubscriptionStatus(
+            SubscriptionStatus.ACTIVE, pageable);
         return FindStoresResponse.from(storePage.getContent());
     }
 

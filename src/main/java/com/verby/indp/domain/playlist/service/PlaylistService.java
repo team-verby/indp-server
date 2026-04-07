@@ -59,8 +59,9 @@ public class PlaylistService {
 
         double order = calculateOrder(store, songs);
 
-        PlaylistSong playlistSong = new PlaylistSong(recommendation, true, recommendation.getVid(), recommendation.getPlayTime(),
-                recommendation.getTitle(), recommendation.getArtist(), order);
+        PlaylistSong playlistSong = new PlaylistSong(recommendation, true, recommendation.getVid(),
+            recommendation.getPlayTime(),
+            recommendation.getTitle(), recommendation.getArtist(), order);
         playlist.addSong(playlistSong);
 
         return playlistSong;
@@ -68,7 +69,7 @@ public class PlaylistService {
 
     public List<PlaylistSong> getSortedSongs(long playlistId) {
         return playlistSongRepository
-                .findAllByPlaylistPlaylistIdOrderByPlayOrder(playlistId);
+            .findAllByPlaylistPlaylistIdOrderByPlayOrder(playlistId);
     }
 
     @Transactional
@@ -93,9 +94,9 @@ public class PlaylistService {
         }
 
         List<PlaylistSong> recommended = playlist.getSongs()
-                .stream()
-                .filter(PlaylistSong::isRecommended)
-                .toList();
+            .stream()
+            .filter(PlaylistSong::isRecommended)
+            .toList();
 
         playlistSongRepository.deleteAll(recommended);
     }
@@ -105,7 +106,7 @@ public class PlaylistService {
 
         Double prevOrder = null;
         Double nextOrder = null;
-        for (int i = 0 ; i < songs.size(); i++) {
+        for (int i = 0; i < songs.size(); i++) {
             if (songs.get(i).getPlaylistSongId() == currentSong.playlistSongId()) {
                 int nextSongIndex = Math.min(songs.size() - 1, i + RECOMMENDATION_INSERT_OFFSET);
                 if (nextSongIndex == i) {
@@ -137,7 +138,7 @@ public class PlaylistService {
 
     private CurrentSong getCurrentSong(Store store) {
         return CurrentSongResolver.resolveCurrentSong(store)
-                .orElseThrow(() -> new ServiceUnavailableException("음악 신청에 실패했습니다. 잠시 후 다시 시도해주세요."));
+            .orElseThrow(() -> new ServiceUnavailableException("음악 신청에 실패했습니다. 잠시 후 다시 시도해주세요."));
     }
 
     private void rebalancePlayOrder(List<PlaylistSong> songs) {
@@ -158,8 +159,9 @@ public class PlaylistService {
         List<PlaylistSong> songs = new ArrayList<>();
         for (int i = 0; i < scheduledSongs.size(); i++) {
             ScheduledPlaylistSong scheduledSong = scheduledSongs.get(i);
-            PlaylistSong song = new PlaylistSong(null, false, scheduledSong.getVid(), scheduledSong.getPlayTime(),
-                    scheduledSong.getTitle(), scheduledSong.getArtist(), (i + 1) * 10.0);
+            PlaylistSong song = new PlaylistSong(null, false, scheduledSong.getVid(),
+                scheduledSong.getPlayTime(),
+                scheduledSong.getTitle(), scheduledSong.getArtist(), (i + 1) * 10.0);
             songs.add(song);
         }
         Playlist playlist = new Playlist(songs);

@@ -29,7 +29,8 @@ class ImageControllerTest extends BaseControllerTest {
     @DisplayName("성공 : 이미지를 업로드한다.")
     void uploadImage() throws Exception {
         // given
-        MockMultipartFile file = new MockMultipartFile("image", "image.png", IMAGE_PNG_VALUE, "content".getBytes());
+        MockMultipartFile file = new MockMultipartFile("image", "image.png", IMAGE_PNG_VALUE,
+            "content".getBytes());
         ImageResponse response = new ImageResponse("imageUrl");
 
         when(imageService.uploadImage(any())).thenReturn(response.imageUrl());
@@ -40,7 +41,8 @@ class ImageControllerTest extends BaseControllerTest {
                 .file("image", file.getBytes())
                 .with(requestPostProcessor -> {
                     requestPostProcessor.setMethod("POST");
-                    return requestPostProcessor;})
+                    return requestPostProcessor;
+                })
                 .contentType(MediaType.MULTIPART_FORM_DATA));
 
         // then

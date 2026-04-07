@@ -16,7 +16,9 @@ public interface StoreSubscriptionRepository extends JpaRepository<StoreSubscrip
 
     Optional<StoreSubscription> findByPayment(Payment payment);
 
-    List<StoreSubscription> findAllByStatusAndEndDateBefore(SubscriptionStatus status, LocalDate date);
+    List<StoreSubscription> findAllByStatusAndEndDateBefore(SubscriptionStatus status,
+        LocalDate date);
 
-    List<StoreSubscription> findAllByStatusAndStartDateLessThanEqual(SubscriptionStatus status, LocalDate date);
+    List<StoreSubscription> findAllByStatusAndStartDateLessThanEqual(SubscriptionStatus status,
+        LocalDate date);
 }

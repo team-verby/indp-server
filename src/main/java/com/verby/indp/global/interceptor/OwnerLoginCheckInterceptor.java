@@ -20,14 +20,16 @@ public class OwnerLoginCheckInterceptor implements HandlerInterceptor {
     private final AuthTokenService authTokenService;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
+        Object handler) {
         if (request.getMethod().equals(HttpMethod.OPTIONS.name())) {
             return true;
         }
 
         String authorization = request.getHeader(AUTHORIZATION_HEADER);
         if (authorization != null && authorization.startsWith(BEARER_PREFIX)) {
-            Long ownerId = authTokenService.decodeOwnerToken(authorization.substring(BEARER_PREFIX.length()));
+            Long ownerId = authTokenService.decodeOwnerToken(
+                authorization.substring(BEARER_PREFIX.length()));
 
             Owner owner = ownerRepository.findById(ownerId)
                 .orElseThrow(() -> new AuthException("권한이 없습니다."));

@@ -37,7 +37,8 @@ public class SubscriptionService {
     private final StoreSubscriptionRepository storeSubscriptionRepository;
 
     @Transactional
-    public AddSubscriptionResponse orderSubscription(Owner owner, long storeId, AddSubscriptionRequest request) {
+    public AddSubscriptionResponse orderSubscription(Owner owner, long storeId,
+        AddSubscriptionRequest request) {
         Store store = storeService.getStoreById(storeId);
         validateOwnership(store, owner);
 
@@ -45,7 +46,8 @@ public class SubscriptionService {
         Payment payment = buildPayment(store.getName(), plan, request.usagePeriod());
 
         LocalDate startDate = resolveStartDate(store);
-        StoreSubscription subscription = new StoreSubscription(plan, payment, request.usagePeriod(), startDate);
+        StoreSubscription subscription = new StoreSubscription(plan, payment, request.usagePeriod(),
+            startDate);
         store.addSubscription(subscription);
 
         return AddSubscriptionResponse.from(subscription);
@@ -61,7 +63,8 @@ public class SubscriptionService {
     @Transactional
     public void activateSubscriptions() {
         List<StoreSubscription> toActivate = storeSubscriptionRepository
-            .findAllByStatusAndStartDateLessThanEqual(SubscriptionStatus.PENDING_ACTIVE, LocalDate.now());
+            .findAllByStatusAndStartDateLessThanEqual(SubscriptionStatus.PENDING_ACTIVE,
+                LocalDate.now());
         toActivate.forEach(s -> s.updateStatus(SubscriptionStatus.ACTIVE));
     }
 
@@ -110,7 +113,8 @@ public class SubscriptionService {
     }
 
     private LocalDate nextSubscriptionStartDay() {
-        LocalDate thisMonday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate thisMonday = LocalDate.now()
+            .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         int daysUntilStartDay = SUBSCRIPTION_START_DAY.getValue() - DayOfWeek.MONDAY.getValue();
         return thisMonday.plusWeeks(1).plusDays(daysUntilStartDay);
     }

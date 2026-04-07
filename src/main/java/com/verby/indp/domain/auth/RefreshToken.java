@@ -34,7 +34,8 @@ public class RefreshToken {
         ADMIN, OWNER
     }
 
-    public RefreshToken(String token, SubjectType subjectType, Long subjectId, LocalDateTime expiresAt) {
+    public RefreshToken(String token, SubjectType subjectType, Long subjectId,
+        LocalDateTime expiresAt) {
         validateToken(token);
         validateSubjectType(subjectType);
         validateSubjectId(subjectId);

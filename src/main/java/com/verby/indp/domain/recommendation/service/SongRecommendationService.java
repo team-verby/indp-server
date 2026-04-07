@@ -40,7 +40,8 @@ public class SongRecommendationService {
     private final PlaylistWebSocketService playlistWebSocketService;
 
     @Transactional
-    public RegisterSongRecommendationResponse orderSongRecommendation(long storeId, String title, String artist, String vid, Integer playTime, String refereeName) {
+    public RegisterSongRecommendationResponse orderSongRecommendation(long storeId, String title,
+        String artist, String vid, Integer playTime, String refereeName) {
         Store store = storeService.getStoreById(storeId);
 
         validateActiveSubscription(store);
@@ -50,7 +51,8 @@ public class SongRecommendationService {
 
         Payment payment = buildPayment(store.getName());
 
-        SongRecommendation songRecommendation = new SongRecommendation(store, title, artist, vid, playTime, refereeName, payment);
+        SongRecommendation songRecommendation = new SongRecommendation(store, title, artist, vid,
+            playTime, refereeName, payment);
         songRecommendationRepository.save(songRecommendation);
 
         return RegisterSongRecommendationResponse.from(songRecommendation);
@@ -61,7 +63,8 @@ public class SongRecommendationService {
         SongRecommendation recommendation = getByPayment(payment);
 
         recommendation.updateStatus(SongRecommendation.RecommendationStatus.RECOMMENDED);
-        PlaylistSong playlistSong = playlistService.addRecommendedSong(recommendation.getStore(), recommendation);
+        PlaylistSong playlistSong = playlistService.addRecommendedSong(recommendation.getStore(),
+            recommendation);
 
         playlistWebSocketService.sendSongRecommended(recommendation, playlistSong);
     }
@@ -79,7 +82,8 @@ public class SongRecommendationService {
     public FindStoreRecommendationsResponse findRecommendedSongs(long storeId) {
         Store store = storeService.getStoreById(storeId);
         return FindStoreRecommendationsResponse.from(
-            songRecommendationRepository.findAllByStoreAndStatus(store, SongRecommendation.RecommendationStatus.RECOMMENDED)
+            songRecommendationRepository.findAllByStoreAndStatus(store,
+                SongRecommendation.RecommendationStatus.RECOMMENDED)
         );
     }
 
@@ -114,7 +118,8 @@ public class SongRecommendationService {
         boolean isOpen = store.getBusinessHours().stream()
             .filter(bh -> bh.getDayOfWeek() == currentDayOfWeek)
             .filter(bh -> !bh.isClosed())
-            .anyMatch(bh -> !currentTime.isBefore(bh.getOpenTime()) && !currentTime.isAfter(bh.getCloseTime()));
+            .anyMatch(bh -> !currentTime.isBefore(bh.getOpenTime()) && !currentTime.isAfter(
+                bh.getCloseTime()));
 
         if (!isOpen) {
             throw new BadRequestException("현재 영업 중인 매장이 아닙니다.");

@@ -55,7 +55,8 @@ public class PlaylistSong {
     @Column(name = "play_order", nullable = false)
     private double playOrder;
 
-    public PlaylistSong(SongRecommendation songRecommendation, boolean isRecommended, String vid, Integer playTime, String title, String artist, double playOrder) {
+    public PlaylistSong(SongRecommendation songRecommendation, boolean isRecommended, String vid,
+        Integer playTime, String title, String artist, double playOrder) {
         validateVid(vid);
         validatePlayTime(playTime);
         validateTitle(title);

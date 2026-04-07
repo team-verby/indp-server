@@ -6,4 +6,6 @@ public record TimePreference(
     LocalTime startTime,
     LocalTime endTime,
     String mood
-) {}
+) {
+
+}

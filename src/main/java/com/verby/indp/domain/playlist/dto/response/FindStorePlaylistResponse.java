@@ -9,15 +9,19 @@ public record FindStorePlaylistResponse(
     PlaylistInfo playlist
 ) {
 
-    public static FindStorePlaylistResponse from(List<PlaylistSong> songs, CurrentSong currentSong) {
+    public static FindStorePlaylistResponse from(List<PlaylistSong> songs,
+        CurrentSong currentSong) {
         PlaylistInfo playlistInfo = PlaylistInfo.from(songs);
         CurrentSongItem song = currentSong != null ? CurrentSongItem.from(currentSong) : null;
         return new FindStorePlaylistResponse(song, playlistInfo);
     }
 
-    private record CurrentSongItem(long playlistSongId, String title, String artist, int elapsedSeconds) {
+    private record CurrentSongItem(long playlistSongId, String title, String artist,
+                                   int elapsedSeconds) {
+
         private static CurrentSongItem from(CurrentSong song) {
-            return new CurrentSongItem(song.playlistSongId(), song.title(), song.artist(), song.elapsedSeconds());
+            return new CurrentSongItem(song.playlistSongId(), song.title(), song.artist(),
+                song.elapsedSeconds());
         }
     }
 
@@ -31,7 +35,8 @@ public record FindStorePlaylistResponse(
         private static PlaylistInfo from(List<PlaylistSong> songs) {
             int totalCount = songs.size();
             int recommendedCount = (int) songs.stream().filter(PlaylistSong::isRecommended).count();
-            int totalPlayTime = songs.stream().mapToInt(s -> s.getPlayTime() != null ? s.getPlayTime() : 0).sum();
+            int totalPlayTime = songs.stream()
+                .mapToInt(s -> s.getPlayTime() != null ? s.getPlayTime() : 0).sum();
             List<SongItem> songItems = songs.stream().map(SongItem::from).toList();
 
             return new PlaylistInfo(totalCount, recommendedCount, totalPlayTime, songItems);
@@ -49,8 +54,10 @@ public record FindStorePlaylistResponse(
     ) {
 
         private static SongItem from(PlaylistSong song) {
-            return new SongItem(song.getPlaylistSongId(), song.getPlayOrder(), song.getTitle(), song.getArtist(),
-                    song.getPlayTime(), song.isRecommended(), song.isRecommended() ? song.getSongRecommendation().getRefereeName() : null);
+            return new SongItem(song.getPlaylistSongId(), song.getPlayOrder(), song.getTitle(),
+                song.getArtist(),
+                song.getPlayTime(), song.isRecommended(),
+                song.isRecommended() ? song.getSongRecommendation().getRefereeName() : null);
         }
     }
 }

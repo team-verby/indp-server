@@ -20,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class OwnerPlaylistService {
+
     private final StoreService storeService;
     private final SlackNotificationService slackNotificationService;
     private final PlaylistService playlistService;

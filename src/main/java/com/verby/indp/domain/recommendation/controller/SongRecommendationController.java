@@ -24,12 +24,14 @@ public class SongRecommendationController {
         @RequestBody RegisterSongRecommendationRequest request
     ) {
         RegisterSongRecommendationResponse response = songRecommendationService.orderSongRecommendation(
-            storeId, request.title(), request.artist(), request.vid(), request.playTime(), request.refereeName());
+            storeId, request.title(), request.artist(), request.vid(), request.playTime(),
+            request.refereeName());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/recommendation-fee")
     public ResponseEntity<FindRecommendationFeeResponse> findRecommendationFee() {
-        return ResponseEntity.ok(FindRecommendationFeeResponse.from(pricePolicyService.getByPolicyKey("recommendation_fee")));
+        return ResponseEntity.ok(FindRecommendationFeeResponse.from(
+            pricePolicyService.getByPolicyKey("recommendation_fee")));
     }
 }

@@ -7,6 +7,7 @@ public record RegisterSongRecommendationResponse(
     int amount,
     String orderName
 ) {
+
     public static RegisterSongRecommendationResponse from(SongRecommendation recommendation) {
         return new RegisterSongRecommendationResponse(
             recommendation.getPayment().getOrderId(),

@@ -14,6 +14,7 @@ public class PricePolicyService {
 
     public PricePolicy getByPolicyKey(String policyKey) {
         return pricePolicyRepository.findByPolicyKey(policyKey)
-            .orElseThrow(() -> new NotFoundException("존재하지 않은 요금 정책 입니다. policy key: " + policyKey));
+            .orElseThrow(
+                () -> new NotFoundException("존재하지 않은 요금 정책 입니다. policy key: " + policyKey));
     }
 }

@@ -11,7 +11,8 @@ public record FindStorePlaylistByOwnerResponse(
     CurrentSongItem currentSong
 ) {
 
-    public static FindStorePlaylistByOwnerResponse from(List<PlaylistSong> sortedSongs, Store store) {
+    public static FindStorePlaylistByOwnerResponse from(List<PlaylistSong> sortedSongs,
+        Store store) {
         PlaylistInfo playlistInfo = PlaylistInfo.from(sortedSongs);
         CurrentSongItem currentSong = CurrentSongResolver.resolveCurrentSong(store)
             .map(CurrentSongItem::from)
@@ -25,10 +26,12 @@ public record FindStorePlaylistByOwnerResponse(
         int totalPlayTime,
         List<SongItem> songs
     ) {
+
         private static PlaylistInfo from(List<PlaylistSong> songs) {
             int totalCount = songs.size();
             int recommendedCount = (int) songs.stream().filter(PlaylistSong::isRecommended).count();
-            int totalPlayTime = songs.stream().mapToInt(s -> s.getPlayTime() != null ? s.getPlayTime() : 0).sum();
+            int totalPlayTime = songs.stream()
+                .mapToInt(s -> s.getPlayTime() != null ? s.getPlayTime() : 0).sum();
             List<SongItem> songItems = songs.stream().map(SongItem::from).toList();
 
             return new PlaylistInfo(totalCount, recommendedCount, totalPlayTime, songItems);
@@ -45,16 +48,22 @@ public record FindStorePlaylistByOwnerResponse(
         String refereeName,
         String vid
     ) {
+
         private static SongItem from(PlaylistSong song) {
-            return new SongItem(song.getPlaylistSongId(), song.getPlayOrder(), song.getTitle(), song.getArtist(),
-                song.getPlayTime(), song.isRecommended(), song.isRecommended() ? song.getSongRecommendation().getRefereeName() : null,
+            return new SongItem(song.getPlaylistSongId(), song.getPlayOrder(), song.getTitle(),
+                song.getArtist(),
+                song.getPlayTime(), song.isRecommended(),
+                song.isRecommended() ? song.getSongRecommendation().getRefereeName() : null,
                 song.getVid());
         }
     }
 
-    private record CurrentSongItem(long playlistSongId, String title, String artist, String vid, int elapsedSeconds) {
+    private record CurrentSongItem(long playlistSongId, String title, String artist, String vid,
+                                   int elapsedSeconds) {
+
         private static CurrentSongItem from(CurrentSong song) {
-            return new CurrentSongItem(song.playlistSongId(), song.title(), song.artist(), song.vid(), song.elapsedSeconds());
+            return new CurrentSongItem(song.playlistSongId(), song.title(), song.artist(),
+                song.vid(), song.elapsedSeconds());
         }
     }
 }

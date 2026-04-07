@@ -20,7 +20,8 @@ public class AdminStoreController {
     private final AdminStoreService storeService;
 
     @GetMapping
-    public ResponseEntity<FindStoresByAdminResponse> findStores(@PageableDefault(size = 20) Pageable pageable) {
+    public ResponseEntity<FindStoresByAdminResponse> findStores(
+        @PageableDefault(size = 20) Pageable pageable) {
         return ResponseEntity.ok(storeService.findStores(pageable));
     }
 

@@ -7,4 +7,5 @@ public record RegisterSongRecommendationRequest(
     Integer playTime,
     String refereeName
 ) {
+
 }

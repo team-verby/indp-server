@@ -36,7 +36,8 @@ public class StoreBusinessHour {
     @Column(name = "is_closed")
     private boolean isClosed;
 
-    public StoreBusinessHour(Store store, int dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isClosed) {
+    public StoreBusinessHour(Store store, int dayOfWeek, LocalTime openTime, LocalTime closeTime,
+        boolean isClosed) {
         validateStore(store);
         validateDayOfWeek(dayOfWeek);
         validateOpenHour(isClosed, openTime, closeTime);

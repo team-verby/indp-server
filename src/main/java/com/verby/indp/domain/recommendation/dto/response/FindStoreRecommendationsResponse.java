@@ -8,6 +8,7 @@ import java.util.List;
 public record FindStoreRecommendationsResponse(
     List<RecommendationItem> recommendations
 ) {
+
     public static FindStoreRecommendationsResponse from(List<SongRecommendation> recommendations) {
         return new FindStoreRecommendationsResponse(
             recommendations.stream()
@@ -25,6 +26,7 @@ public record FindStoreRecommendationsResponse(
         String refereeName,
         LocalDateTime recommendedAt
     ) {
+
         private static RecommendationItem from(SongRecommendation recommendation) {
             return new RecommendationItem(
                 recommendation.getSongRecommendationId(),

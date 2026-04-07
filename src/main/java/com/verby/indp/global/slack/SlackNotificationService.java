@@ -23,7 +23,8 @@ public class SlackNotificationService {
 
     @Async
     public void sendPlaylistRegenerateRequest(Store store) {
-        String text = String.format("플레이리스트 재생성 요청\n매장: %s (ID: %d)", store.getName(), store.getStoreId());
+        String text = String.format("플레이리스트 재생성 요청\n매장: %s (ID: %d)", store.getName(),
+            store.getStoreId());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(Map.of("text", text), headers);

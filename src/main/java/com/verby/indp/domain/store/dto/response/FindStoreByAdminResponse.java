@@ -26,6 +26,7 @@ public record FindStoreByAdminResponse(
     }
 
     private record ApplyInfo(String applicantName, String applicantPhone) {
+
         private static ApplyInfo from(StoreApply storeApply) {
             return new ApplyInfo(storeApply.getApplicantName(), storeApply.getApplicantPhone());
         }
@@ -41,6 +42,7 @@ public record FindStoreByAdminResponse(
         List<String> vibes,
         int lighting
     ) {
+
         private static StoreInfo from(Store store) {
             List<BusinessHourItem> businessHourItems = store.getBusinessHours().stream()
                 .map(BusinessHourItem::from)
@@ -51,13 +53,18 @@ public record FindStoreByAdminResponse(
             List<String> vibes = store.getVibes().stream()
                 .map(storeVibe -> storeVibe.getVibe().name())
                 .toList();
-            return new StoreInfo(store.getName(), store.getIndustry(), store.getAddress(), businessHourItems, store.getCustomerAgeGroup(), photoUrls, vibes, store.getLighting());
+            return new StoreInfo(store.getName(), store.getIndustry(), store.getAddress(),
+                businessHourItems, store.getCustomerAgeGroup(), photoUrls, vibes,
+                store.getLighting());
         }
     }
 
-    private record BusinessHourItem(int dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isClosed) {
+    private record BusinessHourItem(int dayOfWeek, LocalTime openTime, LocalTime closeTime,
+                                    boolean isClosed) {
+
         private static BusinessHourItem from(StoreBusinessHour businessHour) {
-            return new BusinessHourItem(businessHour.getDayOfWeek(), businessHour.getOpenTime(), businessHour.getCloseTime(), businessHour.isClosed());
+            return new BusinessHourItem(businessHour.getDayOfWeek(), businessHour.getOpenTime(),
+                businessHour.getCloseTime(), businessHour.isClosed());
         }
     }
 
@@ -71,28 +78,38 @@ public record FindStoreByAdminResponse(
         String musicTempo,
         List<String> rejectedGenres
     ) {
+
         private static MusicInfo from(StoreMusic storeMusic) {
-            List<String> methods = storeMusic.getPlayMethods().stream().map(pm -> pm.getMethod().name()).toList();
+            List<String> methods = storeMusic.getPlayMethods().stream()
+                .map(pm -> pm.getMethod().name()).toList();
             List<TimePreferenceItem> timePreferences = storeMusic.getMusicTimePreferences().stream()
                 .map(TimePreferenceItem::from)
                 .toList();
-            List<String> rejectedGenres = storeMusic.getGenres().stream().filter(MusicGenre::isRejected)
+            List<String> rejectedGenres = storeMusic.getGenres().stream()
+                .filter(MusicGenre::isRejected)
                 .map(genre -> genre.getGenre().name()).toList();
 
-            return new MusicInfo(methods, storeMusic.getPlaylistType().name(), timePreferences, storeMusic.getPlatform(),
-                storeMusic.getPlayedMusic(), storeMusic.getMusicMood(), storeMusic.getMusicTempo().name(), rejectedGenres);
+            return new MusicInfo(methods, storeMusic.getPlaylistType().name(), timePreferences,
+                storeMusic.getPlatform(),
+                storeMusic.getPlayedMusic(), storeMusic.getMusicMood(),
+                storeMusic.getMusicTempo().name(), rejectedGenres);
         }
     }
 
     private record TimePreferenceItem(int startTimeHour, int endTimeHour, String mood) {
+
         private static TimePreferenceItem from(MusicTimePreference timePreference) {
-            return new TimePreferenceItem(timePreference.getStartTimeHour(), timePreference.getEndTimeHour(), timePreference.getMood());
+            return new TimePreferenceItem(timePreference.getStartTimeHour(),
+                timePreference.getEndTimeHour(), timePreference.getMood());
         }
     }
 
-    private record SubscriptionInfo(String planType, LocalDate startDate, LocalDate endTime, String status) {
+    private record SubscriptionInfo(String planType, LocalDate startDate, LocalDate endTime,
+                                    String status) {
+
         private static SubscriptionInfo from(StoreSubscription subscription) {
-            return new SubscriptionInfo(subscription.getPlan().getType(), subscription.getStartDate(),
+            return new SubscriptionInfo(subscription.getPlan().getType(),
+                subscription.getStartDate(),
                 subscription.getEndDate(), subscription.getStatus().name());
         }
     }

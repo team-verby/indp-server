@@ -21,7 +21,7 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
-                                   WebSocketHandler wsHandler, Map<String, Object> attributes) {
+        WebSocketHandler wsHandler, Map<String, Object> attributes) {
 
         String token = UriComponentsBuilder.fromUri(request.getURI())
             .build()
@@ -44,6 +44,6 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
 
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
-                               WebSocketHandler wsHandler, Exception exception) {
+        WebSocketHandler wsHandler, Exception exception) {
     }
 }

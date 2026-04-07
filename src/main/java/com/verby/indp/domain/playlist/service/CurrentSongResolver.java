@@ -24,7 +24,9 @@ public class CurrentSongResolver {
         for (PlaylistSong song : store.getPlaylist().getSongs()) {
             long duration = song.getPlayTime();
             if (cumulative + duration > elapsedSeconds) {
-                return Optional.of(new CurrentSong(song.getPlaylistSongId(), song.getTitle(), song.getArtist(), song.getVid(), (int) (elapsedSeconds - cumulative)));
+                return Optional.of(
+                    new CurrentSong(song.getPlaylistSongId(), song.getTitle(), song.getArtist(),
+                        song.getVid(), (int) (elapsedSeconds - cumulative)));
             }
 
             cumulative += duration;

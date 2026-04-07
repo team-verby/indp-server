@@ -17,7 +17,8 @@ public class AdminSongRecommendationController {
     private final SongRecommendationService songRecommendationService;
 
     @GetMapping("/admin/stores/{storeId}/songs/recommendations")
-    public ResponseEntity<FindStoreRecommendationsResponse> findRecommendedSongs(@PathVariable long storeId) {
+    public ResponseEntity<FindStoreRecommendationsResponse> findRecommendedSongs(
+        @PathVariable long storeId) {
         return ResponseEntity.ok(songRecommendationService.findRecommendedSongs(storeId));
     }
 

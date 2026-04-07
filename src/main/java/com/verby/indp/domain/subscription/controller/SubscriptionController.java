@@ -20,7 +20,8 @@ public class SubscriptionController {
     private final SubscriptionService subscriptionService;
 
     @GetMapping("/stores/{storeId}")
-    public ResponseEntity<FindSubscriptionsResponse> findSubscriptions(@LoginOwner Owner owner, @PathVariable long storeId) {
+    public ResponseEntity<FindSubscriptionsResponse> findSubscriptions(@LoginOwner Owner owner,
+        @PathVariable long storeId) {
         return ResponseEntity.ok(subscriptionService.findSubscriptions(owner, storeId));
     }
 
@@ -30,6 +31,7 @@ public class SubscriptionController {
         @PathVariable long storeId,
         @RequestBody AddSubscriptionRequest request
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(subscriptionService.orderSubscription(owner, storeId, request));
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(subscriptionService.orderSubscription(owner, storeId, request));
     }
 }

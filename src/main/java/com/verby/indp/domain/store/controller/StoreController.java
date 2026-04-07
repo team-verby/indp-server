@@ -23,7 +23,8 @@ public class StoreController {
     private final ApplyStoreService applyStoreService;
 
     @PostMapping("/apply")
-    public ResponseEntity<AddSubscriptionResponse> applyStore(@RequestBody ApplyStoreRequest request) {
+    public ResponseEntity<AddSubscriptionResponse> applyStore(
+        @RequestBody ApplyStoreRequest request) {
         AddSubscriptionResponse response = applyStoreService.applyStore(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -36,7 +37,8 @@ public class StoreController {
     }
 
     @GetMapping("/{storeId}/summary")
-    public ResponseEntity<FindStoreSummaryResponse> findStoreSummary(@RequestAttribute("owner") Owner owner, @PathVariable long storeId) {
+    public ResponseEntity<FindStoreSummaryResponse> findStoreSummary(
+        @RequestAttribute("owner") Owner owner, @PathVariable long storeId) {
         return ResponseEntity.ok(storeService.findStoreSummary(storeId));
     }
 }
