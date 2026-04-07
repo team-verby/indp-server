@@ -44,7 +44,7 @@ public class OwnerPlaylistService {
         validateOwnership(store, owner);
         validateSubscribeActive(store);
 
-        slackNotificationService.sendPlaylistRegenerateRequest(store);
+        slackNotificationService.handlePlaylistRegenerationRequest(store);
     }
 
     private void validateSubscribeActive(Store store) {
