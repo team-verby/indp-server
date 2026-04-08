@@ -23,4 +23,6 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     Page<Store> findAllByOrderByStoreIdAsc(Pageable pageable);
 
     List<Store> findAllByOwner(Owner owner);
+
+    boolean existsByName(String name);
 }

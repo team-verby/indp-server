@@ -2,6 +2,7 @@ package com.verby.indp.domain.store.service;
 
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.auth.service.OwnerService;
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreApply;
 import com.verby.indp.domain.store.StoreMusic;
@@ -25,6 +26,7 @@ public class ApplyStoreService {
 
     @Transactional
     public AddSubscriptionResponse applyStore(ApplyStoreRequest request) {
+        validateDuplicateName(request.name());
         Store store = buildStore(request);
         storeRepository.save(store);
 
@@ -32,6 +34,12 @@ public class ApplyStoreService {
             request.usagePeriod());
         return subscriptionService.orderSubscription(store.getOwner(), store.getStoreId(),
             addSubscriptionRequest);
+    }
+
+    private void validateDuplicateName(String name) {
+        if (storeRepository.existsByName(name)) {
+            throw new BadRequestException("이미 존재하는 매장 이름입니다.");
+        }
     }
 
     private Store buildStore(ApplyStoreRequest request) {

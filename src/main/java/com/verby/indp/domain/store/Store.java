@@ -21,7 +21,7 @@ import java.util.stream.IntStream;
 
 @Entity
 @Getter
-@Table(name = "store")
+@Table(name = "store", uniqueConstraints = @UniqueConstraint(name = "uk_store_name", columnNames = "name"))
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class Store extends BaseTimeEntity {
 
