@@ -12,7 +12,6 @@ import com.verby.indp.domain.recommendation.service.SongRecommendationService;
 import com.verby.indp.domain.store.service.OwnerStoreService;
 import com.verby.indp.domain.store.service.StoreService;
 import com.verby.indp.domain.subscription.service.SubscriptionService;
-import com.verby.indp.global.jwt.TokenManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import static com.verby.indp.global.fixture.TokenFixture.accessToken;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -44,16 +42,11 @@ public abstract class BaseControllerTest {
     @Autowired
     protected RestDocumentationResultHandler restDocs;
 
-    protected String accessToken = accessToken();
-
     @MockBean
     protected AdminRepository adminRepository;
 
     @MockBean
     protected OwnerRepository ownerRepository;
-
-    @MockBean
-    protected TokenManager tokenManager;
 
     @MockBean
     protected AdminService adminService;

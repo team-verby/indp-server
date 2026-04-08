@@ -25,7 +25,7 @@ public record FindPlansResponse(List<PlanItem> plans) {
                 .map(PlanDiscount::getDiscountRate)
                 .orElse(0);
 
-            return new PlanItem(plan.getPlanId(), plan.getType(), plan.getMonthlyPrice(),
+            return new PlanItem(plan.getPlanId(), plan.getType().name(), plan.getMonthlyPrice(),
                 discountRate);
         }
     }

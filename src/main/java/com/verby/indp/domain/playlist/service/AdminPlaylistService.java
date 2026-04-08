@@ -26,7 +26,7 @@ public class AdminPlaylistService {
     public void addScheduledPlaylists(SchedulePlaylistsUpdateRequest request) {
         request.schedulePlaylists()
             .forEach(schedulePlaylist -> {
-                Store store = storeService.getStoreById(schedulePlaylist.storeId());
+                Store store = storeService.getStoreByName(schedulePlaylist.storeName());
                 List<SongItem> songItems = schedulePlaylist.songs();
                 List<ScheduledPlaylistSong> songs = IntStream.range(0, songItems.size())
                     .mapToObj(i -> new ScheduledPlaylistSong(songItems.get(i).title(),

@@ -18,7 +18,7 @@ public record FindLatestSubscriptionResponse(
     public static FindLatestSubscriptionResponse from(StoreSubscription subscription) {
         return new FindLatestSubscriptionResponse(
             subscription.getStatus(),
-            subscription.getPlan().getType(),
+            subscription.getPlan().getType().name(),
             subscription.getStartDate(),
             subscription.getEndDate(),
             subscription.getPayment().getPaidAt(),

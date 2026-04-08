@@ -32,7 +32,7 @@ public record FindStoreSummaryResponse(
             store.getAddress(),
             store.getBusinessHours().stream().map(BusinessHourItem::from).toList(),
             latestSub.map(s -> s.getStatus().name()).orElse(null),
-            latestSub.map(s -> s.getPlan().getType()).orElse(null)
+            latestSub.map(s -> s.getPlan().getType().name()).orElse(null)
         );
     }
 }

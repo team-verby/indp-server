@@ -34,4 +34,9 @@ public class StoreService {
         return storeRepository.findById(storeId)
             .orElseThrow(() -> new NotFoundException("존재하지 않는 매장입니다."));
     }
+
+    public Store getStoreByName(String name) {
+        return storeRepository.findByName(name)
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 매장입니다."));
+    }
 }

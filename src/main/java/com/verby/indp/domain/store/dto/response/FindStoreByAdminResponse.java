@@ -108,7 +108,7 @@ public record FindStoreByAdminResponse(
                                     String status) {
 
         private static SubscriptionInfo from(StoreSubscription subscription) {
-            return new SubscriptionInfo(subscription.getPlan().getType(),
+            return new SubscriptionInfo(subscription.getPlan().getType().name(),
                 subscription.getStartDate(),
                 subscription.getEndDate(), subscription.getStatus().name());
         }

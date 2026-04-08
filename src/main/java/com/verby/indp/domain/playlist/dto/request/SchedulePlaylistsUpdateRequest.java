@@ -8,7 +8,7 @@ public record SchedulePlaylistsUpdateRequest(
 ) {
 
     public record SchedulePlaylistItem(
-        Long storeId,
+        String storeName,
         List<SongItem> songs,
         LocalDateTime scheduledAt
     ) {

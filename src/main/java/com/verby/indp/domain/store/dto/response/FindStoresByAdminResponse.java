@@ -37,7 +37,7 @@ public record FindStoresByAdminResponse(List<StoreItem> stores) {
                                     String status) {
 
         private static SubscriptionItem from(StoreSubscription subscription) {
-            return new SubscriptionItem(subscription.getPlan().getType(),
+            return new SubscriptionItem(subscription.getPlan().getType().name(),
                 subscription.getStartDate(), subscription.getEndDate(),
                 subscription.getStatus().name());
         }

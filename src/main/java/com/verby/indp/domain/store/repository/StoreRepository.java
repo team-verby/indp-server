@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<Store, Long> {
 
@@ -25,4 +26,6 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     List<Store> findAllByOwner(Owner owner);
 
     boolean existsByName(String name);
+
+    Optional<Store> findByName(String name);
 }

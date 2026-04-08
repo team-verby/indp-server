@@ -34,7 +34,7 @@ public record FindSubscriptionsResponse(
                 subscription.getStartDate(),
                 subscription.getEndDate(),
                 paidAt,
-                subscription.getPlan().getType()
+                subscription.getPlan().getType().name()
             );
         }
     }
