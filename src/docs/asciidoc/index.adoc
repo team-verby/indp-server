@@ -1,7 +1,469 @@
-= Indp Application API Document
-
+= Indp API Document
 :doctype: book
 :source-highlighter: highlightjs
 :sectlinks:
 :toc: left
 :toclevels: 3
+
+== 개요
+
+=== Base URL
+
+|===
+| 환경 | URL
+
+| Local
+| `http://localhost:8080`
+|===
+
+=== 인증
+
+토큰이 필요한 API는 요청 헤더에 `Authorization: Bearer {accessToken}` 을 포함해야 합니다.
+
+---
+
+== 인증 (Auth)
+
+=== 어드민 로그인
+
+`POST /api/admin/login`
+
+==== Request
+
+include::{snippets}/admin-login/admin-login/http-request.adoc[]
+include::{snippets}/admin-login/admin-login/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/admin-login/admin-login/http-response.adoc[]
+include::{snippets}/admin-login/admin-login/response-fields.adoc[]
+
+---
+
+=== 점주 로그인
+
+`POST /api/owner/login`
+
+==== Request
+
+include::{snippets}/owner-login/owner-login/http-request.adoc[]
+include::{snippets}/owner-login/owner-login/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/owner-login/owner-login/http-response.adoc[]
+include::{snippets}/owner-login/owner-login/response-fields.adoc[]
+
+---
+
+=== 토큰 재발급
+
+`POST /api/auth/refresh`
+
+==== Request
+
+include::{snippets}/refresh/refresh/http-request.adoc[]
+include::{snippets}/refresh/refresh/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/refresh/refresh/http-response.adoc[]
+include::{snippets}/refresh/refresh/response-fields.adoc[]
+
+---
+
+=== 점주 로그아웃
+
+`POST /api/owner/logout` [인증 필요]
+
+==== Request
+
+include::{snippets}/owner-logout/owner-logout/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/owner-logout/owner-logout/http-response.adoc[]
+
+---
+
+=== 어드민 로그아웃
+
+`POST /api/admin/logout` [인증 필요]
+
+==== Request
+
+include::{snippets}/admin-logout/admin-logout/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/admin-logout/admin-logout/http-response.adoc[]
+
+---
+
+== 플랜 (Plan)
+
+=== 플랜 목록 조회
+
+`GET /api/plans`
+
+==== Request
+
+include::{snippets}/find-plans/find-plans/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/find-plans/find-plans/http-response.adoc[]
+include::{snippets}/find-plans/find-plans/response-fields.adoc[]
+
+---
+
+== 매장 (Store)
+
+=== 매장 신청
+
+`POST /api/stores/apply`
+
+매장 신청과 동시에 구독 결제 주문을 생성합니다. 반환된 `orderId`로 토스페이먼츠 결제를 진행한 후 `/api/payments/confirm` 을 호출해야 구독이 활성화됩니다.
+
+==== Request
+
+include::{snippets}/apply-store/apply-store/http-request.adoc[]
+include::{snippets}/apply-store/apply-store/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/apply-store/apply-store/http-response.adoc[]
+include::{snippets}/apply-store/apply-store/response-fields.adoc[]
+
+---
+
+=== 매장 목록 조회
+
+`GET /api/stores`
+
+==== Request
+
+include::{snippets}/find-stores/find-stores/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/find-stores/find-stores/http-response.adoc[]
+include::{snippets}/find-stores/find-stores/response-fields.adoc[]
+
+---
+
+=== 매장 요약 정보 조회
+
+`GET /api/stores/{storeId}/summary`
+
+==== Request
+
+include::{snippets}/find-store-summary/find-store-summary/http-request.adoc[]
+include::{snippets}/find-store-summary/find-store-summary/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-store-summary/find-store-summary/http-response.adoc[]
+include::{snippets}/find-store-summary/find-store-summary/response-fields.adoc[]
+
+---
+
+=== [Admin] 매장 목록 조회
+
+`GET /api/admin/stores` [어드민 인증 필요]
+
+==== Request
+
+include::{snippets}/find-stores/find-stores/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/find-stores/find-stores/http-response.adoc[]
+include::{snippets}/find-stores/find-stores/response-fields.adoc[]
+
+---
+
+=== [Admin] 매장 상세 조회
+
+`GET /api/admin/stores/{storeId}` [어드민 인증 필요]
+
+==== Request
+
+include::{snippets}/find-store/find-store/http-request.adoc[]
+include::{snippets}/find-store/find-store/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-store/find-store/http-response.adoc[]
+include::{snippets}/find-store/find-store/response-fields.adoc[]
+
+---
+
+=== [Owner] 내 매장 목록 조회
+
+`GET /api/owner/stores` [점주 인증 필요]
+
+==== Request
+
+include::{snippets}/find-my-stores/find-my-stores/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/find-my-stores/find-my-stores/http-response.adoc[]
+include::{snippets}/find-my-stores/find-my-stores/response-fields.adoc[]
+
+---
+
+=== [Owner] 내 매장 상세 조회
+
+`GET /api/owner/stores/{storeId}` [점주 인증 필요]
+
+==== Request
+
+include::{snippets}/find-my-store/find-my-store/http-request.adoc[]
+include::{snippets}/find-my-store/find-my-store/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-my-store/find-my-store/http-response.adoc[]
+include::{snippets}/find-my-store/find-my-store/response-fields.adoc[]
+
+---
+
+=== [Owner] 매장 정보 수정
+
+`PUT /api/owner/stores/{storeId}` [점주 인증 필요]
+
+==== Request
+
+include::{snippets}/update-store/update-store/http-request.adoc[]
+include::{snippets}/update-store/update-store/path-parameters.adoc[]
+include::{snippets}/update-store/update-store/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/update-store/update-store/http-response.adoc[]
+
+---
+
+=== [Owner] 최신 구독 정보 조회
+
+`GET /api/owner/stores/{storeId}/subscription` [점주 인증 필요]
+
+==== Request
+
+include::{snippets}/find-latest-subscription/find-latest-subscription/http-request.adoc[]
+include::{snippets}/find-latest-subscription/find-latest-subscription/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-latest-subscription/find-latest-subscription/http-response.adoc[]
+include::{snippets}/find-latest-subscription/find-latest-subscription/response-fields.adoc[]
+
+---
+
+== 구독 (Subscription)
+
+=== 구독 주문
+
+`POST /api/owner/subscriptions/stores/{storeId}` [점주 인증 필요]
+
+반환된 `orderId`로 토스페이먼츠 결제를 진행한 후 `/api/payments/confirm` 을 호출해야 구독이 활성화됩니다.
+
+==== Request
+
+include::{snippets}/add-subscription/add-subscription/http-request.adoc[]
+include::{snippets}/add-subscription/add-subscription/path-parameters.adoc[]
+include::{snippets}/add-subscription/add-subscription/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/add-subscription/add-subscription/http-response.adoc[]
+include::{snippets}/add-subscription/add-subscription/response-fields.adoc[]
+
+---
+
+=== 구독 목록 조회
+
+`GET /api/owner/subscriptions/stores/{storeId}` [점주 인증 필요]
+
+==== Request
+
+include::{snippets}/find-subscriptions/find-subscriptions/http-request.adoc[]
+include::{snippets}/find-subscriptions/find-subscriptions/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-subscriptions/find-subscriptions/http-response.adoc[]
+include::{snippets}/find-subscriptions/find-subscriptions/response-fields.adoc[]
+
+---
+
+== 결제 (Payment)
+
+=== 결제 확인
+
+`POST /api/payments/confirm`
+
+토스페이먼츠 결제 완료 후 호출합니다. 구독 결제와 노래 추천 결제 모두 이 엔드포인트를 사용합니다.
+
+==== Request
+
+include::{snippets}/confirm-payment/confirm-subscription-payment/http-request.adoc[]
+include::{snippets}/confirm-payment/confirm-subscription-payment/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/confirm-payment/confirm-subscription-payment/http-response.adoc[]
+
+---
+
+=== 결제 실패
+
+`POST /api/payments/fail`
+
+토스페이먼츠 결제 실패/취소 시 호출합니다.
+
+==== Request
+
+include::{snippets}/fail-payment/fail-payment/http-request.adoc[]
+include::{snippets}/fail-payment/fail-payment/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/fail-payment/fail-payment/http-response.adoc[]
+
+---
+
+== 플레이리스트 (Playlist)
+
+=== 매장 플레이리스트 조회
+
+`GET /api/stores/{storeId}/playlist`
+
+현재 재생 중인 곡 정보와 전체 플레이리스트를 반환합니다. `currentSong` 은 매장 영업 중일 때만 반환됩니다.
+
+==== 현재 재생 곡 없음
+
+===== Request
+
+include::{snippets}/find-store-playlist/find-store-playlist/http-request.adoc[]
+include::{snippets}/find-store-playlist/find-store-playlist/path-parameters.adoc[]
+
+===== Response
+
+include::{snippets}/find-store-playlist/find-store-playlist/http-response.adoc[]
+include::{snippets}/find-store-playlist/find-store-playlist/response-fields.adoc[]
+
+==== 현재 재생 곡 있음
+
+===== Request
+
+include::{snippets}/find-store-playlist/find-store-playlist-with-current-song/http-request.adoc[]
+
+===== Response
+
+include::{snippets}/find-store-playlist/find-store-playlist-with-current-song/http-response.adoc[]
+include::{snippets}/find-store-playlist/find-store-playlist-with-current-song/response-fields.adoc[]
+
+---
+
+=== [Owner] 플레이리스트 조회
+
+`GET /api/owner/stores/{storeId}/playlist` [점주 인증 필요]
+
+==== Request
+
+include::{snippets}/find-store-playlist/find-store-playlist/http-request.adoc[]
+include::{snippets}/find-store-playlist/find-store-playlist/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-store-playlist/find-store-playlist/http-response.adoc[]
+include::{snippets}/find-store-playlist/find-store-playlist/response-fields.adoc[]
+
+---
+
+=== [Owner] 플레이리스트 재생성 요청
+
+`POST /api/owner/stores/{storeId}/playlist/regenerate` [점주 인증 필요]
+
+AI 기반 플레이리스트 재생성을 요청합니다.
+
+==== Request
+
+include::{snippets}/regenerate-playlist/regenerate-playlist/http-request.adoc[]
+include::{snippets}/regenerate-playlist/regenerate-playlist/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/regenerate-playlist/regenerate-playlist/http-response.adoc[]
+
+---
+
+=== [Admin] 플레이리스트 스케줄 등록
+
+`POST /api/admin/playlists/schedule` [어드민 인증 필요]
+
+지정한 시각에 매장 플레이리스트를 일괄 교체하도록 예약합니다.
+
+==== Request
+
+include::{snippets}/schedule-playlist-updates/schedule-playlist-updates/http-request.adoc[]
+include::{snippets}/schedule-playlist-updates/schedule-playlist-updates/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/schedule-playlist-updates/schedule-playlist-updates/http-response.adoc[]
+
+---
+
+== 노래 추천 (Song Recommendation)
+
+=== 노래 추천 등록
+
+`POST /api/stores/{storeId}/songs/recommendations`
+
+손님이 노래를 추천합니다. 반환된 `orderId`로 토스페이먼츠 결제를 진행한 후 `/api/payments/confirm` 을 호출해야 추천이 플레이리스트에 반영됩니다.
+
+==== Request
+
+include::{snippets}/register-recommendation/register-recommendation/http-request.adoc[]
+include::{snippets}/register-recommendation/register-recommendation/path-parameters.adoc[]
+include::{snippets}/register-recommendation/register-recommendation/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/register-recommendation/register-recommendation/http-response.adoc[]
+include::{snippets}/register-recommendation/register-recommendation/response-fields.adoc[]
+
+---
+
+=== 노래 추천 수수료 조회
+
+`GET /api/recommendation-fee`
+
+==== Request
+
+include::{snippets}/find-recommendation-fee/find-recommendation-fee/http-request.adoc[]
+
+==== Response
+
+include::{snippets}/find-recommendation-fee/find-recommendation-fee/http-response.adoc[]
+include::{snippets}/find-recommendation-fee/find-recommendation-fee/response-fields.adoc[]
+
+---
+
+=== [Admin] 매장 노래 추천 목록 조회
+
+`GET /api/admin/stores/{storeId}/songs/recommendations` [어드민 인증 필요]
+
+==== Request
+
+include::{snippets}/find-recommended-songs/find-recommended-songs/http-request.adoc[]
+include::{snippets}/find-recommended-songs/find-recommended-songs/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/find-recommended-songs/find-recommended-songs/http-response.adoc[]
+include::{snippets}/find-recommended-songs/find-recommended-songs/response-fields.adoc[]

@@ -15,15 +15,11 @@ import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.global.image.dto.ImageResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.ResultActions;
 
 class ImageControllerTest extends BaseControllerTest {
-
-    @MockBean
-    private ImageService imageService;
 
     @Test
     @DisplayName("성공 : 이미지를 업로드한다.")

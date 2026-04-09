@@ -1,0 +1,90 @@
+package com.verby.indp.domain.payment.controller;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.BDDMockito.willReturn;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.verby.indp.domain.BaseControllerTest;
+import com.verby.indp.domain.payment.PaymentType;
+import com.verby.indp.domain.payment.dto.request.ConfirmPaymentRequest;
+import com.verby.indp.domain.payment.dto.request.FailPaymentRequest;
+import com.verby.indp.domain.store.dto.response.ConfirmApplyPaymentResponse;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.ResultActions;
+
+class PaymentControllerTest extends BaseControllerTest {
+
+    @Nested
+    @DisplayName("POST /api/payments/confirm 실행 시")
+    class ConfirmPayment {
+
+        @Test
+        @DisplayName("성공 : 구독 결제를 확인한다.")
+        void confirmSubscriptionPayment() throws Exception {
+            // given
+            willDoNothing().given(paymentService).confirm(any());
+
+            ConfirmPaymentRequest request = new ConfirmPaymentRequest(
+                PaymentType.SUBSCRIPTION, "toss_payment_key_123", "INDP-20260101-uuid", 180000);
+
+            // when
+            ResultActions resultActions = mockMvc.perform(post("/api/payments/confirm")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+            // then
+            resultActions.andExpect(status().isOk())
+                .andDo(
+                    restDocs.document(
+                        requestFields(
+                            fieldWithPath("paymentType").type(STRING)
+                                .description("결제 유형 +\n`SUBSCRIPTION` (구독), `SONG_RECOMMENDATION` (노래 추천)"),
+                            fieldWithPath("paymentKey").type(STRING)
+                                .description("토스페이먼츠 paymentKey"),
+                            fieldWithPath("orderId").type(STRING).description("주문 ID"),
+                            fieldWithPath("amount").type(NUMBER).description("결제 금액 (원)")
+                        )
+                    )
+                );
+        }
+    }
+
+    @Nested
+    @DisplayName("POST /api/payments/fail 실행 시")
+    class FailPayment {
+
+        @Test
+        @DisplayName("성공 : 결제 실패를 처리한다.")
+        void failPayment() throws Exception {
+            // given
+            willDoNothing().given(paymentService).failPayment(any());
+
+            FailPaymentRequest request = new FailPaymentRequest("INDP-20260101-uuid");
+
+            // when
+            ResultActions resultActions = mockMvc.perform(post("/api/payments/fail")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+            // then
+            resultActions.andExpect(status().isOk())
+                .andDo(
+                    restDocs.document(
+                        requestFields(
+                            fieldWithPath("orderId").type(STRING).description("주문 ID")
+                        )
+                    )
+                );
+        }
+    }
+}

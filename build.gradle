@@ -122,8 +122,14 @@ def jacocoExcludePatterns = [
 		"**/StoreSongForm*",
 		"**/Store*",
 		"**/StoreTheme*",
-		"**/Theme*"
-
+		"**/Theme*",
+		"**/payment/service/PaymentClient*",
+		"**/infrastructure/ApiService*",
+		"**/playlist/service/PlaylistWebSocketService*",
+		"**/dto/request/TimePreference*",
+		"**/domain/plan/Plan.*",
+		"**/domain/plan/PlanDiscount*",
+		"**/domain/policy/PricePolicy*"
 ]
 
 def excludedClassFilesForReport(classDirectories, jacocoExcludePatterns) {
@@ -149,27 +155,27 @@ jacocoTestReport {
 	finalizedBy jacocoTestCoverageVerification
 }
 
-//jacocoTestCoverageVerification {
-//	excludedClassFilesForReport(classDirectories, jacocoExcludePatterns)
-//	violationRules {
-//		rule {
-//			enabled = true
-//			element = 'CLASS'
-//
-//			limit {
-//				counter = 'BRANCH'
-//				value = 'COVEREDRATIO'
-//				minimum = 0.70
-//			}
-//
-//			limit {
-//				counter = 'LINE'
-//				value = 'COVEREDRATIO'
-//				minimum = 0.70
-//			}
-//		}
-//	}
-//}
+jacocoTestCoverageVerification {
+	excludedClassFilesForReport(classDirectories, jacocoExcludePatterns)
+	violationRules {
+		rule {
+			enabled = true
+			element = 'CLASS'
+
+			limit {
+				counter = 'BRANCH'
+				value = 'COVEREDRATIO'
+				minimum = 0.70
+			}
+
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.70
+			}
+		}
+	}
+}
 
 // SonarCloud
 sonar {

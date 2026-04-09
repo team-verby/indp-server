@@ -34,3 +34,8 @@ cloud:
       static: ap-northeast-2
     s3:
       bucket: bucket
+
+payment:
+  toss:
+    secret-key: tossSecretKey
+    confirm-url: tossConfirmUrl
