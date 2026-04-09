@@ -1,9 +1,5 @@
 package com.verby.indp.domain.auth.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchException;
-import static org.mockito.BDDMockito.given;
-
 import com.verby.indp.domain.auth.Admin;
 import com.verby.indp.domain.auth.RefreshToken;
 import com.verby.indp.domain.auth.RefreshToken.SubjectType;
@@ -11,8 +7,7 @@ import com.verby.indp.domain.auth.dto.request.LoginRequest;
 import com.verby.indp.domain.auth.dto.response.LoginResponse;
 import com.verby.indp.domain.auth.repository.AdminRepository;
 import com.verby.indp.domain.common.exception.AuthException;
-import java.time.LocalDateTime;
-import java.util.Optional;
+import com.verby.indp.fixture.AdminFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,6 +15,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchException;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
@@ -41,18 +43,16 @@ class AdminServiceTest {
         @DisplayName("성공 : 어드민이 로그인하면 토큰을 반환한다.")
         void login() {
             // given
-            Admin admin = org.mockito.Mockito.mock(Admin.class);
-            given(admin.getAdminId()).willReturn(1L);
-            given(admin.mismatchPassword("password123!")).willReturn(false);
+            Admin admin = AdminFixture.admin();
 
-            given(adminRepository.findByLoginId("admin")).willReturn(Optional.of(admin));
-            given(authTokenService.createAdminToken(1L)).willReturn("access-token");
+            given(adminRepository.findByLoginId(admin.getLoginId())).willReturn(Optional.of(admin));
+            given(authTokenService.createAdminToken(admin.getAdminId())).willReturn("access-token");
 
-            RefreshToken refreshToken = new RefreshToken("refresh-token", SubjectType.ADMIN, 1L,
+            RefreshToken refreshToken = new RefreshToken("refresh-token", SubjectType.ADMIN, admin.getAdminId(),
                 LocalDateTime.now().plusDays(30));
-            given(authTokenService.issueAdminRefreshToken(1L)).willReturn(refreshToken);
+            given(authTokenService.issueAdminRefreshToken(admin.getAdminId())).willReturn(refreshToken);
 
-            LoginRequest request = new LoginRequest("admin", "password123!");
+            LoginRequest request = new LoginRequest(admin.getLoginId(), admin.getPassword());
 
             // when
             LoginResponse result = adminService.login(request);

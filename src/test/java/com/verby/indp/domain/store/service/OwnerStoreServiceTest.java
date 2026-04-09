@@ -1,17 +1,15 @@
 package com.verby.indp.domain.store.service;
 
 import static com.verby.indp.fixture.OwnerFixture.owner;
-import static com.verby.indp.fixture.StoreFixture.store;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
-import static org.mockito.ArgumentMatchers.any;
 
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.store.PlayMethod;
 import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.store.dto.response.FindLatestSubscriptionResponse;
 import com.verby.indp.domain.store.dto.request.BusinessHour;
 import com.verby.indp.domain.store.dto.request.UpdateStoreRequest;
 import com.verby.indp.domain.store.dto.response.FindOwnerStoreResponse;
@@ -19,6 +17,8 @@ import com.verby.indp.domain.store.dto.response.FindStoresResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
 import com.verby.indp.domain.store.vo.PlaylistType;
 import com.verby.indp.domain.store.vo.Tempo;
+import com.verby.indp.fixture.OwnerFixture;
+import com.verby.indp.fixture.StoreFixture;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -63,11 +63,8 @@ class OwnerStoreServiceTest {
         @Test
         @DisplayName("성공 : 점주의 매장 상세를 반환한다.")
         void getMyStore() {
-            Owner owner = Mockito.mock(Owner.class);
-            given(owner.getOwnerId()).willReturn(1L);
-
-            Store mockStore = store();
-            given(mockStore.getOwner()).willReturn(owner);
+            Owner owner = OwnerFixture.ownerWithId(1L);
+            Store mockStore = StoreFixture.storeWithOwner(owner);
             given(storeRepository.findById(1L)).willReturn(Optional.of(mockStore));
 
             FindOwnerStoreResponse result = ownerStoreService.getMyStore(owner, 1L);
@@ -89,14 +86,9 @@ class OwnerStoreServiceTest {
         @Test
         @DisplayName("실패 : 소유하지 않은 매장이면 예외를 던진다.")
         void getMyStoreWithNotOwned() {
-            Owner owner = Mockito.mock(Owner.class);
-            given(owner.getOwnerId()).willReturn(1L);
-
-            Owner otherOwner = Mockito.mock(Owner.class);
-            given(otherOwner.getOwnerId()).willReturn(2L);
-
-            Store mockStore = Mockito.mock(Store.class);
-            given(mockStore.getOwner()).willReturn(otherOwner);
+            Owner owner = OwnerFixture.ownerWithId(1L);
+            Owner otherOwner = OwnerFixture.ownerWithId(2L);
+            Store mockStore = StoreFixture.storeWithOwner(otherOwner);
             given(storeRepository.findById(1L)).willReturn(Optional.of(mockStore));
 
             Exception exception = catchException(() -> ownerStoreService.getMyStore(owner, 1L));
@@ -112,14 +104,8 @@ class OwnerStoreServiceTest {
         @Test
         @DisplayName("성공 : 매장 정보를 수정한다.")
         void updateStore() {
-            Owner owner = Mockito.mock(Owner.class);
-            given(owner.getOwnerId()).willReturn(1L);
-
-            Owner storeOwner = Mockito.mock(Owner.class);
-            given(storeOwner.getOwnerId()).willReturn(1L);
-
-            Store mockStore = Mockito.mock(Store.class);
-            given(mockStore.getOwner()).willReturn(storeOwner);
+            Owner owner = OwnerFixture.ownerWithId(1L);
+            Store mockStore = StoreFixture.storeWithOwner(owner);
             given(storeRepository.findById(1L)).willReturn(Optional.of(mockStore));
 
             UpdateStoreRequest request = Mockito.mock(UpdateStoreRequest.class);
@@ -151,14 +137,9 @@ class OwnerStoreServiceTest {
         @Test
         @DisplayName("실패 : 소유하지 않은 매장이면 예외를 던진다.")
         void updateStoreWithNotOwned() {
-            Owner owner = Mockito.mock(Owner.class);
-            given(owner.getOwnerId()).willReturn(1L);
-
-            Owner otherOwner = Mockito.mock(Owner.class);
-            given(otherOwner.getOwnerId()).willReturn(2L);
-
-            Store mockStore = Mockito.mock(Store.class);
-            given(mockStore.getOwner()).willReturn(otherOwner);
+            Owner owner = OwnerFixture.ownerWithId(1L);
+            Owner otherOwner = OwnerFixture.ownerWithId(2L);
+            Store mockStore = StoreFixture.storeWithOwner(otherOwner);
             given(storeRepository.findById(1L)).willReturn(Optional.of(mockStore));
 
             UpdateStoreRequest request = Mockito.mock(UpdateStoreRequest.class);
@@ -175,16 +156,24 @@ class OwnerStoreServiceTest {
     class GetLatestSubscription {
 
         @Test
+        @DisplayName("성공 : 최신 구독 정보를 반환한다.")
+        void getLatestSubscription() {
+            Owner owner = OwnerFixture.ownerWithId(1L);
+            Store mockStore = StoreFixture.storeWithOwner(owner);
+            given(storeRepository.findById(1L)).willReturn(Optional.of(mockStore));
+
+            FindLatestSubscriptionResponse result = ownerStoreService.getLatestSubscription(owner,
+                1L);
+
+            assertThat(result).isNotNull();
+        }
+
+        @Test
         @DisplayName("실패 : 소유하지 않은 매장이면 예외를 던진다.")
         void getLatestSubscriptionWithNotOwned() {
-            Owner owner = Mockito.mock(Owner.class);
-            given(owner.getOwnerId()).willReturn(1L);
-
-            Owner otherOwner = Mockito.mock(Owner.class);
-            given(otherOwner.getOwnerId()).willReturn(2L);
-
-            Store mockStore = Mockito.mock(Store.class);
-            given(mockStore.getOwner()).willReturn(otherOwner);
+            Owner owner = OwnerFixture.ownerWithId(1L);
+            Owner otherOwner = OwnerFixture.ownerWithId(2L);
+            Store mockStore = StoreFixture.storeWithOwner(otherOwner);
             given(storeRepository.findById(1L)).willReturn(Optional.of(mockStore));
 
             Exception exception = catchException(

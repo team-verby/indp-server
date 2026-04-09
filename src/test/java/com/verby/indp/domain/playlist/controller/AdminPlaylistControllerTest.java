@@ -1,29 +1,27 @@
 package com.verby.indp.domain.playlist.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
-import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
-import static org.springframework.restdocs.payload.JsonFieldType.STRING;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.domain.auth.Admin;
 import com.verby.indp.domain.playlist.dto.request.SchedulePlaylistsUpdateRequest;
 import com.verby.indp.domain.playlist.dto.request.SchedulePlaylistsUpdateRequest.SchedulePlaylistItem;
 import com.verby.indp.domain.playlist.dto.request.SchedulePlaylistsUpdateRequest.SchedulePlaylistItem.SongItem;
-import java.time.LocalDateTime;
-import java.util.List;
+import com.verby.indp.fixture.AdminFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.test.web.servlet.ResultActions;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class AdminPlaylistControllerTest extends BaseControllerTest {
 
@@ -35,8 +33,7 @@ class AdminPlaylistControllerTest extends BaseControllerTest {
         @DisplayName("성공 : 플레이리스트 업데이트를 예약한다.")
         void schedulePlaylistUpdates() throws Exception {
             // given
-            Admin admin = Mockito.mock(Admin.class);
-            given(admin.getAdminId()).willReturn(1L);
+            Admin admin = AdminFixture.admin();
             givenAdminAuth(admin);
             willDoNothing().given(adminPlaylistService).addScheduledPlaylists(any());
 

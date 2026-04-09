@@ -5,10 +5,10 @@ import static org.assertj.core.api.Assertions.catchException;
 
 import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.store.vo.Genre;
+import com.verby.indp.fixture.StoreMusicFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 class MusicGenreTest {
 
@@ -19,7 +19,7 @@ class MusicGenreTest {
         @Test
         @DisplayName("성공 : MusicGenre를 생성한다.")
         void newMusicGenre() {
-            StoreMusic storeMusic = Mockito.mock(StoreMusic.class);
+            StoreMusic storeMusic = StoreMusicFixture.storeMusic();
 
             Exception exception = catchException(
                 () -> new MusicGenre(storeMusic, Genre.INDIE, MusicGenre.PreferenceType.LIKE));
@@ -39,7 +39,7 @@ class MusicGenreTest {
         @Test
         @DisplayName("실패 : genre가 null이면 예외를 던진다.")
         void newMusicGenreWithNullGenre() {
-            StoreMusic storeMusic = Mockito.mock(StoreMusic.class);
+            StoreMusic storeMusic = StoreMusicFixture.storeMusic();
 
             Exception exception = catchException(
                 () -> new MusicGenre(storeMusic, null, MusicGenre.PreferenceType.LIKE));
@@ -50,7 +50,7 @@ class MusicGenreTest {
         @Test
         @DisplayName("실패 : preferenceType이 null이면 예외를 던진다.")
         void newMusicGenreWithNullPreferenceType() {
-            StoreMusic storeMusic = Mockito.mock(StoreMusic.class);
+            StoreMusic storeMusic = StoreMusicFixture.storeMusic();
 
             Exception exception = catchException(
                 () -> new MusicGenre(storeMusic, Genre.INDIE, null));
@@ -66,7 +66,7 @@ class MusicGenreTest {
         @Test
         @DisplayName("성공 : LIKE이면 true를 반환한다.")
         void isPreferredTrue() {
-            StoreMusic storeMusic = Mockito.mock(StoreMusic.class);
+            StoreMusic storeMusic = StoreMusicFixture.storeMusic();
             MusicGenre genre = new MusicGenre(storeMusic, Genre.INDIE, MusicGenre.PreferenceType.LIKE);
 
             assertThat(genre.isPreferred()).isTrue();
@@ -75,7 +75,7 @@ class MusicGenreTest {
         @Test
         @DisplayName("성공 : DISLIKE이면 false를 반환한다.")
         void isPreferredFalse() {
-            StoreMusic storeMusic = Mockito.mock(StoreMusic.class);
+            StoreMusic storeMusic = StoreMusicFixture.storeMusic();
             MusicGenre genre = new MusicGenre(storeMusic, Genre.INDIE,
                 MusicGenre.PreferenceType.DISLIKE);
 
@@ -90,7 +90,7 @@ class MusicGenreTest {
         @Test
         @DisplayName("성공 : DISLIKE이면 true를 반환한다.")
         void isRejectedTrue() {
-            StoreMusic storeMusic = Mockito.mock(StoreMusic.class);
+            StoreMusic storeMusic = StoreMusicFixture.storeMusic();
             MusicGenre genre = new MusicGenre(storeMusic, Genre.INDIE,
                 MusicGenre.PreferenceType.DISLIKE);
 
@@ -100,7 +100,7 @@ class MusicGenreTest {
         @Test
         @DisplayName("성공 : LIKE이면 false를 반환한다.")
         void isRejectedFalse() {
-            StoreMusic storeMusic = Mockito.mock(StoreMusic.class);
+            StoreMusic storeMusic = StoreMusicFixture.storeMusic();
             MusicGenre genre = new MusicGenre(storeMusic, Genre.INDIE, MusicGenre.PreferenceType.LIKE);
 
             assertThat(genre.isRejected()).isFalse();

@@ -5,17 +5,17 @@ import static org.assertj.core.api.Assertions.catchException;
 
 import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.store.Store;
+import com.verby.indp.fixture.StoreFixture;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 class ScheduledPlaylistTest {
 
-    private Store mockStore() {
-        return Mockito.mock(Store.class);
+    private Store store() {
+        return StoreFixture.store();
     }
 
     private ScheduledPlaylistSong song() {
@@ -30,7 +30,7 @@ class ScheduledPlaylistTest {
         @DisplayName("성공 : ScheduledPlaylist를 생성한다.")
         void newScheduledPlaylist() {
             Exception exception = catchException(() ->
-                new ScheduledPlaylist(mockStore(), LocalDateTime.now().plusHours(1),
+                new ScheduledPlaylist(store(), LocalDateTime.now().plusHours(1),
                     List.of(song())));
 
             assertThat(exception).isNull();
@@ -49,7 +49,7 @@ class ScheduledPlaylistTest {
         @DisplayName("실패 : scheduledAt이 null이면 예외를 던진다.")
         void newScheduledPlaylistWithNullScheduledAt() {
             Exception exception = catchException(() ->
-                new ScheduledPlaylist(mockStore(), null, List.of(song())));
+                new ScheduledPlaylist(store(), null, List.of(song())));
 
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
@@ -58,7 +58,7 @@ class ScheduledPlaylistTest {
         @DisplayName("실패 : songs가 비어있으면 예외를 던진다.")
         void newScheduledPlaylistWithEmptySongs() {
             Exception exception = catchException(() ->
-                new ScheduledPlaylist(mockStore(), LocalDateTime.now().plusHours(1), List.of()));
+                new ScheduledPlaylist(store(), LocalDateTime.now().plusHours(1), List.of()));
 
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
@@ -71,7 +71,7 @@ class ScheduledPlaylistTest {
         @Test
         @DisplayName("성공 : 상태를 APPLIED로 변경한다.")
         void markApplied() {
-            ScheduledPlaylist scheduledPlaylist = new ScheduledPlaylist(mockStore(),
+            ScheduledPlaylist scheduledPlaylist = new ScheduledPlaylist(store(),
                 LocalDateTime.now().plusHours(1), List.of(song()));
 
             scheduledPlaylist.markApplied();

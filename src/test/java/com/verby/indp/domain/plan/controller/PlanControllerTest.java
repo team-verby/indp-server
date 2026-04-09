@@ -11,13 +11,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.domain.plan.Plan;
-import com.verby.indp.domain.plan.Plan.PlanType;
 import com.verby.indp.domain.plan.dto.response.FindPlansResponse;
+import com.verby.indp.fixture.PlanFixture;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.test.web.servlet.ResultActions;
 
 class PlanControllerTest extends BaseControllerTest {
@@ -30,17 +29,8 @@ class PlanControllerTest extends BaseControllerTest {
         @DisplayName("성공 : 플랜 목록을 조회한다.")
         void findPlans() throws Exception {
             // given
-            Plan planA = Mockito.mock(Plan.class);
-            given(planA.getPlanId()).willReturn(1L);
-            given(planA.getType()).willReturn(PlanType.PLAN_A);
-            given(planA.getMonthlyPrice()).willReturn(15000);
-            given(planA.getDiscounts()).willReturn(List.of());
-
-            Plan planB = Mockito.mock(Plan.class);
-            given(planB.getPlanId()).willReturn(2L);
-            given(planB.getType()).willReturn(PlanType.PLAN_B);
-            given(planB.getMonthlyPrice()).willReturn(39000);
-            given(planB.getDiscounts()).willReturn(List.of());
+            Plan planA = PlanFixture.planA();
+            Plan planB = PlanFixture.planB();
 
             FindPlansResponse response = FindPlansResponse.from(List.of(planA, planB));
             given(planService.getPlans()).willReturn(response);

@@ -18,20 +18,18 @@ import com.verby.indp.domain.auth.Admin;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse;
+import com.verby.indp.fixture.AdminFixture;
 import com.verby.indp.fixture.StoreFixture;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.test.web.servlet.ResultActions;
 
 class AdminStoreControllerTest extends BaseControllerTest {
 
     private Admin admin() {
-        Admin admin = Mockito.mock(Admin.class);
-        given(admin.getAdminId()).willReturn(1L);
-        return admin;
+        return AdminFixture.admin();
     }
 
     @Nested

@@ -15,6 +15,9 @@ import java.util.Optional;
 public class CurrentSongResolver {
 
     public static Optional<CurrentSong> resolveCurrentSong(Store store) {
+        if (store.getPlaylist() == null) {
+            return Optional.empty();
+        }
         long elapsedSeconds = calcElapsedSeconds(store);
         if (elapsedSeconds < 0) {
             return Optional.empty();

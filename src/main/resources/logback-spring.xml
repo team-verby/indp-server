@@ -1,36 +1,42 @@
 <configuration>
 
   <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-  <springProperty name="SLACK_WEBHOOK_URI" source="logging.slack.webhook.uri"/>
-  <!-- console appender -->
-  <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+
+  <springProperty name="SLACK_ERROR_WEBHOOK_URI" source="logging.slack.error.webhook.uri"/>
+  <springProperty name="SLACK_BUSINESS_WEBHOOK_URI" source="logging.slack.business.webhook.uri"/>
+
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <Pattern>${CONSOLE_LOG_PATTERN}</Pattern>
+      <pattern>${CONSOLE_LOG_PATTERN}</pattern>
       <charset>utf8</charset>
     </encoder>
   </appender>
 
-  <!-- slack appender (error) -->
-  <appender name="SLACK" class="com.github.maricn.logback.SlackAppender">
-    <webhookUri>${SLACK_WEBHOOK_URI}</webhookUri>
+  <!-- ========================= -->
+  <!-- 🔴 ERROR SLACK -->
+  <!-- ========================= -->
+  <appender name="SLACK_ERROR" class="com.github.maricn.logback.SlackAppender">
+    <webhookUri>${SLACK_ERROR_WEBHOOK_URI}</webhookUri>
     <layout class="ch.qos.logback.classic.PatternLayout">
-      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - %-5le %logger{35} : %msg%n</pattern>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - %-5level %logger{35} : %msg%n</pattern>
     </layout>
     <username>INDP-SERVER-ERROR</username>
     <iconEmoji>:hammer_and_wrench:</iconEmoji>
     <colorCoding>true</colorCoding>
   </appender>
 
-  <appender name="ASYNC_SLACK" class="ch.qos.logback.classic.AsyncAppender">
-    <appender-ref ref="SLACK"/>
+  <appender name="ASYNC_SLACK_ERROR" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="SLACK_ERROR"/>
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
       <level>ERROR</level>
     </filter>
   </appender>
 
-  <!-- slack appender (business event) -->
+  <!-- ========================= -->
+  <!-- 🟡 BUSINESS SLACK -->
+  <!-- ========================= -->
   <appender name="SLACK_BUSINESS" class="com.github.maricn.logback.SlackAppender">
-    <webhookUri>${SLACK_WEBHOOK_URI}</webhookUri>
+    <webhookUri>${SLACK_BUSINESS_WEBHOOK_URI}</webhookUri>
     <layout class="ch.qos.logback.classic.PatternLayout">
       <pattern>%msg%n</pattern>
     </layout>
@@ -47,7 +53,8 @@
   </logger>
 
   <root level="INFO">
-    <appender-ref ref="ASYNC_SLACK"/>
-    <appender-ref ref="Console"/>
+    <appender-ref ref="ASYNC_SLACK_ERROR"/>
+    <appender-ref ref="CONSOLE"/>
   </root>
+
 </configuration>

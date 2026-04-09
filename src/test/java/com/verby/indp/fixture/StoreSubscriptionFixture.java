@@ -37,4 +37,15 @@ public class StoreSubscriptionFixture {
             LocalDate.of(2026, 1, 12)
         );
     }
+
+    public static StoreSubscription pendingActiveSubscription() {
+        StoreSubscription subscription = new StoreSubscription(
+            PlanFixture.planA(),
+            PaymentFixture.payment(),
+            12,
+            LocalDate.of(2026, 1, 12)
+        );
+        subscription.updateStatus(SubscriptionStatus.PENDING_ACTIVE);
+        return subscription;
+    }
 }

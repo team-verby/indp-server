@@ -12,11 +12,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.domain.auth.Admin;
 import com.verby.indp.domain.recommendation.dto.response.FindStoreRecommendationsResponse;
+import com.verby.indp.fixture.AdminFixture;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.test.web.servlet.ResultActions;
 
 class AdminSongRecommendationControllerTest extends BaseControllerTest {
@@ -29,8 +29,7 @@ class AdminSongRecommendationControllerTest extends BaseControllerTest {
         @DisplayName("성공 : 어드민이 매장의 노래 추천 목록을 조회한다.")
         void findRecommendedSongs() throws Exception {
             // given
-            Admin admin = Mockito.mock(Admin.class);
-            given(admin.getAdminId()).willReturn(1L);
+            Admin admin = AdminFixture.admin();
             givenAdminAuth(admin);
 
             FindStoreRecommendationsResponse response = new FindStoreRecommendationsResponse(

@@ -12,6 +12,9 @@ import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistByOwnerResponse;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.service.StoreService;
+import com.verby.indp.fixture.OwnerFixture;
+import com.verby.indp.fixture.PlaylistFixture;
+import com.verby.indp.fixture.StoreFixture;
 import com.verby.indp.global.slack.SlackNotificationService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,16 +47,8 @@ class OwnerPlaylistServiceTest {
         @Test
         @DisplayName("성공 : 플레이리스트가 없으면 null을 반환한다.")
         void getStorePlaylistWithNullPlaylist() {
-            Owner owner = Mockito.mock(Owner.class);
-            given(owner.getOwnerId()).willReturn(1L);
-
-            Owner storeOwner = Mockito.mock(Owner.class);
-            given(storeOwner.getOwnerId()).willReturn(1L);
-
-            Store store = Mockito.mock(Store.class);
-            given(store.getOwner()).willReturn(storeOwner);
-            given(store.isInactive()).willReturn(false);
-            given(store.getPlaylist()).willReturn(null);
+            Owner owner = OwnerFixture.ownerWithId(1L);
+            Store store = StoreFixture.storeWithOwner(owner);
             given(storeService.getStoreById(1L)).willReturn(store);
 
             FindStorePlaylistByOwnerResponse result = ownerPlaylistService.getStorePlaylist(owner, 1L);
@@ -66,19 +60,10 @@ class OwnerPlaylistServiceTest {
         @Test
         @DisplayName("성공 : 플레이리스트를 반환한다.")
         void getStorePlaylist() {
-            Owner owner = Mockito.mock(Owner.class);
-            given(owner.getOwnerId()).willReturn(1L);
-
-            Owner storeOwner = Mockito.mock(Owner.class);
-            given(storeOwner.getOwnerId()).willReturn(1L);
-
-            Playlist playlist = Mockito.mock(Playlist.class);
-            given(playlist.getPlaylistId()).willReturn(1L);
-
-            Store store = Mockito.mock(Store.class);
-            given(store.getOwner()).willReturn(storeOwner);
-            given(store.isInactive()).willReturn(false);
-            given(store.getPlaylist()).willReturn(playlist);
+            Owner owner = OwnerFixture.ownerWithId(1L);
+            Playlist playlist = PlaylistFixture.playlist();
+            Store store = StoreFixture.storeWithOwner(owner);
+            store.assignPlaylist(playlist);
             given(storeService.getStoreById(1L)).willReturn(store);
             given(playlistService.getSortedSongs(1L)).willReturn(List.of());
 
@@ -90,14 +75,9 @@ class OwnerPlaylistServiceTest {
         @Test
         @DisplayName("실패 : 소유하지 않은 매장이면 예외를 던진다.")
         void getStorePlaylistWithNotOwned() {
-            Owner owner = Mockito.mock(Owner.class);
-            given(owner.getOwnerId()).willReturn(1L);
-
-            Owner otherOwner = Mockito.mock(Owner.class);
-            given(otherOwner.getOwnerId()).willReturn(2L);
-
-            Store store = Mockito.mock(Store.class);
-            given(store.getOwner()).willReturn(otherOwner);
+            Owner owner = OwnerFixture.ownerWithId(1L);
+            Owner otherOwner = OwnerFixture.ownerWithId(2L);
+            Store store = StoreFixture.storeWithOwner(otherOwner);
             given(storeService.getStoreById(1L)).willReturn(store);
 
             Exception exception = catchException(() -> ownerPlaylistService.getStorePlaylist(owner, 1L));
@@ -108,15 +88,8 @@ class OwnerPlaylistServiceTest {
         @Test
         @DisplayName("실패 : 구독이 활성화되지 않은 매장이면 예외를 던진다.")
         void getStorePlaylistWithInactiveSubscription() {
-            Owner owner = Mockito.mock(Owner.class);
-            given(owner.getOwnerId()).willReturn(1L);
-
-            Owner storeOwner = Mockito.mock(Owner.class);
-            given(storeOwner.getOwnerId()).willReturn(1L);
-
-            Store store = Mockito.mock(Store.class);
-            given(store.getOwner()).willReturn(storeOwner);
-            given(store.isInactive()).willReturn(true);
+            Owner owner = OwnerFixture.ownerWithId(1L);
+            Store store = StoreFixture.inactiveStoreWithOwner(owner);
             given(storeService.getStoreById(1L)).willReturn(store);
 
             Exception exception = catchException(() -> ownerPlaylistService.getStorePlaylist(owner, 1L));
@@ -132,15 +105,8 @@ class OwnerPlaylistServiceTest {
         @Test
         @DisplayName("성공 : 슬랙 알림을 전송한다.")
         void regeneratePlaylist() {
-            Owner owner = Mockito.mock(Owner.class);
-            given(owner.getOwnerId()).willReturn(1L);
-
-            Owner storeOwner = Mockito.mock(Owner.class);
-            given(storeOwner.getOwnerId()).willReturn(1L);
-
-            Store store = Mockito.mock(Store.class);
-            given(store.getOwner()).willReturn(storeOwner);
-            given(store.isInactive()).willReturn(false);
+            Owner owner = OwnerFixture.ownerWithId(1L);
+            Store store = StoreFixture.storeWithOwner(owner);
             given(storeService.getStoreById(1L)).willReturn(store);
 
             ownerPlaylistService.regeneratePlaylist(owner, 1L);
@@ -151,14 +117,9 @@ class OwnerPlaylistServiceTest {
         @Test
         @DisplayName("실패 : 소유하지 않은 매장이면 예외를 던진다.")
         void regeneratePlaylistWithNotOwned() {
-            Owner owner = Mockito.mock(Owner.class);
-            given(owner.getOwnerId()).willReturn(1L);
-
-            Owner otherOwner = Mockito.mock(Owner.class);
-            given(otherOwner.getOwnerId()).willReturn(2L);
-
-            Store store = Mockito.mock(Store.class);
-            given(store.getOwner()).willReturn(otherOwner);
+            Owner owner = OwnerFixture.ownerWithId(1L);
+            Owner otherOwner = OwnerFixture.ownerWithId(2L);
+            Store store = StoreFixture.storeWithOwner(otherOwner);
             given(storeService.getStoreById(1L)).willReturn(store);
 
             Exception exception = catchException(() -> ownerPlaylistService.regeneratePlaylist(owner, 1L));
@@ -169,15 +130,8 @@ class OwnerPlaylistServiceTest {
         @Test
         @DisplayName("실패 : 구독이 활성화되지 않은 매장이면 예외를 던진다.")
         void regeneratePlaylistWithInactiveSubscription() {
-            Owner owner = Mockito.mock(Owner.class);
-            given(owner.getOwnerId()).willReturn(1L);
-
-            Owner storeOwner = Mockito.mock(Owner.class);
-            given(storeOwner.getOwnerId()).willReturn(1L);
-
-            Store store = Mockito.mock(Store.class);
-            given(store.getOwner()).willReturn(storeOwner);
-            given(store.isInactive()).willReturn(true);
+            Owner owner = OwnerFixture.ownerWithId(1L);
+            Store store = StoreFixture.inactiveStoreWithOwner(owner);
             given(storeService.getStoreById(1L)).willReturn(store);
 
             Exception exception = catchException(() -> ownerPlaylistService.regeneratePlaylist(owner, 1L));

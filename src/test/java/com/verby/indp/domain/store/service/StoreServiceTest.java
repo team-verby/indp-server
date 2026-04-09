@@ -1,5 +1,6 @@
 package com.verby.indp.domain.store.service;
 
+import static com.verby.indp.fixture.StoreFixture.store;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 import static org.mockito.ArgumentMatchers.any;
@@ -7,8 +8,10 @@ import static org.mockito.BDDMockito.given;
 
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.store.dto.response.FindStoreSummaryResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
+import com.verby.indp.domain.subscription.SubscriptionStatus;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +34,49 @@ class StoreServiceTest {
 
     @Mock
     private StoreRepository storeRepository;
+
+    @Nested
+    @DisplayName("findStores 메서드 실행 시")
+    class FindStores {
+
+        @Test
+        @DisplayName("성공 : 활성 구독 매장 목록을 반환한다.")
+        void findStores() {
+            Page<Store> page = new PageImpl<>(List.of());
+            given(storeRepository.findAllBySubscriptionStatus(any(SubscriptionStatus.class), any()))
+                .willReturn(page);
+
+            FindStoresResponse result = storeService.findStores(PageRequest.of(0, 10));
+
+            assertThat(result).isNotNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("findStoreSummary 메서드 실행 시")
+    class FindStoreSummary {
+
+        @Test
+        @DisplayName("성공 : 매장 요약 정보를 반환한다.")
+        void findStoreSummary() {
+            Store mockStore = store();
+            given(storeRepository.findById(1L)).willReturn(Optional.of(mockStore));
+
+            FindStoreSummaryResponse result = storeService.findStoreSummary(1L);
+
+            assertThat(result).isNotNull();
+        }
+
+        @Test
+        @DisplayName("실패 : 존재하지 않는 매장이면 예외를 던진다.")
+        void findStoreSummaryWithNotExist() {
+            given(storeRepository.findById(999L)).willReturn(Optional.empty());
+
+            Exception exception = catchException(() -> storeService.findStoreSummary(999L));
+
+            assertThat(exception).isInstanceOf(NotFoundException.class);
+        }
+    }
 
     @Nested
     @DisplayName("getStoreById 메서드 실행 시")
