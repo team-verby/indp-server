@@ -66,14 +66,17 @@ class SongRecommendationServiceTest {
         @Test
         @DisplayName("성공 : 추천 노래 목록을 반환한다.")
         void findRecommendedSongs() {
+            // given
             Store store = StoreFixture.store();
             given(storeService.getStoreById(1L)).willReturn(store);
             given(songRecommendationRepository.findAllByStoreAndStatus(store,
                 SongRecommendation.RecommendationStatus.RECOMMENDED)).willReturn(List.of());
 
+            // when
             FindStoreRecommendationsResponse result = songRecommendationService.findRecommendedSongs(
                 1L);
 
+            // then
             assertThat(result).isNotNull();
         }
     }
@@ -85,61 +88,74 @@ class SongRecommendationServiceTest {
         @Test
         @DisplayName("실패 : 구독이 활성화되지 않은 매장이면 예외를 던진다.")
         void orderSongRecommendationWithInactiveSubscription() {
+            // given
             Store store = StoreFixture.inactiveStore();
             given(storeService.getStoreById(1L)).willReturn(store);
 
+            // when
             Exception exception = catchException(() ->
                 songRecommendationService.orderSongRecommendation(1L, "안녕 나의 사랑", "성시경",
                     "5zAEiu3SaO4", 259, "홍길동"));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
 
         @Test
         @DisplayName("실패 : 음악 추천 불가 플랜이면 예외를 던진다.")
         void orderSongRecommendationWithIneligiblePlan() {
+            // given
             Plan planA = PlanFixture.planA();
             Store store = StoreFixture.storeWithActiveSubscriptionAndPlan(planA);
             given(storeService.getStoreById(1L)).willReturn(store);
 
+            // when
             Exception exception = catchException(() ->
                 songRecommendationService.orderSongRecommendation(1L, "안녕 나의 사랑", "성시경",
                     "5zAEiu3SaO4", 259, "홍길동"));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
 
         @Test
         @DisplayName("실패 : 현재 영업 중이 아닌 매장이면 예외를 던진다.")
         void orderSongRecommendationWithClosedStore() {
+            // given
             Plan planB = PlanFixture.planB();
             Store store = StoreFixture.closedStoreWithActiveSubscriptionAndPlan(planB);
             given(storeService.getStoreById(1L)).willReturn(store);
 
+            // when
             Exception exception = catchException(() ->
                 songRecommendationService.orderSongRecommendation(1L, "안녕 나의 사랑", "성시경",
                     "5zAEiu3SaO4", 259, "홍길동"));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
 
         @Test
         @DisplayName("실패 : 플레이리스트가 없는 매장이면 예외를 던진다.")
         void orderSongRecommendationWithNoPlaylist() {
+            // given
             Plan planB = PlanFixture.planB();
             Store store = StoreFixture.storeWithActiveSubscriptionAndPlan(planB);
             given(storeService.getStoreById(1L)).willReturn(store);
 
+            // when
             Exception exception = catchException(() ->
                 songRecommendationService.orderSongRecommendation(1L, "안녕 나의 사랑", "성시경",
                     "5zAEiu3SaO4", 259, "홍길동"));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
 
         @Test
         @DisplayName("성공 : 음악 추천을 주문한다.")
         void orderSongRecommendation() {
+            // given
             Plan planB = PlanFixture.planB();
             Store store = StoreFixture.storeWithActiveSubscriptionAndPlan(planB);
             store.assignPlaylist(PlaylistFixture.playlist());
@@ -149,10 +165,12 @@ class SongRecommendationServiceTest {
             given(pricePolicyService.getByPolicyKey("recommendation_fee")).willReturn(pricePolicy);
             given(songRecommendationRepository.save(any())).willAnswer(inv -> inv.getArgument(0));
 
+            // when
             Exception exception = catchException(() ->
                 songRecommendationService.orderSongRecommendation(1L, "안녕 나의 사랑", "성시경",
                     "5zAEiu3SaO4", 259, "홍길동"));
 
+            // then
             assertThat(exception).isNull();
         }
     }
@@ -164,6 +182,7 @@ class SongRecommendationServiceTest {
         @Test
         @DisplayName("성공 : 결제를 확인하고 추천곡을 플레이리스트에 추가한다.")
         void confirmPayment() {
+            // given
             SongRecommendation recommendation = SongRecommendationFixture.songRecommendation();
             Store store = recommendation.getStore();
             Payment payment = PaymentFixture.payment();
@@ -176,9 +195,11 @@ class SongRecommendationServiceTest {
             willDoNothing().given(playlistWebSocketService)
                 .sendSongRecommended(recommendation, playlistSong);
 
+            // when
             Exception exception = catchException(
                 () -> songRecommendationService.confirmPayment(payment));
 
+            // then
             assertThat(exception).isNull();
             assertThat(recommendation.getStatus())
                 .isEqualTo(SongRecommendation.RecommendationStatus.RECOMMENDED);
@@ -187,12 +208,15 @@ class SongRecommendationServiceTest {
         @Test
         @DisplayName("실패 : 결제에 대한 추천 정보가 없으면 예외를 던진다.")
         void confirmPaymentWithNotFound() {
+            // given
             Payment payment = PaymentFixture.payment();
             given(songRecommendationRepository.findByPayment(payment)).willReturn(Optional.empty());
 
+            // when
             Exception exception = catchException(
                 () -> songRecommendationService.confirmPayment(payment));
 
+            // then
             assertThat(exception).isInstanceOf(NotFoundException.class);
         }
     }

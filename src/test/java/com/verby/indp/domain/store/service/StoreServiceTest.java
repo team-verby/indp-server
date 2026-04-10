@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -42,12 +41,15 @@ class StoreServiceTest {
         @Test
         @DisplayName("성공 : 활성 구독 매장 목록을 반환한다.")
         void findStores() {
+            // given
             Page<Store> page = new PageImpl<>(List.of());
             given(storeRepository.findAllBySubscriptionStatus(any(SubscriptionStatus.class), any()))
                 .willReturn(page);
 
+            // when
             FindStoresResponse result = storeService.findStores(PageRequest.of(0, 10));
 
+            // then
             assertThat(result).isNotNull();
         }
     }
@@ -59,21 +61,27 @@ class StoreServiceTest {
         @Test
         @DisplayName("성공 : 매장 요약 정보를 반환한다.")
         void findStoreSummary() {
+            // given
             Store mockStore = store();
             given(storeRepository.findById(1L)).willReturn(Optional.of(mockStore));
 
+            // when
             FindStoreSummaryResponse result = storeService.findStoreSummary(1L);
 
+            // then
             assertThat(result).isNotNull();
         }
 
         @Test
         @DisplayName("실패 : 존재하지 않는 매장이면 예외를 던진다.")
         void findStoreSummaryWithNotExist() {
+            // given
             given(storeRepository.findById(999L)).willReturn(Optional.empty());
 
+            // when
             Exception exception = catchException(() -> storeService.findStoreSummary(999L));
 
+            // then
             assertThat(exception).isInstanceOf(NotFoundException.class);
         }
     }
@@ -86,7 +94,7 @@ class StoreServiceTest {
         @DisplayName("성공 : 매장을 반환한다.")
         void getStoreById() {
             // given
-            Store store = Mockito.mock(Store.class);
+            Store store = store();
             given(storeRepository.findById(1L)).willReturn(Optional.of(store));
 
             // when
@@ -118,7 +126,7 @@ class StoreServiceTest {
         @DisplayName("성공 : 매장명으로 매장을 반환한다.")
         void getStoreByName() {
             // given
-            Store store = Mockito.mock(Store.class);
+            Store store = store();
             given(storeRepository.findByName("카페공명")).willReturn(Optional.of(store));
 
             // when

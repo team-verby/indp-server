@@ -16,6 +16,13 @@ public class PlaylistSongFixture {
         return song;
     }
 
+    public static PlaylistSong playlistSongWithId(Long id, double playOrder, int playTime) {
+        PlaylistSong song = new PlaylistSong(null, false, "5zAEiu3SaO4", playTime, "안녕 나의 사랑",
+            "성시경", playOrder);
+        ReflectionTestUtils.setField(song, "playlistSongId", id);
+        return song;
+    }
+
     public static PlaylistSong recommendedSong() {
         return new PlaylistSong(null, true, "5zAEiu3SaO4", 259, "안녕 나의 사랑", "성시경", 1.0);
     }

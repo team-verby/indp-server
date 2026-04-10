@@ -100,10 +100,13 @@ class OwnerServiceTest {
         @Test
         @DisplayName("성공 : 점주가 로그아웃한다.")
         void logout() {
+            // given
             willDoNothing().given(authTokenService).revokeOwnerRefreshToken(1L);
 
+            // when
             ownerService.logout(1L);
 
+            // then
             then(authTokenService).should().revokeOwnerRefreshToken(1L);
         }
     }
@@ -115,12 +118,15 @@ class OwnerServiceTest {
         @Test
         @DisplayName("성공 : 점주를 생성한다.")
         void createOwner() {
+            // given
             given(ownerRepository.existsByLoginId(any())).willReturn(false);
             Owner savedOwner = owner();
             given(ownerRepository.save(any())).willReturn(savedOwner);
 
+            // when
             Owner result = ownerService.createOwner("홍길동", "010-1234-5678");
 
+            // then
             assertThat(result).isNotNull();
         }
     }

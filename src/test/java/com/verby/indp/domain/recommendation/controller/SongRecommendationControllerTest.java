@@ -17,15 +17,15 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static com.verby.indp.fixture.PricePolicyFixture.pricePolicyWithAmount;
+
 import com.verby.indp.domain.BaseControllerTest;
-import com.verby.indp.domain.policy.PricePolicy;
 import com.verby.indp.domain.recommendation.dto.request.RegisterSongRecommendationRequest;
 import com.verby.indp.domain.recommendation.dto.response.RegisterSongRecommendationResponse;
 import com.verby.indp.domain.store.dto.response.FindRecommendationFeeResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.test.web.servlet.ResultActions;
 
 class SongRecommendationControllerTest extends BaseControllerTest {
@@ -85,8 +85,7 @@ class SongRecommendationControllerTest extends BaseControllerTest {
         @DisplayName("성공 : 노래 추천 수수료를 조회한다.")
         void findRecommendationFee() throws Exception {
             // given
-            PricePolicy pricePolicy = Mockito.mock(PricePolicy.class);
-            given(pricePolicy.getAmount()).willReturn(500);
+            var pricePolicy = pricePolicyWithAmount(500);
             given(pricePolicyService.getByPolicyKey("recommendation_fee")).willReturn(pricePolicy);
 
             // when

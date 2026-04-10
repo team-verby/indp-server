@@ -11,6 +11,8 @@ import com.verby.indp.domain.playlist.dto.request.SchedulePlaylistsUpdateRequest
 import com.verby.indp.domain.playlist.dto.request.SchedulePlaylistsUpdateRequest.SchedulePlaylistItem;
 import com.verby.indp.domain.playlist.dto.request.SchedulePlaylistsUpdateRequest.SchedulePlaylistItem.SongItem;
 import com.verby.indp.domain.playlist.repository.ScheduledPlaylistUpdateRepository;
+import static com.verby.indp.fixture.StoreFixture.store;
+
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.service.StoreService;
 import java.time.LocalDateTime;
@@ -21,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,7 +45,7 @@ class AdminPlaylistServiceTest {
         @DisplayName("성공 : 스케줄 플레이리스트를 저장한다.")
         void addScheduledPlaylists() {
             // given
-            Store store = Mockito.mock(Store.class);
+            Store store = store();
             given(storeService.getStoreByName("카페 공명")).willReturn(store);
             given(scheduledPlaylistUpdateRepository.save(any(ScheduledPlaylist.class)))
                 .willAnswer(inv -> inv.getArgument(0));

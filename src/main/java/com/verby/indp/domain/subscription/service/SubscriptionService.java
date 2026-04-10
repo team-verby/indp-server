@@ -15,6 +15,7 @@ import com.verby.indp.domain.subscription.SubscriptionStatus;
 import com.verby.indp.domain.subscription.dto.request.AddSubscriptionRequest;
 import com.verby.indp.domain.subscription.dto.response.FindSubscriptionsResponse;
 import com.verby.indp.domain.subscription.repository.StoreSubscriptionRepository;
+import com.verby.indp.global.slack.SlackNotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,7 @@ public class SubscriptionService {
     private final StoreService storeService;
     private final PlanService planService;
     private final StoreSubscriptionRepository storeSubscriptionRepository;
+    private final SlackNotificationService slackNotificationService;
 
     @Transactional
     public AddSubscriptionResponse orderSubscription(Owner owner, long storeId,
@@ -79,6 +81,7 @@ public class SubscriptionService {
     public void confirmPayment(Payment payment) {
         StoreSubscription subscription = getByPayment(payment);
         subscription.updateStatus(SubscriptionStatus.PENDING_ACTIVE);
+        slackNotificationService.handleApplyStoreStore(subscription.getStore());
     }
 
     private Payment buildPayment(String storeName, Plan plan, int usagePeriod) {

@@ -17,6 +17,7 @@ import com.verby.indp.domain.recommendation.dto.response.RegisterSongRecommendat
 import com.verby.indp.domain.recommendation.repository.SongRecommendationRepository;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.service.StoreService;
+import com.verby.indp.global.slack.SlackNotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +39,7 @@ public class SongRecommendationService {
     private final PricePolicyService pricePolicyService;
     private final PlaylistService playlistService;
     private final PlaylistWebSocketService playlistWebSocketService;
+    private final SlackNotificationService slackNotificationService;
 
     @Transactional
     public RegisterSongRecommendationResponse orderSongRecommendation(long storeId, String title,
@@ -67,6 +69,7 @@ public class SongRecommendationService {
             recommendation);
 
         playlistWebSocketService.sendSongRecommended(recommendation, playlistSong);
+        slackNotificationService.handleMusicRecommendation(recommendation);
     }
 
     private Payment buildPayment(String storeName) {

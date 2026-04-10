@@ -48,6 +48,7 @@ class PaymentServiceTest {
         @Test
         @DisplayName("성공 : 구독 결제를 확인한다.")
         void confirmSubscriptionPayment() {
+            // given
             Payment payment = new Payment("인디피_구독_카페공명", 180000);
             String orderId = payment.getOrderId();
             given(paymentRepository.findByOrderId(orderId)).willReturn(Optional.of(payment));
@@ -57,14 +58,17 @@ class PaymentServiceTest {
             ConfirmPaymentRequest request = new ConfirmPaymentRequest(PaymentType.SUBSCRIPTION,
                 "payment-key", orderId, 180000);
 
+            // when
             Exception exception = catchException(() -> paymentService.confirm(request));
 
+            // then
             assertThat(exception).isNull();
         }
 
         @Test
         @DisplayName("성공 : 음악 추천 결제를 확인한다.")
         void confirmSongRecommendationPayment() {
+            // given
             Payment payment = new Payment("인디피_추천_카페공명", 3000);
             String orderId = payment.getOrderId();
             given(paymentRepository.findByOrderId(orderId)).willReturn(Optional.of(payment));
@@ -74,27 +78,33 @@ class PaymentServiceTest {
             ConfirmPaymentRequest request = new ConfirmPaymentRequest(PaymentType.SONG_RECOMMENDATION,
                 "payment-key", orderId, 3000);
 
+            // when
             Exception exception = catchException(() -> paymentService.confirm(request));
 
+            // then
             assertThat(exception).isNull();
         }
 
         @Test
         @DisplayName("실패 : 결제 정보가 없으면 예외를 던진다.")
         void confirmWithNotFound() {
+            // given
             given(paymentRepository.findByOrderId("unknown")).willReturn(Optional.empty());
 
             ConfirmPaymentRequest request = new ConfirmPaymentRequest(PaymentType.SUBSCRIPTION,
                 "payment-key", "unknown", 180000);
 
+            // when
             Exception exception = catchException(() -> paymentService.confirm(request));
 
+            // then
             assertThat(exception).isInstanceOf(NotFoundException.class);
         }
 
         @Test
         @DisplayName("실패 : 이미 처리된 결제이면 예외를 던진다.")
         void confirmWithAlreadyProcessed() {
+            // given
             Payment payment = new Payment("인디피_구독_카페공명", 180000);
             payment.success();
             String orderId = payment.getOrderId();
@@ -103,14 +113,17 @@ class PaymentServiceTest {
             ConfirmPaymentRequest request = new ConfirmPaymentRequest(PaymentType.SUBSCRIPTION,
                 "payment-key", orderId, 180000);
 
+            // when
             Exception exception = catchException(() -> paymentService.confirm(request));
 
+            // then
             assertThat(exception).isInstanceOf(PaymentBadRequestException.class);
         }
 
         @Test
         @DisplayName("실패 : 결제 금액이 다르면 예외를 던진다.")
         void confirmWithDifferentAmount() {
+            // given
             Payment payment = new Payment("인디피_구독_카페공명", 180000);
             String orderId = payment.getOrderId();
             given(paymentRepository.findByOrderId(orderId)).willReturn(Optional.of(payment));
@@ -118,8 +131,10 @@ class PaymentServiceTest {
             ConfirmPaymentRequest request = new ConfirmPaymentRequest(PaymentType.SUBSCRIPTION,
                 "payment-key", orderId, 100000);
 
+            // when
             Exception exception = catchException(() -> paymentService.confirm(request));
 
+            // then
             assertThat(exception).isInstanceOf(PaymentBadRequestException.class);
         }
     }
@@ -131,12 +146,15 @@ class PaymentServiceTest {
         @Test
         @DisplayName("성공 : 결제를 실패 처리한다.")
         void failPayment() {
+            // given
             Payment payment = new Payment("인디피_구독_카페공명", 180000);
             String orderId = payment.getOrderId();
             given(paymentRepository.findByOrderId(orderId)).willReturn(Optional.of(payment));
 
+            // when
             Exception exception = catchException(() -> paymentService.failPayment(orderId));
 
+            // then
             assertThat(exception).isNull();
             assertThat(payment.isFail()).isTrue();
         }
@@ -144,23 +162,29 @@ class PaymentServiceTest {
         @Test
         @DisplayName("실패 : 결제 정보가 없으면 예외를 던진다.")
         void failPaymentWithNotFound() {
+            // given
             given(paymentRepository.findByOrderId("unknown")).willReturn(Optional.empty());
 
+            // when
             Exception exception = catchException(() -> paymentService.failPayment("unknown"));
 
+            // then
             assertThat(exception).isInstanceOf(NotFoundException.class);
         }
 
         @Test
         @DisplayName("실패 : 이미 처리된 결제이면 예외를 던진다.")
         void failPaymentWithAlreadyProcessed() {
+            // given
             Payment payment = new Payment("인디피_구독_카페공명", 180000);
             payment.fail();
             String orderId = payment.getOrderId();
             given(paymentRepository.findByOrderId(orderId)).willReturn(Optional.of(payment));
 
+            // when
             Exception exception = catchException(() -> paymentService.failPayment(orderId));
 
+            // then
             assertThat(exception).isInstanceOf(PaymentBadRequestException.class);
         }
     }

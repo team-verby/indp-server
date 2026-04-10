@@ -12,7 +12,10 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static com.verby.indp.fixture.AdminFixture.admin;
+
 import com.verby.indp.domain.BaseControllerTest;
+import com.verby.indp.domain.auth.Admin;
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.auth.dto.request.LoginRequest;
 import com.verby.indp.domain.auth.dto.request.RefreshRequest;
@@ -159,9 +162,7 @@ class AuthControllerTest extends BaseControllerTest {
         @DisplayName("성공 : 어드민이 로그아웃한다.")
         void adminLogout() throws Exception {
             // given
-            com.verby.indp.domain.auth.Admin admin = org.mockito.Mockito.mock(
-                com.verby.indp.domain.auth.Admin.class);
-            given(admin.getAdminId()).willReturn(1L);
+            Admin admin = admin();
             givenAdminAuth(admin);
             willDoNothing().given(adminService).logout(any());
 

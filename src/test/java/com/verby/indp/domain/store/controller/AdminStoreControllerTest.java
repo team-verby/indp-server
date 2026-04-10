@@ -118,6 +118,12 @@ class AdminStoreControllerTest extends BaseControllerTest {
                                 .description("플레이리스트 유형"),
                             fieldWithPath("musicInfo.timePreferences").type(ARRAY)
                                 .description("시간대별 무드 목록"),
+                            fieldWithPath("musicInfo.timePreferences[].startTimeHour").type(NUMBER)
+                                .description("시작 시각"),
+                            fieldWithPath("musicInfo.timePreferences[].endTimeHour").type(NUMBER)
+                                .description("종료 시각"),
+                            fieldWithPath("musicInfo.timePreferences[].mood").type(STRING)
+                                .description("해당 시간대 무드"),
                             fieldWithPath("musicInfo.MusicPlatform").type(STRING)
                                 .description("음악 플랫폼"),
                             fieldWithPath("musicInfo.playedMusic").type(STRING)

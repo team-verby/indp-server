@@ -56,6 +56,7 @@ class SubscriptionServiceTest {
         @Test
         @DisplayName("성공 : 구독을 주문한다.")
         void orderSubscription() {
+            // given
             Owner owner = OwnerFixture.ownerWithId(1L);
             Plan plan = PlanFixture.planA();
             Store store = StoreFixture.storeWithOwner(owner);
@@ -64,15 +65,18 @@ class SubscriptionServiceTest {
 
             AddSubscriptionRequest request = new AddSubscriptionRequest(1L, 3);
 
+            // when
             AddSubscriptionResponse result = subscriptionService.orderSubscription(owner, 1L,
                 request);
 
+            // then
             assertThat(result).isNotNull();
         }
 
         @Test
         @DisplayName("실패 : 소유하지 않은 매장이면 예외를 던진다.")
         void orderSubscriptionWithNotOwned() {
+            // given
             Owner owner = OwnerFixture.ownerWithId(1L);
             Owner otherOwner = OwnerFixture.ownerWithId(2L);
             Store store = StoreFixture.storeWithOwner(otherOwner);
@@ -80,9 +84,11 @@ class SubscriptionServiceTest {
 
             AddSubscriptionRequest request = new AddSubscriptionRequest(1L, 3);
 
+            // when
             Exception exception = catchException(
                 () -> subscriptionService.orderSubscription(owner, 1L, request));
 
+            // then
             assertThat(exception).isInstanceOf(NotFoundException.class);
         }
     }
@@ -134,25 +140,31 @@ class SubscriptionServiceTest {
         @Test
         @DisplayName("성공 : 활성화할 구독이 없으면 아무것도 하지 않는다.")
         void activateSubscriptionsWithEmpty() {
+            // given
             given(storeSubscriptionRepository.findAllByStatusAndStartDateLessThanEqual(
                 SubscriptionStatus.PENDING_ACTIVE, LocalDate.now()))
                 .willReturn(List.of());
 
+            // when
             Exception exception = catchException(() -> subscriptionService.activateSubscriptions());
 
+            // then
             assertThat(exception).isNull();
         }
 
         @Test
         @DisplayName("성공 : 구독을 활성화한다.")
         void activateSubscriptions() {
+            // given
             StoreSubscription subscription = StoreSubscriptionFixture.pendingActiveSubscription();
             given(storeSubscriptionRepository.findAllByStatusAndStartDateLessThanEqual(
                 any(), any()))
                 .willReturn(List.of(subscription));
 
+            // when
             subscriptionService.activateSubscriptions();
 
+            // then
             assertThat(subscription.getStatus()).isEqualTo(SubscriptionStatus.ACTIVE);
         }
     }
@@ -164,24 +176,30 @@ class SubscriptionServiceTest {
         @Test
         @DisplayName("성공 : 만료할 구독이 없으면 아무것도 하지 않는다.")
         void expireSubscriptionsWithEmpty() {
+            // given
             given(storeSubscriptionRepository.findAllByStatusAndEndDateBefore(
                 SubscriptionStatus.ACTIVE, LocalDate.now()))
                 .willReturn(List.of());
 
+            // when
             Exception exception = catchException(() -> subscriptionService.expireSubscriptions());
 
+            // then
             assertThat(exception).isNull();
         }
 
         @Test
         @DisplayName("성공 : 구독을 만료한다.")
         void expireSubscriptions() {
+            // given
             StoreSubscription subscription = StoreSubscriptionFixture.activeSubscription();
             given(storeSubscriptionRepository.findAllByStatusAndEndDateBefore(any(), any()))
                 .willReturn(List.of(subscription));
 
+            // when
             subscriptionService.expireSubscriptions();
 
+            // then
             assertThat(subscription.getStatus()).isEqualTo(SubscriptionStatus.EXPIRED);
         }
     }
@@ -193,25 +211,31 @@ class SubscriptionServiceTest {
         @Test
         @DisplayName("성공 : 결제를 확인하고 구독을 활성화 대기 상태로 변경한다.")
         void confirmPayment() {
+            // given
             Payment payment = PaymentFixture.payment();
             StoreSubscription subscription = StoreSubscriptionFixture.pendingPaymentSubscription();
             given(storeSubscriptionRepository.findByPayment(payment))
                 .willReturn(Optional.of(subscription));
 
+            // when
             subscriptionService.confirmPayment(payment);
 
+            // then
             assertThat(subscription.getStatus()).isEqualTo(SubscriptionStatus.PENDING_ACTIVE);
         }
 
         @Test
         @DisplayName("실패 : 결제에 대한 구독이 없으면 예외를 던진다.")
         void confirmPaymentWithNotFound() {
+            // given
             Payment payment = PaymentFixture.payment();
             given(storeSubscriptionRepository.findByPayment(payment))
                 .willReturn(Optional.empty());
 
+            // when
             Exception exception = catchException(() -> subscriptionService.confirmPayment(payment));
 
+            // then
             assertThat(exception).isInstanceOf(NotFoundException.class);
         }
     }

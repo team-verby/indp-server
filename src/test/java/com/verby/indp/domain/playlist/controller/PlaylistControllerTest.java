@@ -1,5 +1,6 @@
 package com.verby.indp.domain.playlist.controller;
 
+import static com.verby.indp.fixture.PlaylistSongFixture.playlistSongWithId;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
@@ -65,14 +66,7 @@ class PlaylistControllerTest extends BaseControllerTest {
         @DisplayName("성공 : 현재 재생 중인 곡이 있는 플레이리스트를 조회한다.")
         void findStorePlaylistWithCurrentSong() throws Exception {
             // given
-            com.verby.indp.domain.playlist.PlaylistSong song =
-                org.mockito.Mockito.mock(com.verby.indp.domain.playlist.PlaylistSong.class);
-            given(song.getPlaylistSongId()).willReturn(1L);
-            given(song.getPlayOrder()).willReturn(10.0);
-            given(song.getTitle()).willReturn("안녕 나의 사랑");
-            given(song.getArtist()).willReturn("성시경");
-            given(song.getPlayTime()).willReturn(259);
-            given(song.isRecommended()).willReturn(false);
+            com.verby.indp.domain.playlist.PlaylistSong song = playlistSongWithId(1L, 10.0);
 
             com.verby.indp.domain.playlist.dto.response.CurrentSong currentSong =
                 new com.verby.indp.domain.playlist.dto.response.CurrentSong(

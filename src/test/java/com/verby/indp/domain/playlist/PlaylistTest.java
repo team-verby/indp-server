@@ -23,24 +23,30 @@ class PlaylistTest {
         @Test
         @DisplayName("성공 : Playlist를 생성한다.")
         void newPlaylist() {
+            // when
             Exception exception = catchException(() -> new Playlist(List.of(song())));
 
+            // then
             assertThat(exception).isNull();
         }
 
         @Test
         @DisplayName("실패 : songs가 null이면 예외를 던진다.")
         void newPlaylistWithNullSongs() {
+            // when
             Exception exception = catchException(() -> new Playlist(null));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
 
         @Test
         @DisplayName("실패 : songs가 비어있으면 예외를 던진다.")
         void newPlaylistWithEmptySongs() {
+            // when
             Exception exception = catchException(() -> new Playlist(List.of()));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
     }
@@ -52,11 +58,14 @@ class PlaylistTest {
         @Test
         @DisplayName("성공 : 곡을 추가한다.")
         void addSong() {
+            // given
             Playlist playlist = new Playlist(new ArrayList<>(List.of(song())));
             PlaylistSong newSong = song();
 
+            // when
             playlist.addSong(newSong);
 
+            // then
             assertThat(playlist.getSongs()).hasSize(2);
         }
     }

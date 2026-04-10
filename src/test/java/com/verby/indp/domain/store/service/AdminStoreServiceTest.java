@@ -40,12 +40,15 @@ class AdminStoreServiceTest {
         @Test
         @DisplayName("성공 : 매장 목록을 반환한다.")
         void findStores() {
+            // given
             Page<Store> page = new PageImpl<>(List.of());
             given(storeRepository.findAllByOrderByStoreIdAsc(any())).willReturn(page);
 
+            // when
             FindStoresByAdminResponse result = adminStoreService.findStores(
                 PageRequest.of(0, 10));
 
+            // then
             assertThat(result).isNotNull();
         }
     }
@@ -57,21 +60,27 @@ class AdminStoreServiceTest {
         @Test
         @DisplayName("성공 : 매장 상세를 반환한다.")
         void findStore() {
+            // given
             Store mockStore = store();
             given(storeRepository.findById(1L)).willReturn(Optional.of(mockStore));
 
+            // when
             FindStoreByAdminResponse result = adminStoreService.findStore(1L);
 
+            // then
             assertThat(result).isNotNull();
         }
 
         @Test
         @DisplayName("실패 : 존재하지 않는 매장이면 예외를 던진다.")
         void findStoreWithNotExist() {
+            // given
             given(storeRepository.findById(999L)).willReturn(Optional.empty());
 
+            // when
             Exception exception = catchException(() -> adminStoreService.findStore(999L));
 
+            // then
             assertThat(exception).isInstanceOf(NotFoundException.class);
         }
     }

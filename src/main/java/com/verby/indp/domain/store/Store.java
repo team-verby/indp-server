@@ -110,8 +110,6 @@ public class Store extends BaseTimeEntity {
         this.address = address;
         this.customerAgeGroup = customerAgeGroup;
         this.lighting = lighting;
-        this.businessHours.clear();
-
         setBusinessHours(businessHours);
         setPhotos(photoUrls);
         setVibes(vibes);
@@ -157,10 +155,11 @@ public class Store extends BaseTimeEntity {
     }
 
     private void setBusinessHours(List<BusinessHour> businessHours) {
-        this.businessHours = businessHours.stream()
+        this.businessHours.clear();
+        businessHours.stream()
             .map(bh -> new StoreBusinessHour(this, bh.dayOfWeek(), bh.openTime(), bh.closeTime(),
                 bh.isClosed()))
-            .toList();
+            .forEach(this.businessHours::add);
     }
 
     private void validateStoreApply(StoreApply storeApply) {

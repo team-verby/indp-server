@@ -19,42 +19,53 @@ class MusicGenreTest {
         @Test
         @DisplayName("성공 : MusicGenre를 생성한다.")
         void newMusicGenre() {
+            // given
             StoreMusic storeMusic = StoreMusicFixture.storeMusic();
 
+            // when
             Exception exception = catchException(
                 () -> new MusicGenre(storeMusic, Genre.INDIE, MusicGenre.PreferenceType.LIKE));
 
+            // then
             assertThat(exception).isNull();
         }
 
         @Test
         @DisplayName("실패 : storeMusic이 null이면 예외를 던진다.")
         void newMusicGenreWithNullStoreMusic() {
+            // given & when
             Exception exception = catchException(
                 () -> new MusicGenre(null, Genre.INDIE, MusicGenre.PreferenceType.LIKE));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
 
         @Test
         @DisplayName("실패 : genre가 null이면 예외를 던진다.")
         void newMusicGenreWithNullGenre() {
+            // given
             StoreMusic storeMusic = StoreMusicFixture.storeMusic();
 
+            // when
             Exception exception = catchException(
                 () -> new MusicGenre(storeMusic, null, MusicGenre.PreferenceType.LIKE));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
 
         @Test
         @DisplayName("실패 : preferenceType이 null이면 예외를 던진다.")
         void newMusicGenreWithNullPreferenceType() {
+            // given
             StoreMusic storeMusic = StoreMusicFixture.storeMusic();
 
+            // when
             Exception exception = catchException(
                 () -> new MusicGenre(storeMusic, Genre.INDIE, null));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
     }
@@ -66,19 +77,23 @@ class MusicGenreTest {
         @Test
         @DisplayName("성공 : LIKE이면 true를 반환한다.")
         void isPreferredTrue() {
+            // given
             StoreMusic storeMusic = StoreMusicFixture.storeMusic();
             MusicGenre genre = new MusicGenre(storeMusic, Genre.INDIE, MusicGenre.PreferenceType.LIKE);
 
+            // when & then
             assertThat(genre.isPreferred()).isTrue();
         }
 
         @Test
         @DisplayName("성공 : DISLIKE이면 false를 반환한다.")
         void isPreferredFalse() {
+            // given
             StoreMusic storeMusic = StoreMusicFixture.storeMusic();
             MusicGenre genre = new MusicGenre(storeMusic, Genre.INDIE,
                 MusicGenre.PreferenceType.DISLIKE);
 
+            // when & then
             assertThat(genre.isPreferred()).isFalse();
         }
     }
@@ -90,19 +105,23 @@ class MusicGenreTest {
         @Test
         @DisplayName("성공 : DISLIKE이면 true를 반환한다.")
         void isRejectedTrue() {
+            // given
             StoreMusic storeMusic = StoreMusicFixture.storeMusic();
             MusicGenre genre = new MusicGenre(storeMusic, Genre.INDIE,
                 MusicGenre.PreferenceType.DISLIKE);
 
+            // when & then
             assertThat(genre.isRejected()).isTrue();
         }
 
         @Test
         @DisplayName("성공 : LIKE이면 false를 반환한다.")
         void isRejectedFalse() {
+            // given
             StoreMusic storeMusic = StoreMusicFixture.storeMusic();
             MusicGenre genre = new MusicGenre(storeMusic, Genre.INDIE, MusicGenre.PreferenceType.LIKE);
 
+            // when & then
             assertThat(genre.isRejected()).isFalse();
         }
     }

@@ -16,6 +16,8 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static com.verby.indp.fixture.OwnerFixture.owner;
+
 import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.domain.store.MusicGenre;
 import com.verby.indp.domain.store.PlayMethod;
@@ -34,7 +36,6 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.test.web.servlet.ResultActions;
 
 class StoreControllerTest extends BaseControllerTest {
@@ -179,7 +180,7 @@ class StoreControllerTest extends BaseControllerTest {
             // when
             ResultActions resultActions = mockMvc.perform(
                 get("/api/stores/{storeId}/summary", 1L)
-                    .requestAttr("owner", Mockito.mock(com.verby.indp.domain.auth.Owner.class))
+                    .requestAttr("owner", owner())
             );
 
             // then

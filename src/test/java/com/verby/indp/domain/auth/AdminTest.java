@@ -23,8 +23,10 @@ class AdminTest {
         @Test
         @DisplayName("성공 : 비밀번호가 일치하면 false를 반환한다.")
         void mismatchPasswordFalse() {
+            // given
             Admin admin = createAdmin("admin", "password123!");
 
+            // when & then
             assertThat(admin.getLoginId()).isEqualTo("admin");
             assertThat(admin.getPassword()).isEqualTo("password123!");
             assertThat(admin.getAdminId()).isNull();
@@ -34,8 +36,10 @@ class AdminTest {
         @Test
         @DisplayName("성공 : 비밀번호가 일치하지 않으면 true를 반환한다.")
         void mismatchPasswordTrue() {
+            // given
             Admin admin = createAdmin("admin", "password123!");
 
+            // when & then
             assertThat(admin.mismatchPassword("wrongpassword")).isTrue();
         }
     }

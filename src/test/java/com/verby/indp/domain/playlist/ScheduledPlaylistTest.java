@@ -29,37 +29,45 @@ class ScheduledPlaylistTest {
         @Test
         @DisplayName("성공 : ScheduledPlaylist를 생성한다.")
         void newScheduledPlaylist() {
+            // when
             Exception exception = catchException(() ->
                 new ScheduledPlaylist(store(), LocalDateTime.now().plusHours(1),
                     List.of(song())));
 
+            // then
             assertThat(exception).isNull();
         }
 
         @Test
         @DisplayName("실패 : store가 null이면 예외를 던진다.")
         void newScheduledPlaylistWithNullStore() {
+            // when
             Exception exception = catchException(() ->
                 new ScheduledPlaylist(null, LocalDateTime.now().plusHours(1), List.of(song())));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
 
         @Test
         @DisplayName("실패 : scheduledAt이 null이면 예외를 던진다.")
         void newScheduledPlaylistWithNullScheduledAt() {
+            // when
             Exception exception = catchException(() ->
                 new ScheduledPlaylist(store(), null, List.of(song())));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
 
         @Test
         @DisplayName("실패 : songs가 비어있으면 예외를 던진다.")
         void newScheduledPlaylistWithEmptySongs() {
+            // when
             Exception exception = catchException(() ->
                 new ScheduledPlaylist(store(), LocalDateTime.now().plusHours(1), List.of()));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
     }
@@ -71,11 +79,14 @@ class ScheduledPlaylistTest {
         @Test
         @DisplayName("성공 : 상태를 APPLIED로 변경한다.")
         void markApplied() {
+            // given
             ScheduledPlaylist scheduledPlaylist = new ScheduledPlaylist(store(),
                 LocalDateTime.now().plusHours(1), List.of(song()));
 
+            // when
             scheduledPlaylist.markApplied();
 
+            // then
             assertThat(scheduledPlaylist.getStatus())
                 .isEqualTo(ScheduledPlaylist.UpdateStatus.APPLIED);
         }

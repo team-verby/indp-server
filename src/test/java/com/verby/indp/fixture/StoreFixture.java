@@ -2,6 +2,7 @@ package com.verby.indp.fixture;
 
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.plan.Plan;
+import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreApply;
 import com.verby.indp.domain.store.dto.request.BusinessHour;
@@ -13,6 +14,12 @@ import java.util.stream.IntStream;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class StoreFixture {
+
+    public static Store storeWithPlaylist(Playlist playlist) {
+        Store store = storeWithOwner(OwnerFixture.owner());
+        ReflectionTestUtils.setField(store, "playlist", playlist);
+        return store;
+    }
 
     public static Store store() {
         return storeWithOwner(OwnerFixture.owner());
@@ -81,7 +88,7 @@ public class StoreFixture {
 
     private static List<BusinessHour> allDaysOpen() {
         return IntStream.rangeClosed(1, 7)
-            .mapToObj(day -> new BusinessHour(day, LocalTime.MIN, LocalTime.MAX, false))
+            .mapToObj(day -> new BusinessHour(day, LocalTime.of(8, 0), LocalTime.of(23, 0), false))
             .toList();
     }
 

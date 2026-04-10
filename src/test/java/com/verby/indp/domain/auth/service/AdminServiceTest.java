@@ -7,6 +7,8 @@ import com.verby.indp.domain.auth.dto.request.LoginRequest;
 import com.verby.indp.domain.auth.dto.response.LoginResponse;
 import com.verby.indp.domain.auth.repository.AdminRepository;
 import com.verby.indp.domain.common.exception.AuthException;
+import static com.verby.indp.fixture.AdminFixture.admin;
+
 import com.verby.indp.fixture.AdminFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -80,8 +82,7 @@ class AdminServiceTest {
         @DisplayName("실패 : 비밀번호가 틀리면 예외를 던진다.")
         void loginWithWrongPassword() {
             // given
-            Admin admin = org.mockito.Mockito.mock(Admin.class);
-            given(admin.mismatchPassword("wrong")).willReturn(true);
+            Admin admin = admin();
             given(adminRepository.findByLoginId("admin")).willReturn(Optional.of(admin));
 
             LoginRequest request = new LoginRequest("admin", "wrong");

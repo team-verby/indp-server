@@ -47,12 +47,15 @@ class OwnerPlaylistServiceTest {
         @Test
         @DisplayName("성공 : 플레이리스트가 없으면 null을 반환한다.")
         void getStorePlaylistWithNullPlaylist() {
+            // given
             Owner owner = OwnerFixture.ownerWithId(1L);
             Store store = StoreFixture.storeWithOwner(owner);
             given(storeService.getStoreById(1L)).willReturn(store);
 
+            // when
             FindStorePlaylistByOwnerResponse result = ownerPlaylistService.getStorePlaylist(owner, 1L);
 
+            // then
             assertThat(result.playlist()).isNull();
             assertThat(result.currentSong()).isNull();
         }
@@ -60,6 +63,7 @@ class OwnerPlaylistServiceTest {
         @Test
         @DisplayName("성공 : 플레이리스트를 반환한다.")
         void getStorePlaylist() {
+            // given
             Owner owner = OwnerFixture.ownerWithId(1L);
             Playlist playlist = PlaylistFixture.playlist();
             Store store = StoreFixture.storeWithOwner(owner);
@@ -67,33 +71,41 @@ class OwnerPlaylistServiceTest {
             given(storeService.getStoreById(1L)).willReturn(store);
             given(playlistService.getSortedSongs(1L)).willReturn(List.of());
 
+            // when
             FindStorePlaylistByOwnerResponse result = ownerPlaylistService.getStorePlaylist(owner, 1L);
 
+            // then
             assertThat(result).isNotNull();
         }
 
         @Test
         @DisplayName("실패 : 소유하지 않은 매장이면 예외를 던진다.")
         void getStorePlaylistWithNotOwned() {
+            // given
             Owner owner = OwnerFixture.ownerWithId(1L);
             Owner otherOwner = OwnerFixture.ownerWithId(2L);
             Store store = StoreFixture.storeWithOwner(otherOwner);
             given(storeService.getStoreById(1L)).willReturn(store);
 
+            // when
             Exception exception = catchException(() -> ownerPlaylistService.getStorePlaylist(owner, 1L));
 
+            // then
             assertThat(exception).isInstanceOf(NotFoundException.class);
         }
 
         @Test
         @DisplayName("실패 : 구독이 활성화되지 않은 매장이면 예외를 던진다.")
         void getStorePlaylistWithInactiveSubscription() {
+            // given
             Owner owner = OwnerFixture.ownerWithId(1L);
             Store store = StoreFixture.inactiveStoreWithOwner(owner);
             given(storeService.getStoreById(1L)).willReturn(store);
 
+            // when
             Exception exception = catchException(() -> ownerPlaylistService.getStorePlaylist(owner, 1L));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
     }
@@ -105,37 +117,46 @@ class OwnerPlaylistServiceTest {
         @Test
         @DisplayName("성공 : 슬랙 알림을 전송한다.")
         void regeneratePlaylist() {
+            // given
             Owner owner = OwnerFixture.ownerWithId(1L);
             Store store = StoreFixture.storeWithOwner(owner);
             given(storeService.getStoreById(1L)).willReturn(store);
 
+            // when
             ownerPlaylistService.regeneratePlaylist(owner, 1L);
 
+            // then
             then(slackNotificationService).should().handlePlaylistRegenerationRequest(store);
         }
 
         @Test
         @DisplayName("실패 : 소유하지 않은 매장이면 예외를 던진다.")
         void regeneratePlaylistWithNotOwned() {
+            // given
             Owner owner = OwnerFixture.ownerWithId(1L);
             Owner otherOwner = OwnerFixture.ownerWithId(2L);
             Store store = StoreFixture.storeWithOwner(otherOwner);
             given(storeService.getStoreById(1L)).willReturn(store);
 
+            // when
             Exception exception = catchException(() -> ownerPlaylistService.regeneratePlaylist(owner, 1L));
 
+            // then
             assertThat(exception).isInstanceOf(NotFoundException.class);
         }
 
         @Test
         @DisplayName("실패 : 구독이 활성화되지 않은 매장이면 예외를 던진다.")
         void regeneratePlaylistWithInactiveSubscription() {
+            // given
             Owner owner = OwnerFixture.ownerWithId(1L);
             Store store = StoreFixture.inactiveStoreWithOwner(owner);
             given(storeService.getStoreById(1L)).willReturn(store);
 
+            // when
             Exception exception = catchException(() -> ownerPlaylistService.regeneratePlaylist(owner, 1L));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
     }

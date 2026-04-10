@@ -30,45 +30,55 @@ class StoreSubscriptionTest {
         @Test
         @DisplayName("성공 : StoreSubscription을 생성한다.")
         void newStoreSubscription() {
+            // given & when
             Exception exception = catchException(() ->
                 new StoreSubscription(plan(), payment(), 12, LocalDate.of(2026, 1, 12)));
 
+            // then
             assertThat(exception).isNull();
         }
 
         @Test
         @DisplayName("실패 : plan이 null이면 예외를 던진다.")
         void newStoreSubscriptionWithNullPlan() {
+            // given & when
             Exception exception = catchException(() ->
                 new StoreSubscription(null, payment(), 12, LocalDate.of(2026, 1, 12)));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
 
         @Test
         @DisplayName("실패 : payment가 null이면 예외를 던진다.")
         void newStoreSubscriptionWithNullPayment() {
+            // given & when
             Exception exception = catchException(() ->
                 new StoreSubscription(plan(), null, 12, LocalDate.of(2026, 1, 12)));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
 
         @Test
         @DisplayName("실패 : usagePeriod가 0 이하이면 예외를 던진다.")
         void newStoreSubscriptionWithNonPositiveUsagePeriod() {
+            // given & when
             Exception exception = catchException(() ->
                 new StoreSubscription(plan(), payment(), 0, LocalDate.of(2026, 1, 12)));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
 
         @Test
         @DisplayName("실패 : startDate가 null이면 예외를 던진다.")
         void newStoreSubscriptionWithNullStartDate() {
+            // give & when
             Exception exception = catchException(() ->
                 new StoreSubscription(plan(), payment(), 12, null));
 
+            // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
     }
@@ -80,11 +90,14 @@ class StoreSubscriptionTest {
         @Test
         @DisplayName("성공 : 구독 상태를 변경한다.")
         void updateStatus() {
+            // given
             StoreSubscription subscription = new StoreSubscription(
                 plan(), payment(), 12, LocalDate.of(2026, 1, 12));
 
+            // when
             subscription.updateStatus(SubscriptionStatus.ACTIVE);
 
+            // then
             assertThat(subscription.getStatus()).isEqualTo(SubscriptionStatus.ACTIVE);
         }
     }
