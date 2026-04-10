@@ -5,11 +5,18 @@ VALUES ('admin', 'admin');
 
 -- Plan A
 INSERT INTO plan (type, monthly_price)
-VALUES ('PLAN_A', 15000);
+VALUES ('PLAN_A', 22000);
 
 -- Plan B
 INSERT INTO plan (type, monthly_price)
-VALUES ('PLAN_B', 39000);
+VALUES ('PLAN_B', 33000);
+
+-- discount
+INSERT INTO plan_discount (plan_id, discount_rate, is_active)
+VALUES (1, 60, true);
+
+INSERT INTO plan_discount (plan_id, discount_rate, is_active)
+VALUES (2, 60, true);
 
 -- =====================
 -- 목 데이터: 매장 3개
