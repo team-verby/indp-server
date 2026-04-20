@@ -1,35 +1,21 @@
 package com.verby.indp.domain.recommendation.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchException;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
-
 import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.plan.Plan;
-import com.verby.indp.domain.policy.PricePolicyService;
-import com.verby.indp.domain.policy.PricePolicy;
-import com.verby.indp.domain.recommendation.SongRecommendation;
-import com.verby.indp.domain.recommendation.dto.response.FindStoreRecommendationsResponse;
-import com.verby.indp.domain.recommendation.repository.SongRecommendationRepository;
-import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.service.PlaylistService;
 import com.verby.indp.domain.playlist.service.PlaylistWebSocketService;
+import com.verby.indp.domain.policy.PricePolicy;
+import com.verby.indp.domain.policy.PricePolicyService;
+import com.verby.indp.domain.recommendation.SongRecommendation;
+import com.verby.indp.domain.recommendation.dto.response.FindStoreRecommendationsResponse;
+import com.verby.indp.domain.recommendation.repository.SongRecommendationRepository;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.service.StoreService;
-import com.verby.indp.fixture.PaymentFixture;
-import com.verby.indp.fixture.PlanFixture;
-import com.verby.indp.fixture.PlaylistFixture;
-import com.verby.indp.fixture.PlaylistSongFixture;
-import com.verby.indp.fixture.PricePolicyFixture;
-import com.verby.indp.fixture.SongRecommendationFixture;
-import com.verby.indp.fixture.StoreFixture;
-import java.util.List;
-import java.util.Optional;
+import com.verby.indp.fixture.*;
+import com.verby.indp.global.slack.SlackNotificationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,6 +23,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchException;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 
 @ExtendWith(MockitoExtension.class)
 class SongRecommendationServiceTest {
@@ -58,6 +53,9 @@ class SongRecommendationServiceTest {
 
     @Mock
     private PlaylistWebSocketService playlistWebSocketService;
+
+    @Mock
+    private SlackNotificationService slackNotificationService;
 
     @Nested
     @DisplayName("findRecommendedSongs 메서드 실행 시")

@@ -62,6 +62,9 @@ public class StoreBusinessHour {
 
     private void validateOpenHour(boolean isClosed, LocalTime openTime, LocalTime closeTime) {
         if (isClosed) {
+            if (openTime != null || closeTime != null) {
+                throw new BadRequestException("휴무일에는 openTime, closeTime이 null이어야 합니다.");
+            }
             return;
         }
         if (openTime == null) {

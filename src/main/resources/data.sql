@@ -175,9 +175,9 @@ VALUES (3, 4, '11:00:00', '21:00:00', false);
 INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
 VALUES (3, 5, '11:00:00', '21:00:00', false);
 INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (3, 6, '11:00:00', '21:00:00', true);
+VALUES (3, 6, null, null, true);
 INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (3, 7, '11:00:00', '21:00:00', true);
+VALUES (3, 7, null, null, true);
 
 -- payment (결제 완료 상태)
 INSERT INTO payment (order_id, order_name, amount, status, paid_at, created_at)

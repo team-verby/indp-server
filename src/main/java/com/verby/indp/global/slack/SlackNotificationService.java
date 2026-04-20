@@ -30,8 +30,9 @@ public class SlackNotificationService {
 
     public void handleApplyStoreStore(Store store) {
         slackLog.info(
-            "[매장 도입 문의]\n매장: {}, 신청자 성함: {}, 신청자 연락처: {}",
-            store.getName(), store.getOwner().getName(), store.getOwner().getPhone()
+            "[매장 도입 문의]\n매장: {}, 신청자 성함: {}, 신청자 연락처: {}\n계정: {} / {}",
+            store.getName(), store.getOwner().getName(), store.getOwner().getPhone(),
+            store.getOwner().getLoginId(), store.getOwner().getPassword()
         );
     }
 

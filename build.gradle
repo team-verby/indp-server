@@ -126,6 +126,7 @@ def jacocoExcludePatterns = [
 		"**/payment/service/PaymentClient*",
 		"**/infrastructure/ApiService*",
 		"**/playlist/service/PlaylistWebSocketService*",
+		"**/global/slack/SlackNotificationService*",
 		"**/dto/request/TimePreference*",
 		"**/domain/plan/Plan.*",
 		"**/domain/plan/PlanDiscount*",

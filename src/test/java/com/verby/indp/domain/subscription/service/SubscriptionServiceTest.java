@@ -1,10 +1,5 @@
 package com.verby.indp.domain.subscription.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchException;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.payment.Payment;
@@ -18,14 +13,8 @@ import com.verby.indp.domain.subscription.SubscriptionStatus;
 import com.verby.indp.domain.subscription.dto.request.AddSubscriptionRequest;
 import com.verby.indp.domain.subscription.dto.response.FindSubscriptionsResponse;
 import com.verby.indp.domain.subscription.repository.StoreSubscriptionRepository;
-import com.verby.indp.fixture.OwnerFixture;
-import com.verby.indp.fixture.PaymentFixture;
-import com.verby.indp.fixture.PlanFixture;
-import com.verby.indp.fixture.StoreFixture;
-import com.verby.indp.fixture.StoreSubscriptionFixture;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import com.verby.indp.fixture.*;
+import com.verby.indp.global.slack.SlackNotificationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,6 +22,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchException;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class SubscriptionServiceTest {
@@ -48,6 +46,9 @@ class SubscriptionServiceTest {
 
     @Mock
     private StoreSubscriptionRepository storeSubscriptionRepository;
+
+    @Mock
+    private SlackNotificationService slackNotificationService;
 
     @Nested
     @DisplayName("orderSubscription 메서드 실행 시")
