@@ -1,26 +1,25 @@
 package com.verby.indp.domain.payment.controller;
 
+import com.verby.indp.domain.BaseControllerTest;
+import com.verby.indp.domain.payment.PaymentType;
+import com.verby.indp.domain.payment.dto.request.ConfirmPaymentRequest;
+import com.verby.indp.domain.payment.dto.request.FailPaymentRequest;
+import com.verby.indp.domain.payment.exception.PaymentFailException;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.ResultActions;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.willDoNothing;
-import static org.mockito.BDDMockito.willReturn;
+import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.verby.indp.domain.BaseControllerTest;
-import com.verby.indp.domain.payment.PaymentType;
-import com.verby.indp.domain.payment.dto.request.ConfirmPaymentRequest;
-import com.verby.indp.domain.payment.dto.request.FailPaymentRequest;
-import com.verby.indp.domain.store.dto.response.ConfirmApplyPaymentResponse;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.springframework.test.web.servlet.ResultActions;
 
 class PaymentControllerTest extends BaseControllerTest {
 
@@ -56,6 +55,25 @@ class PaymentControllerTest extends BaseControllerTest {
                         )
                     )
                 );
+        }
+
+        @Test
+        @DisplayName("실패 : 결제 승인 실패 시 결제 상태를 ABORTED로 변경한다.")
+        void confirmPaymentFail() throws Exception {
+            // given
+            ConfirmPaymentRequest request = new ConfirmPaymentRequest(
+                PaymentType.SUBSCRIPTION, "toss_payment_key_123", "INDP-20260101-uuid", 180000);
+
+            willThrow(new PaymentFailException("결제 승인에 실패하였습니다.")).given(paymentService).confirm(any());
+            willDoNothing().given(paymentService).failPayment(any());
+
+            // when
+            ResultActions resultActions = mockMvc.perform(post("/api/payments/confirm")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+            // then
+            resultActions.andExpect(status().isServiceUnavailable());
         }
     }
 

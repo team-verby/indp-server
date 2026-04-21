@@ -2,6 +2,7 @@ package com.verby.indp.domain.payment.controller;
 
 import com.verby.indp.domain.payment.dto.request.ConfirmPaymentRequest;
 import com.verby.indp.domain.payment.dto.request.FailPaymentRequest;
+import com.verby.indp.domain.payment.exception.PaymentFailException;
 import com.verby.indp.domain.payment.service.PaymentService;
 import com.verby.indp.domain.store.dto.response.ConfirmApplyPaymentResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,12 @@ public class PaymentController {
     public ResponseEntity<ConfirmApplyPaymentResponse> confirmApplyPayment(
         @RequestBody ConfirmPaymentRequest request
     ) {
-        paymentService.confirm(request);
+        try {
+            paymentService.confirm(request);
+        } catch (PaymentFailException e) {
+            paymentService.failPayment(request.orderId());
+            throw e;
+        }
         return ResponseEntity.ok().build();
     }
 

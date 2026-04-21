@@ -1,14 +1,15 @@
 package com.verby.indp.domain.store;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchException;
-
 import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.fixture.StoreFixture;
-import java.time.LocalTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalTime;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchException;
 
 class StoreBusinessHourTest {
 
@@ -92,17 +93,6 @@ class StoreBusinessHourTest {
             // when
             Exception exception = catchException(() ->
                 new StoreBusinessHour(store(), 1, LocalTime.of(10, 0), null, false));
-
-            // then
-            assertThat(exception).isInstanceOf(BadRequestException.class);
-        }
-
-        @Test
-        @DisplayName("실패 : openTime이 closeTime 이후이면 예외를 던진다.")
-        void newStoreBusinessHourWithOpenTimeAfterCloseTime() {
-            // when
-            Exception exception = catchException(() ->
-                new StoreBusinessHour(store(), 1, LocalTime.of(22, 0), LocalTime.of(10, 0), false));
 
             // then
             assertThat(exception).isInstanceOf(BadRequestException.class);

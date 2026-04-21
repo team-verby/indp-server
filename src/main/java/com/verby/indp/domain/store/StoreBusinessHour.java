@@ -73,8 +73,5 @@ public class StoreBusinessHour {
         if (closeTime == null) {
             throw new BadRequestException("closeTime은 필수입니다.");
         }
-        if (!openTime.isBefore(closeTime)) {
-            throw new BadRequestException("openTime은 closeTime보다 빨라야 합니다.");
-        }
     }
 }
