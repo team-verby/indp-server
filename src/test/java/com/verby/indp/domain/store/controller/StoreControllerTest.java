@@ -1,23 +1,5 @@
 package com.verby.indp.domain.store.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
-import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
-import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
-import static org.springframework.restdocs.payload.JsonFieldType.STRING;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import static com.verby.indp.fixture.OwnerFixture.owner;
-
 import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.domain.store.MusicGenre;
 import com.verby.indp.domain.store.PlayMethod;
@@ -31,12 +13,25 @@ import com.verby.indp.domain.store.vo.Genre;
 import com.verby.indp.domain.store.vo.PlaylistType;
 import com.verby.indp.domain.store.vo.Tempo;
 import com.verby.indp.domain.store.vo.Vibe;
-import java.time.LocalTime;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.ResultActions;
+
+import java.time.LocalTime;
+import java.util.List;
+
+import static com.verby.indp.fixture.OwnerFixture.owner;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class StoreControllerTest extends BaseControllerTest {
 
@@ -173,7 +168,7 @@ class StoreControllerTest extends BaseControllerTest {
                 "카페 공명 홍대점", "카페", "서울 마포구 와우산로17길 11-8",
                 List.of(new FindStoreSummaryResponse.BusinessHourItem(1, LocalTime.of(10, 0),
                     LocalTime.of(22, 0), false)),
-                "ACTIVE", "PLAN_A"
+                "ACTIVE", "PLAN_A", "photoUrl"
             );
             given(storeService.findStoreSummary(1L)).willReturn(response);
 
@@ -206,7 +201,9 @@ class StoreControllerTest extends BaseControllerTest {
                             fieldWithPath("subscriptionStatus").type(STRING)
                                 .description("구독 상태 +\n`PENDING_PAYMENT`, `PENDING_ACTIVE`, `ACTIVE`, `EXPIRED`"),
                             fieldWithPath("planType").type(STRING)
-                                .description("플랜 종류 +\n`PLAN_A`, `PLAN_B`")
+                                .description("플랜 종류 +\n`PLAN_A`, `PLAN_B`"),
+                            fieldWithPath("mainPhotoUrl").type(STRING)
+                                .description("매장 대표 사진 url")
                         )
                     )
                 );

@@ -2,6 +2,7 @@ package com.verby.indp.domain.store.dto.response;
 
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreBusinessHour;
+import com.verby.indp.domain.store.StorePhoto;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -12,7 +13,8 @@ public record FindStoreSummaryResponse(
     String address,
     List<BusinessHourItem> businessHours,
     String subscriptionStatus,
-    String planType
+    String planType,
+    String mainPhotoUrl
 ) {
 
     public record BusinessHourItem(int dayOfWeek, LocalTime openTime, LocalTime closeTime,
@@ -32,7 +34,8 @@ public record FindStoreSummaryResponse(
             store.getAddress(),
             store.getBusinessHours().stream().map(BusinessHourItem::from).toList(),
             latestSub.map(s -> s.getStatus().name()).orElse(null),
-            latestSub.map(s -> s.getPlan().getType().name()).orElse(null)
+            latestSub.map(s -> s.getPlan().getType().name()).orElse(null),
+            store.getPhotos().stream().filter(StorePhoto::isMain).findFirst().map(StorePhoto::getImageUrl).orElse(null)
         );
     }
 }
