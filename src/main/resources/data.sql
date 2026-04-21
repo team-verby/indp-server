@@ -18,788 +18,313 @@ VALUES (1, 60, true);
 INSERT INTO plan_discount (plan_id, discount_rate, is_active)
 VALUES (2, 60, true);
 
--- =====================
--- 목 데이터: 매장 3개
--- =====================
+-- ===========================
+-- Owner (19)
+-- ===========================
+INSERT INTO owner (login_id, password, name, phone) VALUES
+('store1',  'password', '김밀키',  '010-1234-5678'),
+('store2',  'password', '김선유',  '010-1234-5678'),
+('store3',  'password', '김목동',  '010-1234-5678'),
+('store4',  'password', '김문어',  '010-1234-5678'),
+('store5',  'password', '김스모',  '010-1234-5678'),
+('store6',  'password', '김일상',  '010-1234-5678'),
+('store7',  'password', '김샤로',  '010-1234-5678'),
+('store8',  'password', '김서대',  '010-1234-5678'),
+('store9',  'password', '김용산',  '010-1234-5678'),
+('store10', 'password', '김발산',  '010-1234-5678'),
+('store11', 'password', '김강남',  '010-1234-5678'),
+('store12', 'password', '김동래',  '010-1234-5678'),
+('store13', 'password', '김전포',  '010-1234-5678'),
+('store14', 'password', '김마곡',  '010-1234-5678'),
+('store15', 'password', '김망원',  '010-1234-5678'),
+('store16', 'password', '김신사',  '010-1234-5678'),
+('store17', 'password', '김연남',  '010-1234-5678'),
+('store18', 'password', '김홍대',  '010-1234-5678'),
+('store19', 'password', '김페어',  '010-1234-5678');
 
--- store_apply (신청자 정보)
-INSERT INTO store_apply (applicant_name, applicant_phone, created_at)
-VALUES ('김지현', '010-1234-5678', NOW());
-INSERT INTO store_apply (applicant_name, applicant_phone, created_at)
-VALUES ('박민준', '010-5555-7777', NOW());
-INSERT INTO store_apply (applicant_name, applicant_phone, created_at)
-VALUES ('한나라', '010-6677-8899', NOW());
+-- ===========================
+-- Store Apply (19)
+-- ===========================
+INSERT INTO store_apply (applicant_name, applicant_phone, created_at) VALUES
+('김밀키', '010-1234-5678', NOW()),
+('김선유', '010-1234-5678', NOW()),
+('김목동', '010-1234-5678', NOW()),
+('김문어', '010-1234-5678', NOW()),
+('김스모', '010-1234-5678', NOW()),
+('김일상', '010-1234-5678', NOW()),
+('김샤로', '010-1234-5678', NOW()),
+('김서대', '010-1234-5678', NOW()),
+('김용산', '010-1234-5678', NOW()),
+('김발산', '010-1234-5678', NOW()),
+('김강남', '010-1234-5678', NOW()),
+('김동래', '010-1234-5678', NOW()),
+('김전포', '010-1234-5678', NOW()),
+('김마곡', '010-1234-5678', NOW()),
+('김망원', '010-1234-5678', NOW()),
+('김신사', '010-1234-5678', NOW()),
+('김연남', '010-1234-5678', NOW()),
+('김홍대', '010-1234-5678', NOW()),
+('김페어', '010-1234-5678', NOW());
 
--- owner (점주 계정)
-INSERT INTO owner (login_id, password, name, phone)
-VALUES ('store0001', 'pass1234', '김지현', '010-1234-5678');
-INSERT INTO owner (login_id, password, name, phone)
-VALUES ('store0002', 'pass1234', '박민준', '010-5555-7777');
-INSERT INTO owner (login_id, password, name, phone)
-VALUES ('store0003', 'pass1234', '한나라', '010-6677-8899');
+-- ===========================
+-- Store Music (19) - 공통: 유튜브뮤직, 인디/어쿠스틱, MUSIC_RECOMMENDED, NORMAL, 거부=댄스곡
+-- ===========================
+INSERT INTO store_music (platform, played_music, playlist_type, tempo, rejected_song_note) VALUES
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡'),
+('유튜브 뮤직', '인디, 어쿠스틱', 'MUSIC_RECOMMENDED', 'NORMAL', '댄스곡');
 
--- playlist (플레이리스트)
-INSERT INTO playlist (created_at)
-VALUES (NOW());
-INSERT INTO playlist (created_at)
-VALUES (NOW());
-INSERT INTO playlist (created_at)
-VALUES (NOW());
+-- ===========================
+-- Music Genre - DISLIKE: CLASSIC, CHILDREN (store_music_id 1~19)
+-- ===========================
+INSERT INTO music_genre (store_music_id, genre, preference_type) VALUES
+(1,  'CLASSIC',  'DISLIKE'), (1,  'CHILDREN', 'DISLIKE'),
+(2,  'CLASSIC',  'DISLIKE'), (2,  'CHILDREN', 'DISLIKE'),
+(3,  'CLASSIC',  'DISLIKE'), (3,  'CHILDREN', 'DISLIKE'),
+(4,  'CLASSIC',  'DISLIKE'), (4,  'CHILDREN', 'DISLIKE'),
+(5,  'CLASSIC',  'DISLIKE'), (5,  'CHILDREN', 'DISLIKE'),
+(6,  'CLASSIC',  'DISLIKE'), (6,  'CHILDREN', 'DISLIKE'),
+(7,  'CLASSIC',  'DISLIKE'), (7,  'CHILDREN', 'DISLIKE'),
+(8,  'CLASSIC',  'DISLIKE'), (8,  'CHILDREN', 'DISLIKE'),
+(9,  'CLASSIC',  'DISLIKE'), (9,  'CHILDREN', 'DISLIKE'),
+(10, 'CLASSIC',  'DISLIKE'), (10, 'CHILDREN', 'DISLIKE'),
+(11, 'CLASSIC',  'DISLIKE'), (11, 'CHILDREN', 'DISLIKE'),
+(12, 'CLASSIC',  'DISLIKE'), (12, 'CHILDREN', 'DISLIKE'),
+(13, 'CLASSIC',  'DISLIKE'), (13, 'CHILDREN', 'DISLIKE'),
+(14, 'CLASSIC',  'DISLIKE'), (14, 'CHILDREN', 'DISLIKE'),
+(15, 'CLASSIC',  'DISLIKE'), (15, 'CHILDREN', 'DISLIKE'),
+(16, 'CLASSIC',  'DISLIKE'), (16, 'CHILDREN', 'DISLIKE'),
+(17, 'CLASSIC',  'DISLIKE'), (17, 'CHILDREN', 'DISLIKE'),
+(18, 'CLASSIC',  'DISLIKE'), (18, 'CHILDREN', 'DISLIKE'),
+(19, 'CLASSIC',  'DISLIKE'), (19, 'CHILDREN', 'DISLIKE');
 
--- store_music (음악 설정)
-INSERT INTO store_music (platform, played_music, rejected_song_note, playlist_type, tempo,
-                         music_mood)
-VALUES ('유튜브 뮤직', '인디, 어쿠스틱', null, 'CONSISTENT_MOOD', 'CALM', '아늑하고 조용한');
-INSERT INTO store_music (platform, played_music, rejected_song_note, playlist_type, tempo,
-                         music_mood)
-VALUES ('스포티파이', 'R&B, 팝', null, 'TIME_BASED', 'NORMAL', '세련되고 활기찬');
-INSERT INTO store_music (platform, played_music, rejected_song_note, playlist_type, tempo,
-                         music_mood)
-VALUES ('유튜브 뮤직', '팝, 댄스', null, 'MUSIC_RECOMMENDED', 'LIVELY', '밝고 트렌디한');
+-- ===========================
+-- Playlist (19)
+-- ===========================
+INSERT INTO playlist (created_at) VALUES
+(NOW()), (NOW()), (NOW()), (NOW()), (NOW()),
+(NOW()), (NOW()), (NOW()), (NOW()), (NOW()),
+(NOW()), (NOW()), (NOW()), (NOW()), (NOW()),
+(NOW()), (NOW()), (NOW()), (NOW());
 
--- store (매장)
-INSERT INTO store (store_apply_id, owner_id, playlist_id, store_music_id, name, industry, address,
-                   customer_age_group, lighting, created_at)
-VALUES (1, 1, 1, 1, '카페 공명 홍대점', '카페', '서울 마포구 와우산로17길 11-8', '20대 중반 ~ 30대 초반', 3, NOW());
-INSERT INTO store (store_apply_id, owner_id, playlist_id, store_music_id, name, industry, address,
-                   customer_age_group, lighting, created_at)
-VALUES (2, 2, 2, 2, '더블유오엔 1층', '바/라운지', '서울 마포구 서교동 335-11', '20대 후반 ~ 40대', 2, NOW());
-INSERT INTO store (store_apply_id, owner_id, playlist_id, store_music_id, name, industry, address,
-                   customer_age_group, lighting, created_at)
-VALUES (3, 3, 3, 3, '스모어사이트', '카페', '서울 용산구 한남동 55-9', '20대 초반 ~ 30대', 4, NOW());
+-- ===========================
+-- Store (19)
+-- lighting: 3000 (3000K)
+-- ===========================
+INSERT INTO store (store_apply_id, owner_id, playlist_id, store_music_id, name, industry, address, customer_age_group, lighting, created_at) VALUES
+(1,  1,  1,  1,  '밀키 현대 GRC점',           '카페 / 커피숍',            '경기도 성남시 분당구 분당수서로 477 4층',                              '전연령대', 3000, NOW()),
+(2,  2,  2,  2,  '서울볼더스 선유',             '클라이밍 / 스포츠센터',    '서울특별시 영등포구 양평로28마길 7 3층',                              '전연령대', 3000, NOW()),
+(3,  3,  3,  3,  '서울볼더스 클라이밍 목동점',  '클라이밍 / 스포츠센터',    '서울특별시 양천구 신목로 53 2층',                                    '전연령대', 3000, NOW()),
+(4,  4,  4,  4,  '석문어 서대문점',             '레스토랑 / 일반음식점',    '서울특별시 서대문구 통일로9안길 36-5',                               '전연령대', 3000, NOW()),
+(5,  5,  5,  5,  '스모어사이트',                '카페 / 커피숍',            '대전 유성구 학하로 98 1층 101~104호',                                '전연령대', 3000, NOW()),
+(6,  6,  6,  6,  '일상의아도',                  '카페 / 커피숍',            '충남 천안시 서북구 늘푸른3길 7-1 103호',                             '전연령대', 3000, NOW()),
+(7,  7,  7,  7,  '정숙성 샤로수길 본점',        '레스토랑 / 일반음식점',    '서울특별시 관악구 남부순환로226길 31 1층',                           '전연령대', 3000, NOW()),
+(8,  8,  8,  8,  '정숙성 서대문점',             '레스토랑 / 일반음식점',    '서울특별시 서대문구 경기대로 84 101호',                              '전연령대', 3000, NOW()),
+(9,  9,  9,  9,  '주도락 신용산본점',           '레스토랑 / 일반음식점',    '서울특별시 용산구 한강대로46길 19 1층',                              '전연령대', 3000, NOW()),
+(10, 10, 10, 10, '주도락 마곡발산점',           '레스토랑 / 일반음식점',    '서울특별시 강서구 마곡중앙6로 85 2층 202호',                         '전연령대', 3000, NOW()),
+(11, 11, 11, 11, '주도락 강남점',               '레스토랑 / 일반음식점',    '서울특별시 강남구 강남대로96길 18 1층 101호',                        '전연령대', 3000, NOW()),
+(12, 12, 12, 12, '주도락 부산동래점',           '레스토랑 / 일반음식점',    '부산 동래구 명륜로139번길 45 1층',                                   '전연령대', 3000, NOW()),
+(13, 13, 13, 13, '주도락 전포점',               '레스토랑 / 일반음식점',    '부산 부산진구 전포대로210번길 23 1층',                               '전연령대', 3000, NOW()),
+(14, 14, 14, 14, '카페 공명 마곡책빵',          '카페 / 커피숍',            '서울특별시 강서구 마곡중앙로 105-7 K스퀘어 타워 3 1층 101, 102, 103호', '전연령대', 3000, NOW()),
+(15, 15, 15, 15, '카페 공명 망원책빵',          '카페 / 커피숍',            '서울특별시 마포구 월드컵로13길 22-3',                                '전연령대', 3000, NOW()),
+(16, 16, 16, 16, '카페 공명 신사 가로수길점',   '카페 / 커피숍',            '서울특별시 강남구 도산대로15길 32-4',                                '전연령대', 3000, NOW()),
+(17, 17, 17, 17, '카페 공명 연남점',            '카페 / 커피숍',            '서울특별시 마포구 연희로 11 1층',                                    '전연령대', 3000, NOW()),
+(18, 18, 18, 18, '카페 공명 홍대점',            '카페 / 커피숍',            '서울특별시 마포구 와우산로17길 11-8',                                '전연령대', 3000, NOW()),
+(19, 19, 19, 19, '페어페어드',                  '카페 / 커피숍',            '경기도 성남시 분당구 백현로144번길 22 1층',                           '전연령대', 3000, NOW());
 
--- play_method (재생 방식)
-INSERT INTO play_method (store_music_id, method)
-VALUES (1, 'BLUETOOTH');
-INSERT INTO play_method (store_music_id, method)
-VALUES (2, 'BLUETOOTH');
-INSERT INTO play_method (store_music_id, method)
-VALUES (3, 'WIRED');
+-- ===========================
+-- Store Vibe (19 - 모두 CALM / 차분한)
+-- ===========================
+INSERT INTO store_vibe (store_id, vibe) VALUES
+(1,  'CALM'), (2,  'CALM'), (3,  'CALM'), (4,  'CALM'), (5,  'CALM'),
+(6,  'CALM'), (7,  'CALM'), (8,  'CALM'), (9,  'CALM'), (10, 'CALM'),
+(11, 'CALM'), (12, 'CALM'), (13, 'CALM'), (14, 'CALM'), (15, 'CALM'),
+(16, 'CALM'), (17, 'CALM'), (18, 'CALM'), (19, 'CALM');
 
--- music_genre (장르 선호/차단)
-INSERT INTO music_genre (store_music_id, genre, preference_type)
-VALUES (1, 'INDIE', 'LIKE');
-INSERT INTO music_genre (store_music_id, genre, preference_type)
-VALUES (1, 'BALLAD', 'LIKE');
-INSERT INTO music_genre (store_music_id, genre, preference_type)
-VALUES (1, 'HIPHOP', 'DISLIKE');
-INSERT INTO music_genre (store_music_id, genre, preference_type)
-VALUES (2, 'DANCE', 'LIKE');
-INSERT INTO music_genre (store_music_id, genre, preference_type)
-VALUES (2, 'ROCK', 'DISLIKE');
-INSERT INTO music_genre (store_music_id, genre, preference_type)
-VALUES (3, 'DANCE', 'LIKE');
-INSERT INTO music_genre (store_music_id, genre, preference_type)
-VALUES (3, 'HIPHOP', 'LIKE');
-INSERT INTO music_genre (store_music_id, genre, preference_type)
-VALUES (3, 'CLASSIC', 'DISLIKE');
+-- ===========================
+-- Store Business Hour
+-- day_of_week: 1=월 2=화 3=수 4=목 5=금 6=토 7=일
+-- 자정 넘는 영업시간(25시→01:00, 27시→03:00 등)은 익일 시각으로 저장
+-- ===========================
 
--- music_time_preference (시간대별 무드 - 카페 공명: 10~22시)
-INSERT INTO store_music_time_preference (store_music_id, start_time_hour, end_time_hour, mood)
-VALUES (1, 10, 12, '잔잔한');
-INSERT INTO store_music_time_preference (store_music_id, start_time_hour, end_time_hour, mood)
-VALUES (1, 12, 15, '편안한');
-INSERT INTO store_music_time_preference (store_music_id, start_time_hour, end_time_hour, mood)
-VALUES (1, 15, 18, '잔잔한');
-INSERT INTO store_music_time_preference (store_music_id, start_time_hour, end_time_hour, mood)
-VALUES (1, 18, 22, '로맨틱');
--- 더블유오엔: 18~02시
-INSERT INTO store_music_time_preference (store_music_id, start_time_hour, end_time_hour, mood)
-VALUES (2, 18, 20, '편안한');
-INSERT INTO store_music_time_preference (store_music_id, start_time_hour, end_time_hour, mood)
-VALUES (2, 20, 23, '활기찬');
-INSERT INTO store_music_time_preference (store_music_id, start_time_hour, end_time_hour, mood)
-VALUES (2, 23, 24, '신나는');
--- 스모어사이트: 11~21시
-INSERT INTO store_music_time_preference (store_music_id, start_time_hour, end_time_hour, mood)
-VALUES (3, 11, 14, '밝은');
-INSERT INTO store_music_time_preference (store_music_id, start_time_hour, end_time_hour, mood)
-VALUES (3, 14, 18, '활기찬');
-INSERT INTO store_music_time_preference (store_music_id, start_time_hour, end_time_hour, mood)
-VALUES (3, 18, 21, '신나는');
+-- 1. 밀키 현대 GRC점 | 월~금 07:30~18:00 | 토,일 휴무
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(1, 1, '07:30', '18:00', false), (1, 2, '07:30', '18:00', false),
+(1, 3, '07:30', '18:00', false), (1, 4, '07:30', '18:00', false),
+(1, 5, '07:30', '18:00', false), (1, 6, NULL, NULL, true), (1, 7, NULL, NULL, true);
 
--- store_vibe (분위기)
-INSERT INTO store_vibe (store_id, vibe)
-VALUES (1, 'CALM');
-INSERT INTO store_vibe (store_id, vibe)
-VALUES (1, 'NATURAL');
-INSERT INTO store_vibe (store_id, vibe)
-VALUES (2, 'MODERN');
-INSERT INTO store_vibe (store_id, vibe)
-VALUES (2, 'DARK');
-INSERT INTO store_vibe (store_id, vibe)
-VALUES (3, 'MODERN');
-INSERT INTO store_vibe (store_id, vibe)
-VALUES (3, 'ELEGANT');
+-- 2. 서울볼더스 선유 | 월~금 12:00~23:00 | 토~일 10:00~20:00
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(2, 1, '12:00', '23:00', false), (2, 2, '12:00', '23:00', false),
+(2, 3, '12:00', '23:00', false), (2, 4, '12:00', '23:00', false),
+(2, 5, '12:00', '23:00', false), (2, 6, '10:00', '20:00', false), (2, 7, '10:00', '20:00', false);
 
--- store_business_hour (영업시간: dayOfWeek 1=월 ~ 7=일)
--- 카페 공명: 매일 10:00-22:00
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (1, 1, '10:00:00', '22:00:00', false);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (1, 2, '10:00:00', '22:00:00', false);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (1, 3, '10:00:00', '22:00:00', false);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (1, 4, '10:00:00', '22:00:00', false);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (1, 5, '10:00:00', '22:00:00', false);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (1, 6, '10:00:00', '23:00:00', false);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (1, 7, '10:00:00', '23:00:00', false);
--- 더블유오엔: 매일 18:00-02:00
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (2, 1, '18:00:00', '02:00:00', false);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (2, 2, '18:00:00', '02:00:00', false);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (2, 3, '18:00:00', '02:00:00', false);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (2, 4, '18:00:00', '02:00:00', false);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (2, 5, '18:00:00', '03:00:00', false);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (2, 6, '18:00:00', '03:00:00', false);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (2, 7, '18:00:00', '02:00:00', false);
--- 스모어사이트: 월-금 11:00-21:00, 주말 휴무
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (3, 1, '11:00:00', '21:00:00', false);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (3, 2, '11:00:00', '21:00:00', false);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (3, 3, '11:00:00', '21:00:00', false);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (3, 4, '11:00:00', '21:00:00', false);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (3, 5, '11:00:00', '21:00:00', false);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (3, 6, null, null, true);
-INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed)
-VALUES (3, 7, null, null, true);
+-- 3. 서울볼더스 클라이밍 목동점 | 월~금 10:00~23:00 | 토~일 10:00~22:00
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(3, 1, '10:00', '23:00', false), (3, 2, '10:00', '23:00', false),
+(3, 3, '10:00', '23:00', false), (3, 4, '10:00', '23:00', false),
+(3, 5, '10:00', '23:00', false), (3, 6, '10:00', '22:00', false), (3, 7, '10:00', '22:00', false);
 
--- payment (결제 완료 상태)
-INSERT INTO payment (order_id, order_name, amount, status, paid_at, created_at)
-VALUES ('mock-order-0001', '인디피_구독_카페 공명 홍대점', 180000, 'DONE', NOW(), NOW());
-INSERT INTO payment (order_id, order_name, amount, status, paid_at, created_at)
-VALUES ('mock-order-0002', '인디피_구독_더블유오엔 1층', 234000, 'DONE', NOW(), NOW());
-INSERT INTO payment (order_id, order_name, amount, status, paid_at, created_at)
-VALUES ('mock-order-0003', '인디피_구독_스모어사이트', 180000, 'DONE', NOW(), NOW());
+-- 4. 석문어 서대문점 | 월~금 11:00~23:00 | 토,일 휴무
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(4, 1, '11:00', '23:00', false), (4, 2, '11:00', '23:00', false),
+(4, 3, '11:00', '23:00', false), (4, 4, '11:00', '23:00', false),
+(4, 5, '11:00', '23:00', false), (4, 6, NULL, NULL, true), (4, 7, NULL, NULL, true);
 
--- store_subscription (구독 정보 - ACTIVE)
-INSERT INTO store_subscription (store_id, plan_id, payment_id, start_date, end_date, usage_period,
-                                status, created_at)
-VALUES (1, 1, 1, '2026-01-12', '2027-01-12', 12, 'ACTIVE', NOW());
-INSERT INTO store_subscription (store_id, plan_id, payment_id, start_date, end_date, usage_period,
-                                status, created_at)
-VALUES (2, 2, 2, '2026-02-03', '2026-08-03', 6, 'ACTIVE', NOW());
-INSERT INTO store_subscription (store_id, plan_id, payment_id, start_date, end_date, usage_period,
-                                status, created_at)
-VALUES (3, 1, 3, '2026-03-18', '2026-09-18', 6, 'ACTIVE', NOW());
+-- 5. 스모어사이트 | 월~금 08:00~21:30 | 토~일 10:00~21:30
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(5, 1, '08:00', '21:30', false), (5, 2, '08:00', '21:30', false),
+(5, 3, '08:00', '21:30', false), (5, 4, '08:00', '21:30', false),
+(5, 5, '08:00', '21:30', false), (5, 6, '10:00', '21:30', false), (5, 7, '10:00', '21:30', false);
 
--- =====================
--- 플레이리스트 곡 목록
--- 성시경 - 안녕 나의 사랑 (200곡 × 3 플레이리스트)
--- =====================
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 10.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 20.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 30.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 40.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 50.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 60.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 70.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 80.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 90.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 100.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 110.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 120.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 130.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 140.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 150.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 160.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 170.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 180.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 190.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 200.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 210.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 220.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 230.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 240.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 250.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 260.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 270.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 280.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 290.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 300.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 310.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 320.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 330.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 340.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 350.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 360.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 370.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 380.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 390.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 400.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 410.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 420.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 430.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 440.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 450.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 460.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 470.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 480.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 490.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 500.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 510.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 520.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 530.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 540.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 550.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 560.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 570.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 580.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 590.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 600.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 610.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 620.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 630.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 640.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 650.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 660.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 670.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 680.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 690.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 700.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 710.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 720.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 730.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 740.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 750.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 760.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 770.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 780.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 790.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 800.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 810.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 820.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 830.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 840.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 850.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 860.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 870.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 880.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 890.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 900.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 910.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 920.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 930.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 940.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 950.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 960.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 970.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 980.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 990.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1000.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1010.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1020.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1030.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1040.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1050.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1060.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1070.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1080.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1090.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1100.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1110.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1120.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1130.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1140.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1150.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1160.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1170.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1180.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1190.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1200.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1210.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1220.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1230.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1240.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1250.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1260.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1270.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1280.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1290.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1300.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1310.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1320.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1330.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1340.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1350.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1360.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1370.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1380.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1390.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1400.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1410.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1420.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1430.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1440.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1450.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1460.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1470.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1480.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1490.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1500.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1510.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1520.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1530.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1540.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1550.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1560.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1570.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1580.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1590.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1600.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1610.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1620.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1630.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1640.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1650.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1660.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1670.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1680.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1690.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1700.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1710.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1720.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1730.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1740.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1750.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1760.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1770.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1780.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1790.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1800.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1810.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1820.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1830.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1840.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1850.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1860.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1870.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1880.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1890.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1900.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1910.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1920.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1930.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1940.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1950.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1960.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1970.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1980.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1990.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (1, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 2000.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 10.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 20.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 30.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 40.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 50.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 60.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 70.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 80.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 90.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 100.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 110.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 120.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 130.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 140.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 150.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 160.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 170.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 180.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 190.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 200.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 210.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 220.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 230.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 240.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 250.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 260.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 270.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 280.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 290.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 300.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 310.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 320.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 330.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 340.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 350.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 360.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 370.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 380.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 390.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 400.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 410.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 420.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 430.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 440.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 450.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 460.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 470.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 480.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 490.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 500.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 510.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 520.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 530.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 540.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 550.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 560.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 570.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 580.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 590.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 600.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 610.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 620.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 630.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 640.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 650.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 660.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 670.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 680.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 690.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 700.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 710.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 720.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 730.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 740.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 750.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 760.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 770.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 780.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 790.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 800.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 810.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 820.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 830.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 840.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 850.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 860.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 870.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 880.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 890.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 900.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 910.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 920.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 930.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 940.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 950.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 960.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 970.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 980.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 990.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1000.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1010.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1020.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1030.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1040.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1050.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1060.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1070.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1080.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1090.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1100.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1110.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1120.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1130.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1140.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1150.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1160.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1170.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1180.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1190.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1200.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1210.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1220.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1230.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1240.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1250.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1260.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1270.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1280.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1290.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1300.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1310.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1320.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1330.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1340.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1350.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1360.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1370.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1380.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1390.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1400.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1410.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1420.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1430.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1440.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1450.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1460.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1470.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1480.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1490.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1500.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1510.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1520.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1530.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1540.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1550.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1560.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1570.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1580.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1590.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1600.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1610.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1620.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1630.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1640.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1650.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1660.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1670.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1680.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1690.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1700.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1710.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1720.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1730.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1740.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1750.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1760.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1770.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1780.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1790.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1800.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1810.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1820.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1830.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1840.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1850.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1860.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1870.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1880.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1890.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1900.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1910.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1920.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1930.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1940.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1950.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1960.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1970.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1980.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1990.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (2, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 2000.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 10.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 20.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 30.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 40.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 50.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 60.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 70.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 80.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 90.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 100.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 110.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 120.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 130.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 140.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 150.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 160.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 170.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 180.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 190.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 200.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 210.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 220.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 230.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 240.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 250.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 260.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 270.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 280.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 290.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 300.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 310.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 320.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 330.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 340.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 350.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 360.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 370.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 380.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 390.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 400.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 410.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 420.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 430.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 440.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 450.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 460.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 470.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 480.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 490.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 500.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 510.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 520.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 530.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 540.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 550.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 560.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 570.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 580.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 590.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 600.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 610.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 620.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 630.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 640.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 650.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 660.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 670.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 680.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 690.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 700.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 710.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 720.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 730.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 740.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 750.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 760.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 770.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 780.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 790.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 800.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 810.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 820.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 830.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 840.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 850.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 860.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 870.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 880.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 890.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 900.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 910.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 920.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 930.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 940.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 950.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 960.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 970.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 980.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 990.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1000.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1010.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1020.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1030.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1040.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1050.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1060.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1070.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1080.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1090.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1100.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1110.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1120.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1130.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1140.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1150.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1160.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1170.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1180.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1190.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1200.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1210.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1220.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1230.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1240.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1250.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1260.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1270.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1280.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1290.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1300.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1310.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1320.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1330.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1340.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1350.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1360.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1370.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1380.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1390.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1400.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1410.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1420.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1430.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1440.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1450.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1460.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1470.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1480.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1490.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1500.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1510.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1520.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1530.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1540.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1550.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1560.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1570.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1580.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1590.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1600.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1610.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1620.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1630.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1640.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1650.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1660.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1670.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1680.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1690.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1700.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1710.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1720.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1730.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1740.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1750.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1760.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1770.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1780.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1790.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1800.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1810.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1820.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1830.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1840.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1850.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1860.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1870.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1880.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1890.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1900.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1910.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1920.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1930.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1940.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1950.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1960.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1970.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1980.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 1990.0);
-INSERT INTO playlist_song (playlist_id, song_recommendation_id, is_recommended, vid, play_time, title, artist, play_order) VALUES (3, null, false, '5zAEiu3SaO4', 259, '안녕 나의 사랑', '성시경', 2000.0);
+-- 6. 일상의아도 | 월~금 10:00~21:30 | 토 10:00~21:00 | 일 휴무
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(6, 1, '10:00', '21:30', false), (6, 2, '10:00', '21:30', false),
+(6, 3, '10:00', '21:30', false), (6, 4, '10:00', '21:30', false),
+(6, 5, '10:00', '21:30', false), (6, 6, '10:00', '21:00', false), (6, 7, NULL, NULL, true);
+
+-- 7. 정숙성 샤로수길 본점 | 월~일 11:30~22:00
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(7, 1, '11:30', '22:00', false), (7, 2, '11:30', '22:00', false),
+(7, 3, '11:30', '22:00', false), (7, 4, '11:30', '22:00', false),
+(7, 5, '11:30', '22:00', false), (7, 6, '11:30', '22:00', false), (7, 7, '11:30', '22:00', false);
+
+-- 8. 정숙성 서대문점 | 월~토 11:30~22:00 | 일 휴무
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(8, 1, '11:30', '22:00', false), (8, 2, '11:30', '22:00', false),
+(8, 3, '11:30', '22:00', false), (8, 4, '11:30', '22:00', false),
+(8, 5, '11:30', '22:00', false), (8, 6, '11:30', '22:00', false), (8, 7, NULL, NULL, true);
+
+-- 9. 주도락 신용산본점 | 월~목 11:30~01:00(익일) | 금~일 11:30~03:00(익일)
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(9, 1, '11:30', '01:00', false), (9, 2, '11:30', '01:00', false),
+(9, 3, '11:30', '01:00', false), (9, 4, '11:30', '01:00', false),
+(9, 5, '11:30', '03:00', false), (9, 6, '11:30', '03:00', false), (9, 7, '11:30', '03:00', false);
+
+-- 10. 주도락 마곡발산점 | 월~화 ~01:00 | 수~목 ~02:00 | 금~토 ~03:00 | 일 12:00~00:00
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(10, 1, '11:30', '01:00', false), (10, 2, '11:30', '01:00', false),
+(10, 3, '11:30', '02:00', false), (10, 4, '11:30', '02:00', false),
+(10, 5, '11:30', '03:00', false), (10, 6, '11:30', '03:00', false), (10, 7, '12:00', '00:00', false);
+
+-- 11. 주도락 강남점 | 월~목 ~01:00 | 금~토 ~03:00 | 일 ~02:00
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(11, 1, '11:30', '01:00', false), (11, 2, '11:30', '01:00', false),
+(11, 3, '11:30', '01:00', false), (11, 4, '11:30', '01:00', false),
+(11, 5, '11:30', '03:00', false), (11, 6, '11:30', '03:00', false), (11, 7, '11:30', '02:00', false);
+
+-- 12. 주도락 부산동래점 | 월~일 11:30~04:00(익일, 28시)
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(12, 1, '11:30', '04:00', false), (12, 2, '11:30', '04:00', false),
+(12, 3, '11:30', '04:00', false), (12, 4, '11:30', '04:00', false),
+(12, 5, '11:30', '04:00', false), (12, 6, '11:30', '04:00', false), (12, 7, '11:30', '04:00', false);
+
+-- 13. 주도락 전포점 | 월~일 11:30~06:00(익일, 30시)
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(13, 1, '11:30', '06:00', false), (13, 2, '11:30', '06:00', false),
+(13, 3, '11:30', '06:00', false), (13, 4, '11:30', '06:00', false),
+(13, 5, '11:30', '06:00', false), (13, 6, '11:30', '06:00', false), (13, 7, '11:30', '06:00', false);
+
+-- 14. 카페 공명 마곡책빵 | 월~금 07:00~22:00 | 토~일 10:00~22:00
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(14, 1, '07:00', '22:00', false), (14, 2, '07:00', '22:00', false),
+(14, 3, '07:00', '22:00', false), (14, 4, '07:00', '22:00', false),
+(14, 5, '07:00', '22:00', false), (14, 6, '10:00', '22:00', false), (14, 7, '10:00', '22:00', false);
+
+-- 15. 카페 공명 망원책빵 | 월~일 10:00~22:00
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(15, 1, '10:00', '22:00', false), (15, 2, '10:00', '22:00', false),
+(15, 3, '10:00', '22:00', false), (15, 4, '10:00', '22:00', false),
+(15, 5, '10:00', '22:00', false), (15, 6, '10:00', '22:00', false), (15, 7, '10:00', '22:00', false);
+
+-- 16. 카페 공명 신사 가로수길점 | 월~일 11:00~23:00
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(16, 1, '11:00', '23:00', false), (16, 2, '11:00', '23:00', false),
+(16, 3, '11:00', '23:00', false), (16, 4, '11:00', '23:00', false),
+(16, 5, '11:00', '23:00', false), (16, 6, '11:00', '23:00', false), (16, 7, '11:00', '23:00', false);
+
+-- 17. 카페 공명 연남점 | 월~일 10:00~22:00
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(17, 1, '10:00', '22:00', false), (17, 2, '10:00', '22:00', false),
+(17, 3, '10:00', '22:00', false), (17, 4, '10:00', '22:00', false),
+(17, 5, '10:00', '22:00', false), (17, 6, '10:00', '22:00', false), (17, 7, '10:00', '22:00', false);
+
+-- 18. 카페 공명 홍대점 | 월~일 10:00~22:00
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(18, 1, '10:00', '22:00', false), (18, 2, '10:00', '22:00', false),
+(18, 3, '10:00', '22:00', false), (18, 4, '10:00', '22:00', false),
+(18, 5, '10:00', '22:00', false), (18, 6, '10:00', '22:00', false), (18, 7, '10:00', '22:00', false);
+
+-- 19. 페어페어드 | 월~수 휴무 | 목~금 11:00~18:00 | 토 11:00~19:00 | 일 11:00~18:00
+INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, is_closed) VALUES
+(19, 1, NULL, NULL, true),  (19, 2, NULL, NULL, true), (19, 3, NULL, NULL, true),
+(19, 4, '11:00', '18:00', false), (19, 5, '11:00', '18:00', false),
+(19, 6, '11:00', '19:00', false), (19, 7, '11:00', '18:00', false);
+
+-- ===========================
+-- Store Subscription (19)
+-- plan_id=2 (PLAN_B/프리미엄), payment_id=NULL (0원 무료체험)
+-- status=PENDING_ACTIVE (결제완료, 시작일(04.28) 미도래)
+-- ===========================
+INSERT INTO store_subscription (store_id, plan_id, payment_id, start_date, end_date, usage_period, status, created_at) VALUES
+(1,  2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(2,  2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(3,  2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(4,  2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(5,  2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(6,  2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(7,  2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(8,  2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(9,  2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(10, 2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(11, 2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(12, 2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(13, 2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(14, 2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(15, 2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(16, 2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(17, 2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(18, 2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW()),
+(19, 2, NULL, '2026-04-28', '2026-05-25', 1, 'PENDING_ACTIVE', NOW());
+
+-- ===========================
+-- Store Photo (19 - 각 매장 대표 이미지 1장)
+-- URL: /images/stores/{store_id}.png (Spring Boot static resource)
+-- ===========================
+INSERT INTO store_photo (store_id, image_url, sort_order, is_main) VALUES
+(1,  '/images/stores/1.png',  1, true),
+(2,  '/images/stores/2.png',  1, true),
+(3,  '/images/stores/3.png',  1, true),
+(4,  '/images/stores/4.png',  1, true),
+(5,  '/images/stores/5.png',  1, true),
+(6,  '/images/stores/6.png',  1, true),
+(7,  '/images/stores/7.png',  1, true),
+(8,  '/images/stores/8.png',  1, true),
+(9,  '/images/stores/9.png',  1, true),
+(10, '/images/stores/10.png', 1, true),
+(11, '/images/stores/11.png', 1, true),
+(12, '/images/stores/12.png', 1, true),
+(13, '/images/stores/13.png', 1, true),
+(14, '/images/stores/14.png', 1, true),
+(15, '/images/stores/15.png', 1, true),
+(16, '/images/stores/16.png', 1, true),
+(17, '/images/stores/17.png', 1, true),
+(18, '/images/stores/18.png', 1, true),
+(19, '/images/stores/19.png', 1, true);
 
