@@ -116,17 +116,34 @@ public class SongRecommendationService {
     private void validateBusinessOpen(Store store) {
         LocalDateTime now = LocalDateTime.now();
         int currentDayOfWeek = now.getDayOfWeek().getValue();
+        int prevDayOfWeek = currentDayOfWeek == 1 ? 7 : currentDayOfWeek - 1;
         LocalTime currentTime = now.toLocalTime();
 
         boolean isOpen = store.getBusinessHours().stream()
-            .filter(bh -> bh.getDayOfWeek() == currentDayOfWeek)
             .filter(bh -> !bh.isClosed())
-            .anyMatch(bh -> !currentTime.isBefore(bh.getOpenTime()) && !currentTime.isAfter(
-                bh.getCloseTime()));
+            .anyMatch(bh -> isOpenAt(bh, currentDayOfWeek, prevDayOfWeek, currentTime));
 
         if (!isOpen) {
             throw new BadRequestException("현재 영업 중인 매장이 아닙니다.");
         }
+    }
+
+    private boolean isOpenAt(StoreBusinessHour bh, int dayOfWeek, int prevDayOfWeek, LocalTime time) {
+        boolean isPastMidnight = bh.getCloseTime().isBefore(bh.getOpenTime());
+
+        if (bh.getDayOfWeek() == dayOfWeek) {
+            if (!isPastMidnight) {
+                return !time.isBefore(bh.getOpenTime()) && !time.isAfter(bh.getCloseTime());
+            }
+
+            return !time.isBefore(bh.getOpenTime());
+        }
+
+        if (bh.getDayOfWeek() == prevDayOfWeek && isPastMidnight) {
+            return !time.isAfter(bh.getCloseTime());
+        }
+
+        return false;
     }
 
     private void validatePlaylistExists(Store store) {
