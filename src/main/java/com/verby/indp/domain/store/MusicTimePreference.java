@@ -62,7 +62,8 @@ public class MusicTimePreference {
     }
 
     private void validateTimeRange(int startTimeHour, int endTimeHour) {
-        if (startTimeHour >= endTimeHour) {
+        boolean isMidnightWrap = startTimeHour == 23 && endTimeHour == 0;
+        if (!isMidnightWrap && startTimeHour >= endTimeHour) {
             throw new BadRequestException("startTimeHour는 endTimeHour보다 작아야 합니다.");
         }
     }
