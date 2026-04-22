@@ -8,10 +8,11 @@ import com.verby.indp.domain.store.StoreApply;
 import com.verby.indp.domain.store.dto.request.BusinessHour;
 import com.verby.indp.domain.store.vo.Vibe;
 import com.verby.indp.domain.subscription.StoreSubscription;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.IntStream;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class StoreFixture {
 
@@ -26,7 +27,7 @@ public class StoreFixture {
     }
 
     public static Store storeWithOwner(Owner owner) {
-        Store store = createStore(owner, allDaysOpen());
+        Store store = createStore(owner, nowOpen());
         StoreSubscription subscription = StoreSubscriptionFixture.activeSubscription();
         store.addSubscription(subscription);
         ReflectionTestUtils.setField(store, "storeId", 1L);
@@ -34,13 +35,13 @@ public class StoreFixture {
     }
 
     public static Store inactiveStore() {
-        Store store = createStore(OwnerFixture.owner(), allDaysOpen());
+        Store store = createStore(OwnerFixture.owner(), nowOpen());
         ReflectionTestUtils.setField(store, "storeId", 1L);
         return store;
     }
 
     public static Store inactiveStoreWithOwner(Owner owner) {
-        Store store = createStore(owner, allDaysOpen());
+        Store store = createStore(owner, nowOpen());
         ReflectionTestUtils.setField(store, "storeId", 1L);
         return store;
     }
@@ -54,7 +55,7 @@ public class StoreFixture {
     }
 
     public static Store storeWithActiveSubscriptionAndPlan(Plan plan) {
-        Store store = createStore(OwnerFixture.owner(), allDaysOpen());
+        Store store = createStore(OwnerFixture.owner(), nowOpen());
         StoreSubscription subscription = StoreSubscriptionFixture.activeSubscriptionWithPlan(plan);
         store.addSubscription(subscription);
         ReflectionTestUtils.setField(store, "storeId", 1L);
@@ -86,9 +87,10 @@ public class StoreFixture {
         );
     }
 
-    private static List<BusinessHour> allDaysOpen() {
+    private static List<BusinessHour> nowOpen() {
+        LocalTime now = LocalTime.now();
         return IntStream.rangeClosed(1, 7)
-            .mapToObj(day -> new BusinessHour(day, LocalTime.of(8, 0), LocalTime.of(23, 0), false))
+            .mapToObj(day -> new BusinessHour(day, now.minusMinutes(30), now.plusMinutes(30), false))
             .toList();
     }
 

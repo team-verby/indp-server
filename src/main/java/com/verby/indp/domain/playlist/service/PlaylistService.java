@@ -13,12 +13,16 @@ import com.verby.indp.domain.playlist.repository.PlaylistSongRepository;
 import com.verby.indp.domain.playlist.repository.ScheduledPlaylistUpdateRepository;
 import com.verby.indp.domain.recommendation.SongRecommendation;
 import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.store.StoreBusinessHour;
+import com.verby.indp.domain.store.repository.StoreBusinessHourRepository;
 import com.verby.indp.domain.store.service.StoreService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +36,7 @@ public class PlaylistService {
 
     private final PlaylistSongRepository playlistSongRepository;
     private final ScheduledPlaylistUpdateRepository scheduledPlaylistUpdateRepository;
+    private final StoreBusinessHourRepository storeBusinessHourRepository;
     private final StoreService storeService;
 
     public FindStorePlaylistResponse getStorePlaylist(long storeId) {
@@ -87,18 +92,24 @@ public class PlaylistService {
     }
 
     @Transactional
-    public void deleteRecommendedSongs(Store store) {
-        Playlist playlist = store.getPlaylist();
-        if (playlist == null) {
-            return;
+    public void deleteRecommendedSongsOfClosingStores(int dayOfWeek, LocalTime fromCloseTime, LocalTime toCloseTime) {
+        List<StoreBusinessHour> closingBusinessHour = storeBusinessHourRepository
+            .findByDayOfWeekAndCloseTimeBetween(dayOfWeek, fromCloseTime, toCloseTime);
+
+        for (StoreBusinessHour businessHour : closingBusinessHour) {
+            Store store = businessHour.getStore();
+            Playlist playlist = store.getPlaylist();
+            if (playlist == null) {
+                continue;
+            }
+
+            List<PlaylistSong> recommended = playlist.getSongs()
+                .stream()
+                .filter(PlaylistSong::isRecommended)
+                .toList();
+
+            playlistSongRepository.deleteAll(recommended);
         }
-
-        List<PlaylistSong> recommended = playlist.getSongs()
-            .stream()
-            .filter(PlaylistSong::isRecommended)
-            .toList();
-
-        playlistSongRepository.deleteAll(recommended);
     }
 
     private double calculateOrder(Store store, List<PlaylistSong> songs) {
@@ -138,7 +149,7 @@ public class PlaylistService {
 
     private CurrentSong getCurrentSong(Store store) {
         return CurrentSongResolver.resolveCurrentSong(store)
-            .orElseThrow(() -> new ServiceUnavailableException("음악 신청에 실패했습니다. 잠시 후 다시 시도해주세요."));
+            .orElseThrow(() -> new ServiceUnavailableException("현재 재생 중인 플레이리스트가 아닙니다."));
     }
 
     private void rebalancePlayOrder(List<PlaylistSong> songs) {

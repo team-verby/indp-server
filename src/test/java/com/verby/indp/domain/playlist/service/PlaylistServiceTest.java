@@ -1,19 +1,5 @@
 package com.verby.indp.domain.playlist.service;
 
-import static com.verby.indp.fixture.PlaylistFixture.playlist;
-import static com.verby.indp.fixture.PlaylistFixture.playlistWithSongs;
-import static com.verby.indp.fixture.PlaylistSongFixture.playlistSong;
-import static com.verby.indp.fixture.PlaylistSongFixture.playlistSongWithId;
-import static com.verby.indp.fixture.PlaylistSongFixture.recommendedSong;
-import static com.verby.indp.fixture.ScheduledPlaylistFixture.scheduledPlaylistWithSongs;
-import static com.verby.indp.fixture.SongRecommendationFixture.songRecommendation;
-import static com.verby.indp.fixture.StoreFixture.inactiveStore;
-import static com.verby.indp.fixture.StoreFixture.store;
-import static com.verby.indp.fixture.StoreFixture.storeWithPlaylist;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchException;
-import static org.mockito.BDDMockito.given;
-
 import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.playlist.Playlist;
@@ -25,12 +11,9 @@ import com.verby.indp.domain.playlist.repository.PlaylistSongRepository;
 import com.verby.indp.domain.playlist.repository.ScheduledPlaylistUpdateRepository;
 import com.verby.indp.domain.recommendation.SongRecommendation;
 import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.store.StoreBusinessHour;
+import com.verby.indp.domain.store.repository.StoreBusinessHourRepository;
 import com.verby.indp.domain.store.service.StoreService;
-import java.util.ArrayList;
-import java.util.List;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willDoNothing;
-import static org.mockito.ArgumentMatchers.any;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -38,6 +21,21 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.verby.indp.fixture.PlaylistFixture.playlist;
+import static com.verby.indp.fixture.PlaylistFixture.playlistWithSongs;
+import static com.verby.indp.fixture.PlaylistSongFixture.*;
+import static com.verby.indp.fixture.ScheduledPlaylistFixture.scheduledPlaylistWithSongs;
+import static com.verby.indp.fixture.SongRecommendationFixture.songRecommendation;
+import static com.verby.indp.fixture.StoreFixture.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchException;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PlaylistServiceTest {
@@ -50,6 +48,9 @@ class PlaylistServiceTest {
 
     @Mock
     private ScheduledPlaylistUpdateRepository scheduledPlaylistUpdateRepository;
+
+    @Mock
+    private StoreBusinessHourRepository storeBusinessHourRepository;
 
     @Mock
     private StoreService storeService;
@@ -145,18 +146,37 @@ class PlaylistServiceTest {
     }
 
     @Nested
-    @DisplayName("deleteRecommendedSongs 메서드 실행 시")
-    class DeleteRecommendedSongs {
+    @DisplayName("deleteRecommendedSongsOfClosingStores 메서드 실행 시")
+    class DeleteRecommendedSongsOfClosingStores {
+
+        @Test
+        @DisplayName("성공 : 마감 매장이 없으면 아무것도 하지 않는다.")
+        void deleteRecommendedSongsWithNoClosingStores() {
+            // given
+            given(storeBusinessHourRepository.findByDayOfWeekAndCloseTimeBetween(any(Integer.class), any(), any()))
+                .willReturn(List.of());
+
+            // when
+            Exception exception = catchException(
+                () -> playlistService.deleteRecommendedSongsOfClosingStores(1, LocalTime.of(21, 30), LocalTime.of(22, 0)));
+
+            // then
+            assertThat(exception).isNull();
+            then(playlistSongRepository).shouldHaveNoInteractions();
+        }
 
         @Test
         @DisplayName("성공 : 플레이리스트가 없으면 아무것도 하지 않는다.")
         void deleteRecommendedSongsWithNullPlaylist() {
             // given
             Store store = store();
+            StoreBusinessHour businessHour = new StoreBusinessHour(store, 1, LocalTime.of(9, 0), LocalTime.of(22, 0), false);
+            given(storeBusinessHourRepository.findByDayOfWeekAndCloseTimeBetween(any(Integer.class), any(), any()))
+                .willReturn(List.of(businessHour));
 
             // when
             Exception exception = catchException(
-                () -> playlistService.deleteRecommendedSongs(store));
+                () -> playlistService.deleteRecommendedSongsOfClosingStores(1, LocalTime.of(21, 30), LocalTime.of(22, 0)));
 
             // then
             assertThat(exception).isNull();
@@ -171,11 +191,14 @@ class PlaylistServiceTest {
             PlaylistSong normalSong = playlistSong();
             Playlist playlist = playlistWithSongs(new ArrayList<>(List.of(recommendedSong, normalSong)));
             Store store = storeWithPlaylist(playlist);
+            StoreBusinessHour businessHour = new StoreBusinessHour(store, 1, LocalTime.of(9, 0), LocalTime.of(22, 0), false);
 
+            given(storeBusinessHourRepository.findByDayOfWeekAndCloseTimeBetween(any(Integer.class), any(), any()))
+                .willReturn(List.of(businessHour));
             willDoNothing().given(playlistSongRepository).deleteAll(any());
 
             // when
-            playlistService.deleteRecommendedSongs(store);
+            playlistService.deleteRecommendedSongsOfClosingStores(1, LocalTime.of(21, 30), LocalTime.of(22, 0));
 
             // then
             then(playlistSongRepository).should().deleteAll(List.of(recommendedSong));
