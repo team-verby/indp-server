@@ -1,7 +1,6 @@
 package com.verby.indp.domain.subscription.service;
 
 import com.verby.indp.domain.auth.Owner;
-import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.plan.Plan;

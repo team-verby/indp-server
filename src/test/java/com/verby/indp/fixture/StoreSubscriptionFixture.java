@@ -38,6 +38,17 @@ public class StoreSubscriptionFixture {
         );
     }
 
+    public static StoreSubscription doneSubscription() {
+        StoreSubscription subscription = new StoreSubscription(
+            PlanFixture.planA(),
+            PaymentFixture.donePayment(),
+            1,
+            LocalDate.of(2026, 4, 28)
+        );
+        subscription.updateStatus(SubscriptionStatus.ACTIVE);
+        return subscription;
+    }
+
     public static StoreSubscription pendingActiveSubscription() {
         StoreSubscription subscription = new StoreSubscription(
             PlanFixture.planA(),

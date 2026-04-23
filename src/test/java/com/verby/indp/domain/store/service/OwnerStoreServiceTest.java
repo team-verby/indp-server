@@ -15,8 +15,8 @@ import com.verby.indp.domain.store.dto.request.BusinessHour;
 import com.verby.indp.domain.store.dto.request.GenreItem;
 import com.verby.indp.domain.store.dto.request.UpdateStoreRequest;
 import com.verby.indp.domain.store.vo.Genre;
-import com.verby.indp.domain.store.dto.response.FindOwnerStoreResponse;
-import com.verby.indp.domain.store.dto.response.FindStoresResponse;
+import com.verby.indp.domain.store.dto.response.FindStoreByOwnerResponse;
+import com.verby.indp.domain.store.dto.response.FindStoresByOwnerResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
 import com.verby.indp.domain.store.vo.PlaylistType;
 import com.verby.indp.domain.store.vo.Tempo;
@@ -54,7 +54,7 @@ class OwnerStoreServiceTest {
             given(storeRepository.findAllByOwner(owner)).willReturn(List.of());
 
             // when
-            FindStoresResponse result = ownerStoreService.getMyStores(owner);
+            FindStoresByOwnerResponse result = ownerStoreService.getMyStores(owner);
 
             // then
             assertThat(result).isNotNull();
@@ -74,7 +74,7 @@ class OwnerStoreServiceTest {
             given(storeRepository.findById(1L)).willReturn(Optional.of(mockStore));
 
             // when
-            FindOwnerStoreResponse result = ownerStoreService.getMyStore(owner, 1L);
+            FindStoreByOwnerResponse result = ownerStoreService.getMyStore(owner, 1L);
 
             // then
             assertThat(result).isNotNull();

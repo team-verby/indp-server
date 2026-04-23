@@ -7,9 +7,11 @@ import com.verby.indp.domain.subscription.StoreSubscription;
 import java.time.LocalDate;
 import java.util.List;
 
-public record FindStoresByAdminResponse(List<StoreItem> stores) {
+public record FindStoresByAdminResponse(
+    List<StoreItem> stores, int totalPages, long totalElements
+) {
 
-    public static record StoreItem(
+    public record StoreItem(
         Long storeId,
         String name,
         SubscriptionItem subscription,

@@ -5,20 +5,20 @@ import com.verby.indp.domain.store.*;
 import java.time.LocalTime;
 import java.util.List;
 
-public record FindOwnerStoreResponse(
+public record FindStoreByOwnerResponse(
     ApplyInfo applyInfo,
     StoreInfo storeInfo,
     MusicInfo musicInfo
 ) {
 
-    public static FindOwnerStoreResponse from(Store store) {
+    public static FindStoreByOwnerResponse from(Store store) {
         StoreApply storeApply = store.getStoreApply();
 
         ApplyInfo applyInfo = ApplyInfo.from(storeApply);
         StoreInfo storeInfo = StoreInfo.from(store);
         MusicInfo musicInfo = MusicInfo.from(store.getStoreMusic());
 
-        return new FindOwnerStoreResponse(applyInfo, storeInfo, musicInfo);
+        return new FindStoreByOwnerResponse(applyInfo, storeInfo, musicInfo);
     }
 
     private record ApplyInfo(String applicantName, String applicantPhone) {

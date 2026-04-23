@@ -11,7 +11,7 @@ public record AddSubscriptionResponse(
     public static AddSubscriptionResponse from(StoreSubscription subscription) {
         return new AddSubscriptionResponse(
             subscription.getPayment().getOrderId(),
-            subscription.getPayment().getAmount(),
+            subscription.getPayment().getTotalAmount(),
             subscription.getPayment().getOrderName()
         );
     }

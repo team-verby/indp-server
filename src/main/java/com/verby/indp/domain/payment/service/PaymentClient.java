@@ -1,21 +1,23 @@
 package com.verby.indp.domain.payment.service;
 
-import com.verby.indp.domain.payment.PaymentStatus;
+import com.verby.indp.domain.payment.dto.reponse.TossErrorResponse;
 import com.verby.indp.domain.payment.dto.reponse.TossPaymentApiResponse;
 import com.verby.indp.domain.payment.exception.PaymentFailException;
-import com.verby.indp.global.infrastructure.ApiService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentClient {
@@ -23,25 +25,48 @@ public class PaymentClient {
     @Value("${payment.toss.secret-key}")
     private String secretKey;
 
-    @Value("${payment.toss.confirm-url}")
-    private String confirmUrl;
+    private static final String confirmUrl = "https://api.tosspayments.com/v1/payments/confirm";
+    private static final String cancelUrl = "https://api.tosspayments.com/v1/payments/%s/cancel";
 
-    private final ApiService apiService;
+    private final WebClient webClient;
 
-    public void confirmPayment(String orderId, String paymentKey, Integer amount) {
-        HttpHeaders httpHeaders = getHttpHeaders();
-        Map<String, Object> params = getParams(orderId, paymentKey, amount);
-        TossPaymentApiResponse paymentApiResponse = requestPaymentApi(httpHeaders, params);
+    public void confirmPayment(String orderId, String paymentKey, int amount) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("paymentKey", paymentKey);
+        params.put("orderId", orderId);
+        params.put("amount", amount);
 
-        validatePaymentResult(paymentApiResponse);
+        TossPaymentApiResponse response = post(confirmUrl, params);
+        log.info("결제 승인 완료. paymentKey={}, status={}, totalAmount={}, balanceAmount={}", paymentKey, response.status(), response.totalAmount(), response.balanceAmount());
     }
 
-    private HttpHeaders getHttpHeaders() {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setBasicAuth(getEncodeAuth());
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+    public TossPaymentApiResponse cancelPayment(String paymentKey, int cancelAmount, String cancelReason) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("cancelReason", cancelReason);
+        params.put("cancelAmount", cancelAmount);
 
-        return httpHeaders;
+        TossPaymentApiResponse response = post(String.format(cancelUrl, paymentKey), params);
+        log.info("결제 취소 완료. paymentKey={}, status={}, totalAmount={}, balanceAmount={}", paymentKey, response.status(), response.totalAmount(), response.balanceAmount());
+        return response;
+    }
+
+    private <T> T post(String url, Map<String, Object> body) {
+        return webClient.post()
+            .uri(url)
+            .headers(this::setHeaders)
+            .bodyValue(body)
+            .retrieve()
+            .onStatus(HttpStatusCode::isError, response ->
+                response.bodyToMono(TossErrorResponse.class)
+                    .map(err -> new PaymentFailException(err.message()))
+            )
+            .bodyToMono((Class<T>) TossPaymentApiResponse.class)
+            .block();
+    }
+
+    private void setHeaders(HttpHeaders headers) {
+        headers.setBasicAuth(getEncodeAuth());
+        headers.setContentType(MediaType.APPLICATION_JSON);
     }
 
     private String getEncodeAuth() {
@@ -50,29 +75,4 @@ public class PaymentClient {
                 .encode((secretKey + ":").getBytes(StandardCharsets.UTF_8))
         );
     }
-
-    private Map<String, Object> getParams(String uuid, String paymentKey, Integer amount) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("paymentKey", paymentKey);
-        params.put("orderId", uuid);
-        params.put("amount", amount);
-
-        return params;
-    }
-
-    private TossPaymentApiResponse requestPaymentApi(HttpHeaders httpHeaders,
-        Map<String, Object> params) {
-        return apiService.post(
-            new HttpEntity<>(params, httpHeaders),
-            confirmUrl,
-            TossPaymentApiResponse.class
-        );
-    }
-
-    private void validatePaymentResult(TossPaymentApiResponse paymentApiResponse) {
-        if (!paymentApiResponse.status().equals(PaymentStatus.DONE.name())) {
-            throw new PaymentFailException("결제가 실패되었습니다.");
-        }
-    }
-
 }

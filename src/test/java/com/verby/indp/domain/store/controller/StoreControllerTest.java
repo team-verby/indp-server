@@ -138,7 +138,7 @@ class StoreControllerTest extends BaseControllerTest {
         @DisplayName("성공 : 매장 목록을 조회한다.")
         void findStores() throws Exception {
             // given
-            FindStoresResponse response = new FindStoresResponse(List.of());
+            FindStoresResponse response = new FindStoresResponse(List.of(), 0, 0);
             given(storeService.findStores(any())).willReturn(response);
 
             // when
@@ -149,7 +149,9 @@ class StoreControllerTest extends BaseControllerTest {
                 .andDo(
                     restDocs.document(
                         responseFields(
-                            fieldWithPath("stores").type(ARRAY).description("매장 목록")
+                            fieldWithPath("stores").type(ARRAY).description("매장 목록"),
+                            fieldWithPath("totalPages").type(NUMBER).description("전체 페이지 수"),
+                            fieldWithPath("totalElements").type(NUMBER).description("전체 매장 수")
                         )
                     )
                 );

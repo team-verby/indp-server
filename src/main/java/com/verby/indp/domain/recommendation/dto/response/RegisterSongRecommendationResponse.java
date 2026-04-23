@@ -11,7 +11,7 @@ public record RegisterSongRecommendationResponse(
     public static RegisterSongRecommendationResponse from(SongRecommendation recommendation) {
         return new RegisterSongRecommendationResponse(
             recommendation.getPayment().getOrderId(),
-            recommendation.getPayment().getAmount(),
+            recommendation.getPayment().getTotalAmount(),
             recommendation.getPayment().getOrderName()
         );
     }

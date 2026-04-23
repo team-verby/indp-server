@@ -31,7 +31,7 @@ public class AdminStoreService {
                 return StoreItem.from(store, currentSong);
             })
             .toList();
-        return new FindStoresByAdminResponse(items);
+        return new FindStoresByAdminResponse(items, storePage.getTotalPages(), storePage.getTotalElements());
     }
 
     public FindStoreByAdminResponse findStore(long storeId) {

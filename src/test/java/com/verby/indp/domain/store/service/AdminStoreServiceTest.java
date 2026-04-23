@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import com.verby.indp.domain.common.exception.NotFoundException;
+import com.verby.indp.domain.playlist.service.CurrentSongResolver;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse;
@@ -32,6 +33,9 @@ class AdminStoreServiceTest {
 
     @Mock
     private StoreRepository storeRepository;
+
+    @Mock
+    private CurrentSongResolver currentSongResolver;
 
     @Nested
     @DisplayName("findStores 메서드 실행 시")

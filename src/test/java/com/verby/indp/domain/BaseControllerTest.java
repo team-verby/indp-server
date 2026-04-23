@@ -1,10 +1,5 @@
 package com.verby.indp.domain;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.verby.indp.config.RestDocsConfig;
 import com.verby.indp.domain.auth.Admin;
@@ -14,6 +9,9 @@ import com.verby.indp.domain.auth.repository.OwnerRepository;
 import com.verby.indp.domain.auth.service.AdminService;
 import com.verby.indp.domain.auth.service.AuthTokenService;
 import com.verby.indp.domain.auth.service.OwnerService;
+import com.verby.indp.domain.payment.service.AdminPaymentService;
+import com.verby.indp.domain.payment.service.OwnerPaymentService;
+import com.verby.indp.domain.payment.service.PaymentConfirmService;
 import com.verby.indp.domain.payment.service.PaymentService;
 import com.verby.indp.domain.plan.service.PlanService;
 import com.verby.indp.domain.playlist.service.AdminPlaylistService;
@@ -27,7 +25,6 @@ import com.verby.indp.domain.store.service.OwnerStoreService;
 import com.verby.indp.domain.store.service.StoreService;
 import com.verby.indp.domain.subscription.service.SubscriptionService;
 import com.verby.indp.global.image.ImageService;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +38,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
+
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @WebMvcTest
 @ExtendWith(RestDocumentationExtension.class)
@@ -75,6 +79,15 @@ public abstract class BaseControllerTest {
 
     @MockBean
     protected PaymentService paymentService;
+
+    @MockBean
+    protected PaymentConfirmService paymentConfirmService;
+
+    @MockBean
+    protected AdminPaymentService adminPaymentService;
+
+    @MockBean
+    protected OwnerPaymentService ownerPaymentService;
 
     @MockBean
     protected PlanService planService;

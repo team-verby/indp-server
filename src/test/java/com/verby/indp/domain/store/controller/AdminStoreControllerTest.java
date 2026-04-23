@@ -43,7 +43,7 @@ class AdminStoreControllerTest extends BaseControllerTest {
             Admin admin = admin();
             givenAdminAuth(admin);
 
-            FindStoresByAdminResponse response = new FindStoresByAdminResponse(List.of());
+            FindStoresByAdminResponse response = new FindStoresByAdminResponse(List.of(), 0, 0);
             given(adminStoreService.findStores(any())).willReturn(response);
 
             // when
@@ -55,7 +55,9 @@ class AdminStoreControllerTest extends BaseControllerTest {
                 .andDo(
                     restDocs.document(
                         responseFields(
-                            fieldWithPath("stores").type(ARRAY).description("매장 목록")
+                            fieldWithPath("stores").type(ARRAY).description("매장 목록"),
+                            fieldWithPath("totalPages").type(NUMBER).description("전체 페이지 수"),
+                            fieldWithPath("totalElements").type(NUMBER).description("전체 매장 수")
                         )
                     )
                 );

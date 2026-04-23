@@ -3,8 +3,8 @@ package com.verby.indp.domain.store.controller;
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.store.dto.request.UpdateStoreRequest;
 import com.verby.indp.domain.store.dto.response.FindLatestSubscriptionResponse;
-import com.verby.indp.domain.store.dto.response.FindOwnerStoreResponse;
-import com.verby.indp.domain.store.dto.response.FindStoresResponse;
+import com.verby.indp.domain.store.dto.response.FindStoreByOwnerResponse;
+import com.verby.indp.domain.store.dto.response.FindStoresByOwnerResponse;
 import com.verby.indp.domain.store.service.OwnerStoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +18,12 @@ public class OwnerStoreController {
     private final OwnerStoreService ownerStoreService;
 
     @GetMapping
-    public ResponseEntity<FindStoresResponse> findMyStores(@RequestAttribute("owner") Owner owner) {
+    public ResponseEntity<FindStoresByOwnerResponse> findMyStores(@RequestAttribute("owner") Owner owner) {
         return ResponseEntity.ok(ownerStoreService.getMyStores(owner));
     }
 
     @GetMapping("/{storeId}")
-    public ResponseEntity<FindOwnerStoreResponse> findMyStore(
+    public ResponseEntity<FindStoreByOwnerResponse> findMyStore(
         @RequestAttribute("owner") Owner owner, @PathVariable long storeId) {
         return ResponseEntity.ok(ownerStoreService.getMyStore(owner, storeId));
     }

@@ -34,19 +34,23 @@ public class Payment extends BaseTimeEntity {
     @Column(name = "order_name")
     private String orderName;
 
-    @Column(name = "amount")
-    private int amount;
+    @Column(name = "total_amount")
+    private int totalAmount;
+
+    @Column(name = "balance_amount")
+    private int balanceAmount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private PaymentStatus status = PaymentStatus.PENDING;
 
-    public Payment(String orderName, int amount) {
+    public Payment(String orderName, int totalAmount) {
         validateOrderName(orderName);
-        validateAmount(amount);
+        validateAmount(totalAmount);
         this.orderId = UUID.randomUUID().toString();
         this.orderName = orderName;
-        this.amount = amount;
+        this.totalAmount = totalAmount;
+        this.balanceAmount = totalAmount;
     }
 
     public void updatePaymentKey(String paymentKey) {
@@ -63,16 +67,17 @@ public class Payment extends BaseTimeEntity {
         this.status = ABORTED;
     }
 
-    public boolean isFail() {
-        return this.status == ABORTED;
+    public void cancel(PaymentStatus status, int balanceAmount) {
+        this.status = status;
+        this.balanceAmount = balanceAmount;
     }
 
-    public boolean isSuccess() {
-        return this.status == DONE;
+    public boolean isStatusWith(PaymentStatus status) {
+        return this.status == status;
     }
 
     public boolean isDifferentAmount(int amount) {
-        return this.amount != amount;
+        return this.totalAmount != amount;
     }
 
     private void validateOrderName(String orderName) {

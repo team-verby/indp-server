@@ -4,5 +4,6 @@ public enum PaymentStatus {
     PENDING,
     DONE,
     ABORTED,
-    CANCELED
+    CANCELED,
+    PARTIAL_CANCELED
 }

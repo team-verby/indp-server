@@ -22,7 +22,7 @@ public class StoreService {
     public FindStoresResponse findStores(Pageable pageable) {
         Page<Store> storePage = storeRepository.findAllBySubscriptionStatus(
             SubscriptionStatus.ACTIVE, pageable);
-        return FindStoresResponse.from(storePage.getContent());
+        return FindStoresResponse.from(storePage);
     }
 
     public FindStoreSummaryResponse findStoreSummary(long storeId) {

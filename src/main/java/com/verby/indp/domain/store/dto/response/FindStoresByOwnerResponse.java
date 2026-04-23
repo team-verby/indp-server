@@ -3,19 +3,15 @@ package com.verby.indp.domain.store.dto.response;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreBusinessHour;
 import com.verby.indp.domain.store.StorePhoto;
-import org.springframework.data.domain.Page;
 
 import java.time.LocalTime;
 import java.util.List;
 
-public record FindStoresResponse(List<StoreItem> stores, int totalPages, long totalElements) {
+public record FindStoresByOwnerResponse(List<StoreItem> stores, int totalPages, long totalElements) {
 
-    public static FindStoresResponse from(Page<Store> page) {
-        return new FindStoresResponse(
-            page.getContent().stream().map(StoreItem::from).toList(),
-            page.getTotalPages(),
-            page.getTotalElements()
-        );
+    public static FindStoresByOwnerResponse from(List<Store> stores) {
+        List<StoreItem> items = stores.stream().map(StoreItem::from).toList();
+        return new FindStoresByOwnerResponse(items, 1, items.size());
     }
 
     private record StoreItem(

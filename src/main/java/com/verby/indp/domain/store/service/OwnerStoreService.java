@@ -6,8 +6,8 @@ import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreMusic;
 import com.verby.indp.domain.store.dto.request.UpdateStoreRequest;
 import com.verby.indp.domain.store.dto.response.FindLatestSubscriptionResponse;
-import com.verby.indp.domain.store.dto.response.FindOwnerStoreResponse;
-import com.verby.indp.domain.store.dto.response.FindStoresResponse;
+import com.verby.indp.domain.store.dto.response.FindStoreByOwnerResponse;
+import com.verby.indp.domain.store.dto.response.FindStoresByOwnerResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,15 +22,15 @@ public class OwnerStoreService {
 
     private final StoreRepository storeRepository;
 
-    public FindStoresResponse getMyStores(Owner owner) {
+    public FindStoresByOwnerResponse getMyStores(Owner owner) {
         List<Store> stores = storeRepository.findAllByOwner(owner);
-        return FindStoresResponse.from(stores);
+        return FindStoresByOwnerResponse.from(stores);
     }
 
-    public FindOwnerStoreResponse getMyStore(Owner owner, long storeId) {
+    public FindStoreByOwnerResponse getMyStore(Owner owner, long storeId) {
         Store store = getStoreById(storeId);
         validateOwnership(store, owner);
-        return FindOwnerStoreResponse.from(store);
+        return FindStoreByOwnerResponse.from(store);
     }
 
     @Transactional

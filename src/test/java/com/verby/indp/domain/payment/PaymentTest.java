@@ -1,12 +1,12 @@
 package com.verby.indp.domain.payment;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchException;
-
 import com.verby.indp.domain.common.exception.BadRequestException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchException;
 
 class PaymentTest {
 
@@ -113,7 +113,7 @@ class PaymentTest {
             payment.success();
 
             // then
-            assertThat(payment.isSuccess()).isTrue();
+            assertThat(payment.isStatusWith(PaymentStatus.DONE)).isTrue();
         }
     }
 
@@ -131,7 +131,40 @@ class PaymentTest {
             payment.fail();
 
             // then
-            assertThat(payment.isFail()).isTrue();
+            assertThat(payment.isStatusWith(PaymentStatus.ABORTED)).isTrue();
+        }
+    }
+
+    @Nested
+    @DisplayName("cancel 메서드 실행 시")
+    class Cancel {
+
+        @Test
+        @DisplayName("성공 : 결제 상태가 CANCELED로 변경된다.")
+        void cancel() {
+            // given
+            Payment payment = new Payment("인디피_구독_카페공명", 180000);
+
+            // when
+            payment.cancel(PaymentStatus.CANCELED, 0);
+
+            // then
+            assertThat(payment.isStatusWith(PaymentStatus.CANCELED)).isTrue();
+            assertThat(payment.getBalanceAmount()).isZero();
+        }
+
+        @Test
+        @DisplayName("성공 : 부분 취소 시 결제 상태가 PARTIAL_CANCELED로 변경된다.")
+        void partialCancel() {
+            // given
+            Payment payment = new Payment("인디피_구독_카페공명", 180000);
+
+            // when
+            payment.cancel(PaymentStatus.PARTIAL_CANCELED, 90000);
+
+            // then
+            assertThat(payment.isStatusWith(PaymentStatus.PARTIAL_CANCELED)).isTrue();
+            assertThat(payment.getBalanceAmount()).isEqualTo(90000);
         }
     }
 

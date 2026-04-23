@@ -22,15 +22,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.domain.auth.Owner;
-import com.verby.indp.domain.store.MusicGenre;
 import com.verby.indp.domain.store.PlayMethod;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.dto.request.BusinessHour;
-import com.verby.indp.domain.store.dto.request.GenreItem;
 import com.verby.indp.domain.store.dto.request.UpdateStoreRequest;
 import com.verby.indp.domain.store.dto.response.FindLatestSubscriptionResponse;
-import com.verby.indp.domain.store.dto.response.FindOwnerStoreResponse;
-import com.verby.indp.domain.store.dto.response.FindStoresResponse;
+import com.verby.indp.domain.store.dto.response.FindStoreByOwnerResponse;
+import com.verby.indp.domain.store.dto.response.FindStoresByOwnerResponse;
 import com.verby.indp.domain.store.vo.PlaylistType;
 import com.verby.indp.domain.store.vo.Tempo;
 import com.verby.indp.domain.store.vo.Vibe;
@@ -58,7 +56,7 @@ class OwnerStoreControllerTest extends BaseControllerTest {
             Owner owner = owner();
             givenOwnerAuth(owner);
 
-            FindStoresResponse response = new FindStoresResponse(List.of());
+            FindStoresByOwnerResponse response = new FindStoresByOwnerResponse(List.of(), 1, 0);
             given(ownerStoreService.getMyStores(any())).willReturn(response);
 
             // when
@@ -70,7 +68,9 @@ class OwnerStoreControllerTest extends BaseControllerTest {
                 .andDo(
                     restDocs.document(
                         responseFields(
-                            fieldWithPath("stores").type(ARRAY).description("매장 목록")
+                            fieldWithPath("stores").type(ARRAY).description("매장 목록"),
+                            fieldWithPath("totalPages").type(NUMBER).description("전체 페이지 수"),
+                            fieldWithPath("totalElements").type(NUMBER).description("전체 매장 수")
                         )
                     )
                 );
@@ -89,7 +89,7 @@ class OwnerStoreControllerTest extends BaseControllerTest {
             givenOwnerAuth(owner);
 
             Store store = StoreFixture.store();
-            FindOwnerStoreResponse response = FindOwnerStoreResponse.from(store);
+            FindStoreByOwnerResponse response = FindStoreByOwnerResponse.from(store);
             given(ownerStoreService.getMyStore(any(), eq(1L))).willReturn(response);
 
             // when
