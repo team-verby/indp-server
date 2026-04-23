@@ -5,11 +5,13 @@ import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.playlist.PlaylistSong;
+import com.verby.indp.domain.playlist.dto.response.CurrentSong;
 import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistByOwnerResponse;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.service.StoreService;
 import com.verby.indp.global.slack.SlackNotificationService;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,7 @@ public class OwnerPlaylistService {
     private final StoreService storeService;
     private final SlackNotificationService slackNotificationService;
     private final PlaylistService playlistService;
+    private final CurrentSongResolver currentSongResolver;
 
     public FindStorePlaylistByOwnerResponse getStorePlaylist(Owner owner, long storeId) {
         Store store = storeService.getStoreById(storeId);
@@ -35,7 +38,8 @@ public class OwnerPlaylistService {
         }
 
         List<PlaylistSong> sortedSongs = playlistService.getSortedSongs(playlist.getPlaylistId());
-        return FindStorePlaylistByOwnerResponse.from(sortedSongs, store);
+        CurrentSong currentSong = currentSongResolver.resolveCurrentSong(store).orElse(null);
+        return FindStorePlaylistByOwnerResponse.from(sortedSongs, currentSong);
     }
 
     public void regeneratePlaylist(Owner owner, long storeId) {

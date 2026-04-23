@@ -38,6 +38,7 @@ public class PlaylistService {
     private final ScheduledPlaylistUpdateRepository scheduledPlaylistUpdateRepository;
     private final StoreBusinessHourRepository storeBusinessHourRepository;
     private final StoreService storeService;
+    private final CurrentSongResolver currentSongResolver;
 
     public FindStorePlaylistResponse getStorePlaylist(long storeId) {
         Store store = storeService.getStoreById(storeId);
@@ -49,7 +50,7 @@ public class PlaylistService {
         }
 
         List<PlaylistSong> songs = getSortedSongs(playlist.getPlaylistId());
-        CurrentSong currentSong = CurrentSongResolver.resolveCurrentSong(store).orElse(null);
+        CurrentSong currentSong = currentSongResolver.resolveCurrentSong(store).orElse(null);
         return FindStorePlaylistResponse.from(songs, currentSong);
     }
 
@@ -148,7 +149,7 @@ public class PlaylistService {
     }
 
     private CurrentSong getCurrentSong(Store store) {
-        return CurrentSongResolver.resolveCurrentSong(store)
+        return currentSongResolver.resolveCurrentSong(store)
             .orElseThrow(() -> new ServiceUnavailableException("현재 재생 중인 플레이리스트가 아닙니다."));
     }
 

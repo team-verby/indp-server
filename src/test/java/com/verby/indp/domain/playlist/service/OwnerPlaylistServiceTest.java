@@ -40,6 +40,9 @@ class OwnerPlaylistServiceTest {
     @Mock
     private PlaylistService playlistService;
 
+    @Mock
+    private CurrentSongResolver currentSongResolver;
+
     @Nested
     @DisplayName("getStorePlaylist 메서드 실행 시")
     class GetStorePlaylist {

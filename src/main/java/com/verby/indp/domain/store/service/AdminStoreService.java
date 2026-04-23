@@ -1,10 +1,14 @@
 package com.verby.indp.domain.store.service;
 
 import com.verby.indp.domain.common.exception.NotFoundException;
+import com.verby.indp.domain.playlist.dto.response.CurrentSong;
+import com.verby.indp.domain.playlist.service.CurrentSongResolver;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse;
+import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse.StoreItem;
 import com.verby.indp.domain.store.repository.StoreRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,10 +21,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminStoreService {
 
     private final StoreRepository storeRepository;
+    private final CurrentSongResolver currentSongResolver;
 
     public FindStoresByAdminResponse findStores(Pageable pageable) {
         Page<Store> storePage = storeRepository.findAllByOrderByStoreIdAsc(pageable);
-        return FindStoresByAdminResponse.from(storePage.getContent());
+        List<StoreItem> items = storePage.getContent().stream()
+            .map(store -> {
+                CurrentSong currentSong = currentSongResolver.resolveCurrentSong(store).orElse(null);
+                return StoreItem.from(store, currentSong);
+            })
+            .toList();
+        return new FindStoresByAdminResponse(items);
     }
 
     public FindStoreByAdminResponse findStore(long storeId) {

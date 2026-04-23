@@ -6,6 +6,7 @@ import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.ScheduledPlaylist;
 import com.verby.indp.domain.playlist.ScheduledPlaylistSong;
+import com.verby.indp.domain.playlist.dto.response.CurrentSong;
 import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistResponse;
 import com.verby.indp.domain.playlist.repository.PlaylistSongRepository;
 import com.verby.indp.domain.playlist.repository.ScheduledPlaylistUpdateRepository;
@@ -14,6 +15,7 @@ import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreBusinessHour;
 import com.verby.indp.domain.store.repository.StoreBusinessHourRepository;
 import com.verby.indp.domain.store.service.StoreService;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -54,6 +56,9 @@ class PlaylistServiceTest {
 
     @Mock
     private StoreService storeService;
+
+    @Mock
+    private CurrentSongResolver currentSongResolver;
 
     @Nested
     @DisplayName("getStorePlaylist 메서드 실행 시")
@@ -251,6 +256,8 @@ class PlaylistServiceTest {
 
             given(playlistSongRepository.findAllByPlaylistPlaylistIdOrderByPlayOrder(1L))
                 .willReturn(List.of(repoSong));
+            given(currentSongResolver.resolveCurrentSong(store))
+                .willReturn(Optional.of(new CurrentSong(42L, "title", "artist", "vid", 0)));
 
             // when
             PlaylistSong result = playlistService.addRecommendedSong(store, recommendation);
@@ -279,6 +286,8 @@ class PlaylistServiceTest {
 
             given(playlistSongRepository.findAllByPlaylistPlaylistIdOrderByPlayOrder(1L))
                 .willReturn(List.of(song1, song2, song3, song4, song5, song6));
+            given(currentSongResolver.resolveCurrentSong(store))
+                .willReturn(Optional.of(new CurrentSong(1, "title", "artist", "vid", 0)));
 
             // when
             PlaylistSong result = playlistService.addRecommendedSong(store, recommendation);

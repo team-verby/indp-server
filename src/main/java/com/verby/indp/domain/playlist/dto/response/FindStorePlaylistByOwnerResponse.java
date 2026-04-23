@@ -11,13 +11,9 @@ public record FindStorePlaylistByOwnerResponse(
     CurrentSongItem currentSong
 ) {
 
-    public static FindStorePlaylistByOwnerResponse from(List<PlaylistSong> sortedSongs,
-        Store store) {
+    public static FindStorePlaylistByOwnerResponse from(List<PlaylistSong> sortedSongs, CurrentSong currentSong) {
         PlaylistInfo playlistInfo = PlaylistInfo.from(sortedSongs);
-        CurrentSongItem currentSong = CurrentSongResolver.resolveCurrentSong(store)
-            .map(CurrentSongItem::from)
-            .orElse(null);
-        return new FindStorePlaylistByOwnerResponse(playlistInfo, currentSong);
+        return new FindStorePlaylistByOwnerResponse(playlistInfo, CurrentSongItem.from(currentSong));
     }
 
     private record PlaylistInfo(
@@ -62,6 +58,9 @@ public record FindStorePlaylistByOwnerResponse(
                                    int elapsedSeconds) {
 
         private static CurrentSongItem from(CurrentSong song) {
+            if (song == null) {
+                return null;
+            }
             return new CurrentSongItem(song.playlistSongId(), song.title(), song.artist(),
                 song.vid(), song.elapsedSeconds());
         }

@@ -10,11 +10,12 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Optional;
+import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Component
 public class CurrentSongResolver {
 
-    public static Optional<CurrentSong> resolveCurrentSong(Store store) {
+    public Optional<CurrentSong> resolveCurrentSong(Store store) {
         if (store.getPlaylist() == null) {
             return Optional.empty();
         }
@@ -38,7 +39,7 @@ public class CurrentSongResolver {
         return Optional.empty();
     }
 
-    public static long calcElapsedSeconds(Store store) {
+    private long calcElapsedSeconds(Store store) {
         LocalDateTime now = LocalDateTime.now();
         int todayDayOfWeek = now.getDayOfWeek().getValue();
 

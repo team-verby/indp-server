@@ -1,7 +1,6 @@
 package com.verby.indp.domain.store.dto.response;
 
 import com.verby.indp.domain.playlist.dto.response.CurrentSong;
-import com.verby.indp.domain.playlist.service.CurrentSongResolver;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.subscription.StoreSubscription;
 
@@ -10,26 +9,19 @@ import java.util.List;
 
 public record FindStoresByAdminResponse(List<StoreItem> stores) {
 
-    public static FindStoresByAdminResponse from(List<Store> stores) {
-        return new FindStoresByAdminResponse(
-            stores.stream().map(StoreItem::from).toList()
-        );
-    }
-
-    private record StoreItem(
+    public static record StoreItem(
         Long storeId,
         String name,
         SubscriptionItem subscription,
         CurrentSongItem currentSong
     ) {
 
-        private static StoreItem from(Store store) {
+        public static StoreItem from(Store store, CurrentSong currentSong) {
             SubscriptionItem subscription = SubscriptionItem.from(store.getLatestSubscription());
-            CurrentSongItem currentSong = CurrentSongResolver.resolveCurrentSong(store)
-                .map(CurrentSongItem::from)
-                .orElse(null);
+            CurrentSongItem currentSongItem =
+                currentSong == null ? null : CurrentSongItem.from(currentSong);
 
-            return new StoreItem(store.getStoreId(), store.getName(), subscription, currentSong);
+            return new StoreItem(store.getStoreId(), store.getName(), subscription, currentSongItem);
         }
     }
 
