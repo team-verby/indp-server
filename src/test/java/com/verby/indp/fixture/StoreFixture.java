@@ -88,9 +88,8 @@ public class StoreFixture {
     }
 
     private static List<BusinessHour> nowOpen() {
-        LocalTime now = LocalTime.now();
         return IntStream.rangeClosed(1, 7)
-            .mapToObj(day -> new BusinessHour(day, now.minusMinutes(30), now.plusMinutes(30), false))
+            .mapToObj(day -> new BusinessHour(day, LocalTime.of(0, 0), LocalTime.of(23, 59, 59), false))
             .toList();
     }
 

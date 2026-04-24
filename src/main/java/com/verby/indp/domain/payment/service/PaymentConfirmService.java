@@ -10,11 +10,12 @@ import com.verby.indp.domain.payment.exception.PaymentFailException;
 import com.verby.indp.domain.payment.repository.PaymentRepository;
 import com.verby.indp.domain.recommendation.service.SongRecommendationService;
 import com.verby.indp.domain.subscription.service.SubscriptionService;
+import java.text.MessageFormat;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.text.MessageFormat;
 
 @RequiredArgsConstructor
 @Service
@@ -25,6 +26,7 @@ public class PaymentConfirmService {
     private final SongRecommendationService songRecommendationService;
     private final SubscriptionService subscriptionService;
     private final PaymentService paymentService;
+    private final Clock clock;
 
     @Transactional
     public void confirm(ConfirmPaymentRequest request) {
@@ -47,7 +49,7 @@ public class PaymentConfirmService {
         }
 
         payment.updatePaymentKey(request.paymentKey());
-        payment.success();
+        payment.success(LocalDateTime.now(clock));
     }
 
     private void validatePaymentStatus(Payment payment) {

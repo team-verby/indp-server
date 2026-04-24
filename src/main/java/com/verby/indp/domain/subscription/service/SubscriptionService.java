@@ -15,14 +15,14 @@ import com.verby.indp.domain.subscription.dto.request.AddSubscriptionRequest;
 import com.verby.indp.domain.subscription.dto.response.FindSubscriptionsResponse;
 import com.verby.indp.domain.subscription.repository.StoreSubscriptionRepository;
 import com.verby.indp.global.slack.SlackNotificationService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +36,7 @@ public class SubscriptionService {
     private final PlanService planService;
     private final StoreSubscriptionRepository storeSubscriptionRepository;
     private final SlackNotificationService slackNotificationService;
+    private final Clock clock;
 
     @Transactional
     public AddSubscriptionResponse orderSubscription(Owner owner, long storeId,
@@ -65,14 +66,14 @@ public class SubscriptionService {
     public void activateSubscriptions() {
         List<StoreSubscription> toActivate = storeSubscriptionRepository
             .findAllByStatusAndStartDateLessThanEqual(SubscriptionStatus.PENDING_ACTIVE,
-                LocalDate.now());
+                LocalDate.now(clock));
         toActivate.forEach(s -> s.updateStatus(SubscriptionStatus.ACTIVE));
     }
 
     @Transactional
     public void expireSubscriptions() {
         List<StoreSubscription> expired = storeSubscriptionRepository
-            .findAllByStatusAndEndDateBefore(SubscriptionStatus.ACTIVE, LocalDate.now());
+            .findAllByStatusAndEndDateBefore(SubscriptionStatus.ACTIVE, LocalDate.now(clock));
         expired.forEach(s -> s.updateStatus(SubscriptionStatus.EXPIRED));
     }
 
@@ -115,7 +116,7 @@ public class SubscriptionService {
     }
 
     private LocalDate nextSubscriptionStartDay() {
-        LocalDate thisMonday = LocalDate.now()
+        LocalDate thisMonday = LocalDate.now(clock)
             .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         int daysUntilStartDay = SUBSCRIPTION_START_DAY.getValue() - DayOfWeek.MONDAY.getValue();
         return thisMonday.plusWeeks(1).plusDays(daysUntilStartDay);

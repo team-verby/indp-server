@@ -1,6 +1,7 @@
 package com.verby.indp.domain.payment;
 
 import com.verby.indp.domain.common.exception.BadRequestException;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -110,7 +111,7 @@ class PaymentTest {
             Payment payment = new Payment("인디피_구독_카페공명", 180000);
 
             // when
-            payment.success();
+            payment.success(LocalDateTime.now());
 
             // then
             assertThat(payment.isStatusWith(PaymentStatus.DONE)).isTrue();

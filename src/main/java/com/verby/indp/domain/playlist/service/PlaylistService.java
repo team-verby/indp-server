@@ -17,12 +17,12 @@ import com.verby.indp.domain.store.StoreBusinessHour;
 import com.verby.indp.domain.store.repository.StoreBusinessHourRepository;
 import com.verby.indp.domain.store.service.StoreService;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +39,7 @@ public class PlaylistService {
     private final StoreBusinessHourRepository storeBusinessHourRepository;
     private final StoreService storeService;
     private final CurrentSongResolver currentSongResolver;
+    private final Clock clock;
 
     public FindStorePlaylistResponse getStorePlaylist(long storeId) {
         Store store = storeService.getStoreById(storeId);
@@ -83,7 +84,7 @@ public class PlaylistService {
         List<ScheduledPlaylist> scheduledPlaylists = scheduledPlaylistUpdateRepository
             .findAllByStatusAndScheduledAtLessThanEqual(
                 ScheduledPlaylist.UpdateStatus.PENDING,
-                LocalDateTime.now()
+                LocalDateTime.now(clock)
             );
 
         for (ScheduledPlaylist scheduledPlaylist : scheduledPlaylists) {

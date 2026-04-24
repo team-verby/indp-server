@@ -11,14 +11,14 @@ import com.verby.indp.domain.common.exception.AuthException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +33,7 @@ public class AuthTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final AdminRepository adminRepository;
     private final OwnerRepository ownerRepository;
+    private final Clock clock;
 
     public String createAdminToken(Long adminId) {
         return buildJwt("adminId", adminId);
@@ -75,7 +76,7 @@ public class AuthTokenService {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(request.refreshToken())
             .orElseThrow(() -> new AuthException("유효하지 않은 리프레시 토큰입니다."));
 
-        if (refreshToken.isExpired()) {
+        if (refreshToken.isExpired(LocalDateTime.now(clock))) {
             refreshTokenRepository.delete(refreshToken);
             throw new AuthException("만료된 리프레시 토큰입니다.");
         }
@@ -137,6 +138,6 @@ public class AuthTokenService {
 
     private RefreshToken buildRefreshToken(SubjectType subjectType, Long subjectId) {
         return new RefreshToken(UUID.randomUUID().toString(), subjectType, subjectId,
-            LocalDateTime.now().plusDays(REFRESH_TOKEN_VALIDITY_DAYS));
+            LocalDateTime.now(clock).plusDays(REFRESH_TOKEN_VALIDITY_DAYS));
     }
 }

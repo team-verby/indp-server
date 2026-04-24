@@ -15,7 +15,11 @@ import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreBusinessHour;
 import com.verby.indp.domain.store.repository.StoreBusinessHourRepository;
 import com.verby.indp.domain.store.service.StoreService;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,6 +27,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.mockito.BDDMockito.lenient;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -59,6 +65,15 @@ class PlaylistServiceTest {
 
     @Mock
     private CurrentSongResolver currentSongResolver;
+
+    @Mock
+    private Clock clock;
+
+    @BeforeEach
+    void setUp() {
+        lenient().when(clock.instant()).thenReturn(Instant.parse("2026-04-24T03:00:00Z"));
+        lenient().when(clock.getZone()).thenReturn(ZoneId.systemDefault());
+    }
 
     @Nested
     @DisplayName("getStorePlaylist 메서드 실행 시")

@@ -18,12 +18,12 @@ import com.verby.indp.domain.recommendation.repository.SongRecommendationReposit
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.service.StoreService;
 import com.verby.indp.global.slack.SlackNotificationService;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +40,7 @@ public class SongRecommendationService {
     private final PlaylistService playlistService;
     private final PlaylistWebSocketService playlistWebSocketService;
     private final SlackNotificationService slackNotificationService;
+    private final Clock clock;
 
     @Transactional
     public RegisterSongRecommendationResponse orderSongRecommendation(long storeId, String title,
@@ -114,7 +115,7 @@ public class SongRecommendationService {
     }
 
     private void validateBusinessOpen(Store store) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(clock);
         int currentDayOfWeek = now.getDayOfWeek().getValue();
         int prevDayOfWeek = currentDayOfWeek == 1 ? 7 : currentDayOfWeek - 1;
         LocalTime currentTime = now.toLocalTime();

@@ -17,7 +17,10 @@ import com.verby.indp.domain.auth.repository.AdminRepository;
 import com.verby.indp.domain.auth.repository.OwnerRepository;
 import com.verby.indp.domain.auth.repository.RefreshTokenRepository;
 import com.verby.indp.domain.common.exception.AuthException;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +31,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import static org.mockito.BDDMockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 class AuthTokenServiceTest {
@@ -44,10 +49,15 @@ class AuthTokenServiceTest {
     @Mock
     private OwnerRepository ownerRepository;
 
+    @Mock
+    private Clock clock;
+
     @BeforeEach
     void setUp() {
         ReflectionTestUtils.setField(authTokenService, "secretKey",
             "test-secret-key-for-jwt-testing-minimum-length");
+        lenient().when(clock.instant()).thenReturn(Instant.parse("2026-04-24T03:00:00Z"));
+        lenient().when(clock.getZone()).thenReturn(ZoneId.systemDefault());
     }
 
     @Nested

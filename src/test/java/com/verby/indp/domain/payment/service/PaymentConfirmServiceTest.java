@@ -9,6 +9,11 @@ import com.verby.indp.domain.payment.exception.PaymentFailException;
 import com.verby.indp.domain.payment.repository.PaymentRepository;
 import com.verby.indp.domain.recommendation.service.SongRecommendationService;
 import com.verby.indp.domain.subscription.service.SubscriptionService;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,6 +21,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.mockito.BDDMockito.lenient;
 
 import java.util.Optional;
 
@@ -45,6 +52,15 @@ class PaymentConfirmServiceTest {
 
     @Mock
     private PaymentService paymentService;
+
+    @Mock
+    private Clock clock;
+
+    @BeforeEach
+    void setUp() {
+        lenient().when(clock.instant()).thenReturn(Instant.parse("2026-04-24T03:00:00Z"));
+        lenient().when(clock.getZone()).thenReturn(ZoneId.systemDefault());
+    }
 
     @Nested
     @DisplayName("confirm 메서드 실행 시")
@@ -133,7 +149,7 @@ class PaymentConfirmServiceTest {
         void confirmWithAlreadyProcessed() {
             // given
             Payment payment = new Payment("인디피_구독_카페공명", 180000);
-            payment.success();
+            payment.success(LocalDateTime.now());
             String orderId = payment.getOrderId();
             given(paymentRepository.findByOrderId(orderId)).willReturn(Optional.of(payment));
 

@@ -15,6 +15,12 @@ import com.verby.indp.domain.subscription.dto.response.FindSubscriptionsResponse
 import com.verby.indp.domain.subscription.repository.StoreSubscriptionRepository;
 import com.verby.indp.fixture.*;
 import com.verby.indp.global.slack.SlackNotificationService;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,9 +29,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import static org.mockito.BDDMockito.lenient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
@@ -49,6 +53,15 @@ class SubscriptionServiceTest {
 
     @Mock
     private SlackNotificationService slackNotificationService;
+
+    @Mock
+    private Clock clock;
+
+    @BeforeEach
+    void setUp() {
+        lenient().when(clock.instant()).thenReturn(Instant.parse("2026-04-24T03:00:00Z"));
+        lenient().when(clock.getZone()).thenReturn(ZoneId.systemDefault());
+    }
 
     @Nested
     @DisplayName("orderSubscription 메서드 실행 시")
@@ -143,7 +156,7 @@ class SubscriptionServiceTest {
         void activateSubscriptionsWithEmpty() {
             // given
             given(storeSubscriptionRepository.findAllByStatusAndStartDateLessThanEqual(
-                SubscriptionStatus.PENDING_ACTIVE, LocalDate.now()))
+                any(), any()))
                 .willReturn(List.of());
 
             // when
@@ -179,7 +192,7 @@ class SubscriptionServiceTest {
         void expireSubscriptionsWithEmpty() {
             // given
             given(storeSubscriptionRepository.findAllByStatusAndEndDateBefore(
-                SubscriptionStatus.ACTIVE, LocalDate.now()))
+                any(), any()))
                 .willReturn(List.of());
 
             // when

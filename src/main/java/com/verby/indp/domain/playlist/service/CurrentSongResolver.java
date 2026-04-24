@@ -4,16 +4,18 @@ import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.dto.response.CurrentSong;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreBusinessHour;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class CurrentSongResolver {
+
+    private final Clock clock;
 
     public Optional<CurrentSong> resolveCurrentSong(Store store) {
         if (store.getPlaylist() == null) {
@@ -40,7 +42,7 @@ public class CurrentSongResolver {
     }
 
     private long calcElapsedSeconds(Store store) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(clock);
         int todayDayOfWeek = now.getDayOfWeek().getValue();
 
         Optional<StoreBusinessHour> todayHour = store.getBusinessHours().stream()

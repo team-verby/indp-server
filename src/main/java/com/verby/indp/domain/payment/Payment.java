@@ -58,9 +58,9 @@ public class Payment extends BaseTimeEntity {
         this.paymentKey = paymentKey;
     }
 
-    public void success() {
+    public void success(LocalDateTime now) {
         this.status = DONE;
-        this.paidAt = LocalDateTime.now();
+        this.paidAt = now;
     }
 
     public void fail() {

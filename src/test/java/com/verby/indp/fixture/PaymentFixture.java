@@ -1,6 +1,7 @@
 package com.verby.indp.fixture;
 
 import com.verby.indp.domain.payment.Payment;
+import java.time.LocalDateTime;
 
 
 public class PaymentFixture {
@@ -15,7 +16,7 @@ public class PaymentFixture {
 
     public static Payment donePayment() {
         Payment payment = new Payment("인디피_구독_카페공명", 180000);
-        payment.success();
+        payment.success(LocalDateTime.now());
         return payment;
     }
 }

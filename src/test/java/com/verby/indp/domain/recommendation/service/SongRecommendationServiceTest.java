@@ -16,6 +16,10 @@ import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.service.StoreService;
 import com.verby.indp.fixture.*;
 import com.verby.indp.global.slack.SlackNotificationService;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,6 +27,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.mockito.BDDMockito.lenient;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,6 +62,15 @@ class SongRecommendationServiceTest {
 
     @Mock
     private SlackNotificationService slackNotificationService;
+
+    @Mock
+    private Clock clock;
+
+    @BeforeEach
+    void setUp() {
+        lenient().when(clock.instant()).thenReturn(Instant.parse("2026-04-24T03:00:00Z"));
+        lenient().when(clock.getZone()).thenReturn(ZoneId.systemDefault());
+    }
 
     @Nested
     @DisplayName("findRecommendedSongs 메서드 실행 시")

@@ -86,7 +86,7 @@ class RefreshTokenTest {
                 LocalDateTime.now().plusDays(30));
 
             // when & then
-            assertThat(token.isExpired()).isFalse();
+            assertThat(token.isExpired(LocalDateTime.now())).isFalse();
         }
 
         @Test
@@ -97,7 +97,7 @@ class RefreshTokenTest {
                 LocalDateTime.now().minusSeconds(1));
 
             // when & then
-            assertThat(token.isExpired()).isTrue();
+            assertThat(token.isExpired(LocalDateTime.now())).isTrue();
         }
     }
 }
