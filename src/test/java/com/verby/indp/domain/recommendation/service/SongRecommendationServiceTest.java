@@ -166,6 +166,40 @@ class SongRecommendationServiceTest {
         }
 
         @Test
+        @DisplayName("성공 : 자정을 넘기는 영업시간(당일)에 영업 중인 매장에서 플레이리스트가 없으면 예외를 던진다.")
+        void orderSongRecommendationWithPastMidnightCurrentDay() {
+            // given
+            Plan planB = PlanFixture.planB();
+            Store store = StoreFixture.pastMidnightCurrentDayStoreWithPlan(planB);
+            given(storeService.getStoreById(1L)).willReturn(store);
+
+            // when
+            Exception exception = catchException(() ->
+                songRecommendationService.orderSongRecommendation(1L, "안녕 나의 사랑", "성시경",
+                    "5zAEiu3SaO4", 259, "홍길동"));
+
+            // then
+            assertThat(exception).isInstanceOf(BadRequestException.class);
+        }
+
+        @Test
+        @DisplayName("성공 : 전날 자정을 넘긴 영업시간에 영업 중인 매장에서 플레이리스트가 없으면 예외를 던진다.")
+        void orderSongRecommendationWithPastMidnightPrevDay() {
+            // given
+            Plan planB = PlanFixture.planB();
+            Store store = StoreFixture.pastMidnightPrevDayStoreWithPlan(planB);
+            given(storeService.getStoreById(1L)).willReturn(store);
+
+            // when
+            Exception exception = catchException(() ->
+                songRecommendationService.orderSongRecommendation(1L, "안녕 나의 사랑", "성시경",
+                    "5zAEiu3SaO4", 259, "홍길동"));
+
+            // then
+            assertThat(exception).isInstanceOf(BadRequestException.class);
+        }
+
+        @Test
         @DisplayName("성공 : 음악 추천을 주문한다.")
         void orderSongRecommendation() {
             // given

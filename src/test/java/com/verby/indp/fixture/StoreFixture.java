@@ -70,6 +70,30 @@ public class StoreFixture {
         return store;
     }
 
+    // 금요일(5) 22:00~02:00 자정 넘기는 영업시간. mock clock 기준 KST 12:00(금)에 당일 영업 중
+    public static Store pastMidnightCurrentDayStoreWithPlan(Plan plan) {
+        List<BusinessHour> hours = List.of(
+            new BusinessHour(5, LocalTime.of(10, 0), LocalTime.of(2, 0), false)
+        );
+        Store store = createStore(OwnerFixture.owner(), hours);
+        StoreSubscription subscription = StoreSubscriptionFixture.activeSubscriptionWithPlan(plan);
+        store.addSubscription(subscription);
+        ReflectionTestUtils.setField(store, "storeId", 1L);
+        return store;
+    }
+
+    // 목요일(4) 22:00~13:00 자정 넘기는 영업시간. mock clock 기준 KST 12:00(금)에 전날 영업시간 연장으로 영업 중
+    public static Store pastMidnightPrevDayStoreWithPlan(Plan plan) {
+        List<BusinessHour> hours = List.of(
+            new BusinessHour(4, LocalTime.of(22, 0), LocalTime.of(13, 0), false)
+        );
+        Store store = createStore(OwnerFixture.owner(), hours);
+        StoreSubscription subscription = StoreSubscriptionFixture.activeSubscriptionWithPlan(plan);
+        store.addSubscription(subscription);
+        ReflectionTestUtils.setField(store, "storeId", 1L);
+        return store;
+    }
+
     private static Store createStore(Owner owner, List<BusinessHour> businessHours) {
         StoreApply storeApply = new StoreApply("홍길동", "010-1234-5678");
         return new Store(
