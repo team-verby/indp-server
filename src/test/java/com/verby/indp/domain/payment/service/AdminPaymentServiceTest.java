@@ -1,5 +1,6 @@
 package com.verby.indp.domain.payment.service;
 
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.payment.PaymentStatus;
@@ -152,6 +153,23 @@ class AdminPaymentServiceTest {
             // then
             assertThat(payment.isStatusWith(PaymentStatus.PARTIAL_CANCELED)).isTrue();
             assertThat(payment.getBalanceAmount()).isEqualTo(90000);
+        }
+
+        @Test
+        @DisplayName("실패 : 환불 요청 금액이 잔액을 초과하면 예외를 던진다.")
+        void cancelPaymentWithExceedingAmount() {
+            // given
+            Payment payment = PaymentFixture.donePayment();
+            CancelPaymentRequest request = new CancelPaymentRequest(200000, "단순 변심");
+
+            given(paymentService.getPaymentById(1L)).willReturn(payment);
+
+            // when
+            Exception exception = catchException(
+                () -> adminPaymentService.cancelPayment(1L, request));
+
+            // then
+            assertThat(exception).isInstanceOf(BadRequestException.class);
         }
 
         @Test

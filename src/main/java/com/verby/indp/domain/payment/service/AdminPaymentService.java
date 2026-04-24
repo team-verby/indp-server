@@ -1,5 +1,6 @@
 package com.verby.indp.domain.payment.service;
 
+import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.payment.PaymentStatus;
 import com.verby.indp.domain.payment.dto.reponse.TossPaymentApiResponse;
@@ -36,13 +37,23 @@ public class AdminPaymentService {
 
     public void cancelPayment(long paymentId, CancelPaymentRequest request) {
         Payment payment = paymentService.getPaymentById(paymentId);
-        TossPaymentApiResponse response = paymentClient.cancelPayment(payment.getPaymentKey(), request.cancelAmount(), request.cancelReason());
+
+        validateCancelAmount(request.cancelAmount(), payment.getBalanceAmount());
+
+        TossPaymentApiResponse response = paymentClient.cancelPayment(payment.getPaymentKey(),
+            request.cancelAmount(), request.cancelReason());
         int balanceAmount = response.balanceAmount();
 
         if (balanceAmount == 0) {
             payment.cancel(PaymentStatus.CANCELED, balanceAmount);
         } else {
             payment.cancel(PaymentStatus.PARTIAL_CANCELED, balanceAmount);
+        }
+    }
+
+    private void validateCancelAmount(int cancelAmount, int balanceAmount) {
+        if (cancelAmount > balanceAmount) {
+            throw new BadRequestException("환불 요청 금액이 잔액을 초과합니다.");
         }
     }
 }
