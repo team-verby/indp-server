@@ -6,13 +6,18 @@ import com.verby.indp.domain.store.PlayMethod;
 import com.verby.indp.domain.store.dto.request.ApplyStoreRequest;
 import com.verby.indp.domain.store.dto.request.BusinessHour;
 import com.verby.indp.domain.store.dto.request.GenreItem;
-import com.verby.indp.domain.store.dto.response.AddSubscriptionResponse;
+import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.store.dto.response.AddFirstSubscriptionResponse;
 import com.verby.indp.domain.store.dto.response.FindStoreSummaryResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresResponse;
 import com.verby.indp.domain.store.vo.Genre;
 import com.verby.indp.domain.store.vo.PlaylistType;
 import com.verby.indp.domain.store.vo.Tempo;
 import com.verby.indp.domain.store.vo.Vibe;
+import com.verby.indp.domain.subscription.StoreSubscription;
+import com.verby.indp.fixture.OwnerFixture;
+import com.verby.indp.fixture.StoreFixture;
+import com.verby.indp.fixture.StoreSubscriptionFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -43,8 +48,10 @@ class StoreControllerTest extends BaseControllerTest {
         @DisplayName("성공 : 매장을 신청한다.")
         void applyStore() throws Exception {
             // given
-            AddSubscriptionResponse response = new AddSubscriptionResponse(
-                "INDP-20260101-uuid", 180000, "인디피_구독_카페공명");
+            Store store = StoreFixture.storeWithOwner(OwnerFixture.owner());
+            StoreSubscription subscription = StoreSubscriptionFixture.activeSubscription();
+            subscription.setStore(store);
+            AddFirstSubscriptionResponse response = AddFirstSubscriptionResponse.from(subscription);
             given(applyStoreService.applyStore(any())).willReturn(response);
 
             ApplyStoreRequest request = new ApplyStoreRequest(
@@ -123,7 +130,10 @@ class StoreControllerTest extends BaseControllerTest {
                         responseFields(
                             fieldWithPath("orderId").type(STRING).description("주문 ID"),
                             fieldWithPath("amount").type(NUMBER).description("결제 금액 (원)"),
-                            fieldWithPath("orderName").type(STRING).description("주문명")
+                            fieldWithPath("orderName").type(STRING).description("주문명"),
+                            fieldWithPath("ownerAccount").type(OBJECT).description("오너 계정 정보"),
+                            fieldWithPath("ownerAccount.loginId").type(STRING).description("로그인 ID"),
+                            fieldWithPath("ownerAccount.password").type(STRING).description("비밀번호")
                         )
                     )
                 );

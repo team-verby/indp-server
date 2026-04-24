@@ -9,6 +9,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
+import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
@@ -19,8 +20,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.domain.auth.Owner;
-import com.verby.indp.domain.store.dto.response.AddSubscriptionResponse;
 import com.verby.indp.domain.subscription.dto.request.AddSubscriptionRequest;
+import com.verby.indp.domain.subscription.dto.response.AddRenewalSubscriptionResponse;
 import com.verby.indp.domain.subscription.dto.response.FindSubscriptionsResponse;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -75,9 +76,9 @@ class SubscriptionControllerTest extends BaseControllerTest {
             Owner owner = owner();
             givenOwnerAuth(owner);
 
-            AddSubscriptionResponse response = new AddSubscriptionResponse(
+            AddRenewalSubscriptionResponse response = new AddRenewalSubscriptionResponse(
                 "INDP-20260101-uuid", 180000, "인디피_구독_카페공명");
-            given(subscriptionService.orderSubscription(any(), eq(1L), any())).willReturn(response);
+            given(subscriptionService.orderRenewalSubscription(any(), eq(1L), any())).willReturn(response);
 
             AddSubscriptionRequest request = new AddSubscriptionRequest(1L, 12);
 

@@ -4,7 +4,6 @@ import static com.verby.indp.fixture.OwnerFixture.owner;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import com.verby.indp.domain.auth.Owner;
@@ -16,8 +15,8 @@ import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.dto.request.ApplyStoreRequest;
 import com.verby.indp.domain.store.dto.request.BusinessHour;
 import com.verby.indp.domain.store.dto.request.GenreItem;
+import com.verby.indp.domain.store.dto.response.AddFirstSubscriptionResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
-import com.verby.indp.domain.store.dto.response.AddSubscriptionResponse;
 import com.verby.indp.domain.store.vo.Genre;
 import com.verby.indp.domain.store.vo.PlaylistType;
 import com.verby.indp.domain.store.vo.Tempo;
@@ -95,13 +94,11 @@ class ApplyStoreServiceTest {
                 return s;
             });
 
-            AddSubscriptionResponse subscriptionResponse = new AddSubscriptionResponse(
-                "INDP-orderId", 3000, "orderName");
-            given(subscriptionService.orderSubscription(any(), anyLong(), any()))
-                .willReturn(subscriptionResponse);
+            given(subscriptionService.orderFirstSubscription(any(), any()))
+                .willReturn(new AddFirstSubscriptionResponse("INDP-orderId", 3000, "orderName", null));
 
             // when
-            AddSubscriptionResponse result = applyStoreService.applyStore(request);
+            AddFirstSubscriptionResponse result = applyStoreService.applyStore(request);
 
             // then
             assertThat(result).isNotNull();

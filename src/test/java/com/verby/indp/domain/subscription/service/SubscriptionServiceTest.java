@@ -6,7 +6,7 @@ import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.plan.Plan;
 import com.verby.indp.domain.plan.service.PlanService;
 import com.verby.indp.domain.store.Store;
-import com.verby.indp.domain.store.dto.response.AddSubscriptionResponse;
+import com.verby.indp.domain.subscription.dto.response.AddRenewalSubscriptionResponse;
 import com.verby.indp.domain.store.service.StoreService;
 import com.verby.indp.domain.subscription.StoreSubscription;
 import com.verby.indp.domain.subscription.SubscriptionStatus;
@@ -80,7 +80,7 @@ class SubscriptionServiceTest {
             AddSubscriptionRequest request = new AddSubscriptionRequest(1L, 3);
 
             // when
-            AddSubscriptionResponse result = subscriptionService.orderSubscription(owner, 1L,
+            AddRenewalSubscriptionResponse result = subscriptionService.orderRenewalSubscription(owner, 1L,
                 request);
 
             // then
@@ -100,7 +100,7 @@ class SubscriptionServiceTest {
 
             // when
             Exception exception = catchException(
-                () -> subscriptionService.orderSubscription(owner, 1L, request));
+                () -> subscriptionService.orderRenewalSubscription(owner, 1L, request));
 
             // then
             assertThat(exception).isInstanceOf(NotFoundException.class);

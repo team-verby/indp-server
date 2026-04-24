@@ -1,7 +1,7 @@
 package com.verby.indp.domain.store.controller;
 
 import com.verby.indp.domain.store.dto.request.ApplyStoreRequest;
-import com.verby.indp.domain.store.dto.response.AddSubscriptionResponse;
+import com.verby.indp.domain.store.dto.response.AddFirstSubscriptionResponse;
 import com.verby.indp.domain.store.dto.response.FindStoreSummaryResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresResponse;
 import com.verby.indp.domain.store.service.ApplyStoreService;
@@ -22,9 +22,9 @@ public class StoreController {
     private final ApplyStoreService applyStoreService;
 
     @PostMapping("/apply")
-    public ResponseEntity<AddSubscriptionResponse> applyStore(
+    public ResponseEntity<AddFirstSubscriptionResponse> applyStore(
         @RequestBody ApplyStoreRequest request) {
-        AddSubscriptionResponse response = applyStoreService.applyStore(request);
+        AddFirstSubscriptionResponse response = applyStoreService.applyStore(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

@@ -7,7 +7,7 @@ import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreApply;
 import com.verby.indp.domain.store.StoreMusic;
 import com.verby.indp.domain.store.dto.request.ApplyStoreRequest;
-import com.verby.indp.domain.store.dto.response.AddSubscriptionResponse;
+import com.verby.indp.domain.store.dto.response.AddFirstSubscriptionResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
 import com.verby.indp.domain.subscription.dto.request.AddSubscriptionRequest;
 import com.verby.indp.domain.subscription.service.SubscriptionService;
@@ -25,15 +25,14 @@ public class ApplyStoreService {
     private final SubscriptionService subscriptionService;
 
     @Transactional
-    public AddSubscriptionResponse applyStore(ApplyStoreRequest request) {
+    public AddFirstSubscriptionResponse applyStore(ApplyStoreRequest request) {
         validateDuplicateName(request.name());
         Store store = buildStore(request);
         storeRepository.save(store);
 
         AddSubscriptionRequest addSubscriptionRequest = new AddSubscriptionRequest(request.planId(),
             request.usagePeriod());
-        return subscriptionService.orderSubscription(store.getOwner(), store.getStoreId(),
-            addSubscriptionRequest);
+        return subscriptionService.orderFirstSubscription(store, addSubscriptionRequest);
     }
 
     private void validateDuplicateName(String name) {
