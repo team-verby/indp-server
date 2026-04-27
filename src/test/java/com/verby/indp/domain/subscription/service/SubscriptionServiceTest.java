@@ -17,6 +17,7 @@ import com.verby.indp.fixture.*;
 import com.verby.indp.global.slack.SlackNotificationService;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
@@ -85,6 +86,72 @@ class SubscriptionServiceTest {
 
             // then
             assertThat(result).isNotNull();
+        }
+
+        @Test
+        @DisplayName("성공 : 기존 구독이 있으면 기존 구독 종료일 다음날부터 시작한다.")
+        void orderSubscriptionStartsAfterExistingSubscriptionEndDate() {
+            // given
+            Owner owner = OwnerFixture.ownerWithId(1L);
+            Store store = StoreFixture.storeWithOwner(owner);
+            Plan plan = PlanFixture.planA();
+            given(storeService.getStoreById(1L)).willReturn(store);
+            given(planService.getPlan(1L)).willReturn(plan);
+
+            LocalDate existingEndDate = store.findLatestActiveOrPendingSubscription().get().getEndDate();
+            AddSubscriptionRequest request = new AddSubscriptionRequest(1L, 3);
+
+            // when
+            subscriptionService.orderRenewalSubscription(owner, 1L, request);
+
+            // then
+            StoreSubscription newSubscription = store.getSubscriptions().stream()
+                .filter(s -> s.getStatus() == SubscriptionStatus.PENDING_PAYMENT)
+                .findFirst().get();
+            assertThat(newSubscription.getStartDate()).isEqualTo(existingEndDate.plusDays(1));
+        }
+
+        @Test
+        @DisplayName("성공 : 기존 구독이 없으면 다음 화요일부터 시작한다.")
+        void orderSubscriptionStartsOnNextTuesdayWithoutExistingSubscription() {
+            // given
+            Owner owner = OwnerFixture.ownerWithId(1L);
+            Store store = StoreFixture.inactiveStoreWithOwner(owner);
+            Plan plan = PlanFixture.planA();
+            given(storeService.getStoreById(1L)).willReturn(store);
+            given(planService.getPlan(1L)).willReturn(plan);
+
+            AddSubscriptionRequest request = new AddSubscriptionRequest(1L, 3);
+
+            // when
+            subscriptionService.orderRenewalSubscription(owner, 1L, request);
+
+            // then
+            StoreSubscription newSubscription = store.getSubscriptions().get(0);
+            assertThat(newSubscription.getStartDate()).isEqualTo(LocalDate.of(2026, 4, 28));
+        }
+
+        @Test
+        @DisplayName("성공 : 만료된 구독만 있으면 다음 화요일부터 시작한다.")
+        void orderSubscriptionStartsOnNextTuesdayWhenOnlyExpiredSubscriptionExists() {
+            // given
+            Owner owner = OwnerFixture.ownerWithId(1L);
+            Store store = StoreFixture.inactiveStoreWithOwner(owner);
+            store.addSubscription(StoreSubscriptionFixture.expiredSubscription());
+            Plan plan = PlanFixture.planA();
+            given(storeService.getStoreById(1L)).willReturn(store);
+            given(planService.getPlan(1L)).willReturn(plan);
+
+            AddSubscriptionRequest request = new AddSubscriptionRequest(1L, 3);
+
+            // when
+            subscriptionService.orderRenewalSubscription(owner, 1L, request);
+
+            // then
+            StoreSubscription newSubscription = store.getSubscriptions().stream()
+                .filter(s -> s.getStatus() == SubscriptionStatus.PENDING_PAYMENT)
+                .findFirst().get();
+            assertThat(newSubscription.getStartDate()).isEqualTo(LocalDate.of(2026, 4, 28));
         }
 
         @Test

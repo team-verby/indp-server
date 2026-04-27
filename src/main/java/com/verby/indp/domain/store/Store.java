@@ -126,9 +126,10 @@ public class Store extends BaseTimeEntity {
             .orElseThrow(() -> new NotFoundException("구독 정보가 없습니다."));
     }
 
-    public Optional<StoreSubscription> findLatestPaidSubscription() {
+    public Optional<StoreSubscription> findLatestActiveOrPendingSubscription() {
         return subscriptions.stream()
-            .filter(s -> s.getStatus() != SubscriptionStatus.PENDING_PAYMENT)
+            .filter(s -> s.getStatus() == SubscriptionStatus.PENDING_ACTIVE
+                || s.getStatus() == SubscriptionStatus.ACTIVE)
             .max(Comparator.comparing(StoreSubscription::getStartDate));
     }
 

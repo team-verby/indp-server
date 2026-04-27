@@ -18,6 +18,8 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class StoreSubscription extends BaseTimeEntity {
 
+    private static final int WEEKS_PER_PERIOD = 4;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "store_subscription_id")
@@ -58,7 +60,7 @@ public class StoreSubscription extends BaseTimeEntity {
         this.payment = payment;
         this.usagePeriod = usagePeriod;
         this.startDate = startDate;
-        this.endDate = startDate.plusMonths(usagePeriod);
+        this.endDate = startDate.plusWeeks((long) usagePeriod * WEEKS_PER_PERIOD);
     }
 
 

@@ -121,7 +121,7 @@ public class SubscriptionService {
     }
 
     private LocalDate resolveStartDate(Store store) {
-        return store.findLatestPaidSubscription()
+        return store.findLatestActiveOrPendingSubscription()
             .map(subscription -> subscription.getEndDate().plusDays(1))
             .orElseGet(this::nextSubscriptionStartDay);
     }

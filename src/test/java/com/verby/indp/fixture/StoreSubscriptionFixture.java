@@ -59,4 +59,15 @@ public class StoreSubscriptionFixture {
         subscription.updateStatus(SubscriptionStatus.PENDING_ACTIVE);
         return subscription;
     }
+
+    public static StoreSubscription expiredSubscription() {
+        StoreSubscription subscription = new StoreSubscription(
+            PlanFixture.planA(),
+            PaymentFixture.payment(),
+            4,
+            LocalDate.of(2025, 1, 1)
+        );
+        subscription.updateStatus(SubscriptionStatus.EXPIRED);
+        return subscription;
+    }
 }

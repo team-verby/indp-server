@@ -4,8 +4,10 @@ import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreBusinessHour;
 import com.verby.indp.domain.store.StorePhoto;
 
+import com.verby.indp.domain.subscription.StoreSubscription;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 public record FindStoreSummaryResponse(
     String name,
@@ -27,14 +29,14 @@ public record FindStoreSummaryResponse(
     }
 
     public static FindStoreSummaryResponse from(Store store) {
-        var latestSub = store.findLatestPaidSubscription();
+        Optional<StoreSubscription> subscription = store.findLatestActiveOrPendingSubscription();
         return new FindStoreSummaryResponse(
             store.getName(),
             store.getIndustry(),
             store.getAddress(),
             store.getBusinessHours().stream().map(BusinessHourItem::from).toList(),
-            latestSub.map(s -> s.getStatus().name()).orElse(null),
-            latestSub.map(s -> s.getPlan().getType().name()).orElse(null),
+            subscription.map(s -> s.getStatus().name()).orElse(null),
+            subscription.map(s -> s.getPlan().getType().name()).orElse(null),
             store.getPhotos().stream().filter(StorePhoto::isMain).findFirst().map(StorePhoto::getImageUrl).orElse(null)
         );
     }
