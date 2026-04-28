@@ -60,7 +60,7 @@ public class StoreSubscription extends BaseTimeEntity {
         this.payment = payment;
         this.usagePeriod = usagePeriod;
         this.startDate = startDate;
-        this.endDate = startDate.plusWeeks((long) usagePeriod * WEEKS_PER_PERIOD);
+        this.endDate = startDate.plusWeeks((long) usagePeriod * WEEKS_PER_PERIOD).minusDays(1);
     }
 
 
