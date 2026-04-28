@@ -4,16 +4,19 @@ import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.playlist.dto.response.CurrentSong;
 import com.verby.indp.domain.playlist.service.CurrentSongResolver;
 import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.store.dto.request.TimePreference;
+import com.verby.indp.domain.store.dto.request.UpdateTimePreferencesByAdminRequest;
 import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse.StoreItem;
 import com.verby.indp.domain.store.repository.StoreRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +40,15 @@ public class AdminStoreService {
     public FindStoreByAdminResponse findStore(long storeId) {
         Store store = getStoreById(storeId);
         return FindStoreByAdminResponse.from(store);
+    }
+
+    @Transactional
+    public void updateTimePreferences(long storeId, UpdateTimePreferencesByAdminRequest request) {
+        Store store = getStoreById(storeId);
+        List<TimePreference> timePreferences = request.timePreferences().stream()
+            .map(item -> new TimePreference(item.startTime(), item.endTime(), item.mood()))
+            .toList();
+        store.getStoreMusic().updateTimePreferences(timePreferences);
     }
 
     public Store getStoreById(long storeId) {

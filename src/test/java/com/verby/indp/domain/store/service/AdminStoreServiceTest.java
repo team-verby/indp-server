@@ -1,19 +1,13 @@
 package com.verby.indp.domain.store.service;
 
-import static com.verby.indp.fixture.StoreFixture.store;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchException;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.playlist.service.CurrentSongResolver;
 import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.store.dto.request.TimePreference;
+import com.verby.indp.domain.store.dto.request.UpdateTimePreferencesByAdminRequest;
 import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,6 +18,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
+
+import static com.verby.indp.fixture.StoreFixture.store;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchException;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class AdminStoreServiceTest {
@@ -54,6 +57,50 @@ class AdminStoreServiceTest {
 
             // then
             assertThat(result).isNotNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("updateTimePreferences 메서드 실행 시")
+    class UpdateTimePreferences {
+
+        @Test
+        @DisplayName("성공 : 기존 시간대별 무드를 새 목록으로 교체한다.")
+        void updateTimePreferences() {
+            // given
+            Store mockStore = store();
+            given(storeRepository.findById(1L)).willReturn(Optional.of(mockStore));
+
+            UpdateTimePreferencesByAdminRequest request = new UpdateTimePreferencesByAdminRequest(
+                List.of(
+                    new TimePreference(LocalTime.of(10, 0), LocalTime.of(14, 0), "낮 무드"),
+                    new TimePreference(LocalTime.of(14, 0), LocalTime.of(20, 0), "저녁 무드")
+                )
+            );
+
+            // when
+            adminStoreService.updateTimePreferences(1L, request);
+
+            // then
+            assertThat(mockStore.getStoreMusic().getMusicTimePreferences()).hasSize(2);
+        }
+
+        @Test
+        @DisplayName("실패 : 존재하지 않는 매장이면 예외를 던진다.")
+        void updateTimePreferencesWithNotExistStore() {
+            // given
+            given(storeRepository.findById(999L)).willReturn(Optional.empty());
+
+            UpdateTimePreferencesByAdminRequest request = new UpdateTimePreferencesByAdminRequest(
+                List.of(new TimePreference(LocalTime.of(10, 0), LocalTime.of(14, 0), "낮 무드"))
+            );
+
+            // when
+            Exception exception = catchException(
+                () -> adminStoreService.updateTimePreferences(999L, request));
+
+            // then
+            assertThat(exception).isInstanceOf(NotFoundException.class);
         }
     }
 

@@ -4,8 +4,8 @@ import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.store.dto.request.BusinessHour;
 import com.verby.indp.domain.store.dto.request.GenreItem;
 import com.verby.indp.domain.store.dto.request.TimePreference;
-import com.verby.indp.domain.store.vo.Tempo;
 import com.verby.indp.domain.store.vo.PlaylistType;
+import com.verby.indp.domain.store.vo.Tempo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Entity
@@ -80,7 +81,14 @@ public class StoreMusic {
             .toList();
         this.musicTimePreferences = buildMusicTimePreferences(playlistType, timePreferences,
             musicMood, businessHours);
+    }
 
+    public void updateTimePreferences(List<TimePreference> timePreferences) {
+        this.musicTimePreferences.clear();
+        timePreferences.stream()
+            .map(tp -> new MusicTimePreference(this, tp.startTime().getHour(),
+                tp.endTime().getHour(), tp.mood()))
+            .forEach(this.musicTimePreferences::add);
     }
 
     private void validatePlatform(String platform) {
@@ -126,7 +134,7 @@ public class StoreMusic {
 
         List<BusinessHour> openHours = businessHours.stream()
             .filter(bh -> !bh.isClosed())
-            .toList();
+            .collect(Collectors.toCollection(ArrayList::new));;
 
         LocalTime openTime = openHours.stream().map(BusinessHour::openTime)
             .min(LocalTime::compareTo).orElse(LocalTime.MIN);
@@ -139,14 +147,14 @@ public class StoreMusic {
         if (playlistType == PlaylistType.MUSIC_RECOMMENDED) {
             return IntStream.range(openHour, closeHour)
                 .mapToObj(hour -> new MusicTimePreference(this, hour, hour + 1, null))
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
 
         } else if (playlistType == PlaylistType.CONSISTENT_MOOD) {
             return IntStream.range(openHour, closeHour)
                 .mapToObj(hour -> new MusicTimePreference(this, hour, hour + 1, mood))
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
         }
 
-        return List.of();
+        return new ArrayList<>();
     }
 }
