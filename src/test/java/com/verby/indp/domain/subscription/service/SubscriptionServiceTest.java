@@ -9,7 +9,6 @@ import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.subscription.dto.response.AddRenewalSubscriptionResponse;
 import com.verby.indp.domain.store.service.StoreService;
 import com.verby.indp.domain.subscription.StoreSubscription;
-import com.verby.indp.domain.store.StoreStatus;
 import com.verby.indp.domain.subscription.SubscriptionStatus;
 import com.verby.indp.domain.subscription.dto.request.AddSubscriptionRequest;
 import com.verby.indp.domain.subscription.dto.response.FindSubscriptionsResponse;
@@ -306,7 +305,6 @@ class SubscriptionServiceTest {
 
             // then
             assertThat(subscription.getStatus()).isEqualTo(SubscriptionStatus.PENDING_ACTIVE);
-            assertThat(subscription.getStore().getStatus()).isEqualTo(StoreStatus.ACTIVE);
         }
 
         @Test

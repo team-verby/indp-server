@@ -4,7 +4,6 @@ import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.playlist.dto.response.CurrentSong;
 import com.verby.indp.domain.playlist.service.CurrentSongResolver;
 import com.verby.indp.domain.store.Store;
-import com.verby.indp.domain.store.StoreStatus;
 import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse.StoreItem;
@@ -25,7 +24,7 @@ public class AdminStoreService {
     private final CurrentSongResolver currentSongResolver;
 
     public FindStoresByAdminResponse findStores(Pageable pageable) {
-        Page<Store> storePage = storeRepository.findAllByStatusOrderByStoreIdAsc(StoreStatus.ACTIVE, pageable);
+        Page<Store> storePage = storeRepository.findAll(pageable);
         List<StoreItem> items = storePage.getContent().stream()
             .map(store -> {
                 CurrentSong currentSong = currentSongResolver.resolveCurrentSong(store).orElse(null);

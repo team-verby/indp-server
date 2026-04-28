@@ -9,7 +9,6 @@ import static org.mockito.BDDMockito.given;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.playlist.service.CurrentSongResolver;
 import com.verby.indp.domain.store.Store;
-import com.verby.indp.domain.store.StoreStatus;
 import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
@@ -47,7 +46,7 @@ class AdminStoreServiceTest {
         void findStores() {
             // given
             Page<Store> page = new PageImpl<>(List.of());
-            given(storeRepository.findAllByStatusOrderByStoreIdAsc(StoreStatus.ACTIVE, PageRequest.of(0, 10))).willReturn(page);
+            given(storeRepository.findAll(PageRequest.of(0, 10))).willReturn(page);
 
             // when
             FindStoresByAdminResponse result = adminStoreService.findStores(

@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Entity
-@Table(name = "store")
+@Table(name = "store", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class Store extends BaseTimeEntity {
@@ -29,10 +29,6 @@ public class Store extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "store_id")
     private Long storeId;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private StoreStatus status = StoreStatus.PENDING;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "store_apply_id")
@@ -117,10 +113,6 @@ public class Store extends BaseTimeEntity {
         setBusinessHours(businessHours);
         setPhotos(photoUrls);
         setVibes(vibes);
-    }
-
-    public void activate() {
-        this.status = StoreStatus.ACTIVE;
     }
 
     public void assignPlaylist(Playlist playlist) {

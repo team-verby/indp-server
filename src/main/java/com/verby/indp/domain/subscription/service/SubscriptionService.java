@@ -92,7 +92,6 @@ public class SubscriptionService {
     public void confirmPayment(Payment payment) {
         StoreSubscription subscription = getByPayment(payment);
         subscription.updateStatus(SubscriptionStatus.PENDING_ACTIVE);
-        subscription.getStore().activate();
         slackNotificationService.handleApplyStoreStore(subscription.getStore());
     }
 

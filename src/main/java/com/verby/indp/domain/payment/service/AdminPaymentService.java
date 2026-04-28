@@ -35,6 +35,7 @@ public class AdminPaymentService {
         return FindAdminPaymentsResponse.from(page);
     }
 
+    @Transactional
     public void cancelPayment(long paymentId, CancelPaymentRequest request) {
         Payment payment = paymentService.getPaymentById(paymentId);
 
