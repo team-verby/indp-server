@@ -1,30 +1,22 @@
 package com.verby.indp.domain.store.service;
 
-import static com.verby.indp.fixture.OwnerFixture.owner;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchException;
-import static org.mockito.BDDMockito.given;
-
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.store.MusicGenre;
 import com.verby.indp.domain.store.PlayMethod;
 import com.verby.indp.domain.store.Store;
-import com.verby.indp.domain.store.dto.response.FindLatestSubscriptionResponse;
 import com.verby.indp.domain.store.dto.request.BusinessHour;
 import com.verby.indp.domain.store.dto.request.GenreItem;
 import com.verby.indp.domain.store.dto.request.UpdateStoreRequest;
-import com.verby.indp.domain.store.vo.Genre;
+import com.verby.indp.domain.store.dto.response.FindActiveSubscriptionResponse;
 import com.verby.indp.domain.store.dto.response.FindStoreByOwnerResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByOwnerResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
+import com.verby.indp.domain.store.vo.Genre;
 import com.verby.indp.domain.store.vo.PlaylistType;
 import com.verby.indp.domain.store.vo.Tempo;
 import com.verby.indp.fixture.OwnerFixture;
 import com.verby.indp.fixture.StoreFixture;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,6 +24,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
+
+import static com.verby.indp.fixture.OwnerFixture.owner;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchException;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class OwnerStoreServiceTest {
@@ -175,7 +176,7 @@ class OwnerStoreServiceTest {
             given(storeRepository.findById(1L)).willReturn(Optional.of(mockStore));
 
             // when
-            FindLatestSubscriptionResponse result = ownerStoreService.getLatestSubscription(owner,
+            FindActiveSubscriptionResponse result = ownerStoreService.getActiveSubscription(owner,
                 1L);
 
             // then
@@ -193,7 +194,7 @@ class OwnerStoreServiceTest {
 
             // when
             Exception exception = catchException(
-                () -> ownerStoreService.getLatestSubscription(owner, 1L));
+                () -> ownerStoreService.getActiveSubscription(owner, 1L));
 
             // then
             assertThat(exception).isInstanceOf(NotFoundException.class);
@@ -208,7 +209,7 @@ class OwnerStoreServiceTest {
 
             // when
             Exception exception = catchException(
-                () -> ownerStoreService.getLatestSubscription(owner, 999L));
+                () -> ownerStoreService.getActiveSubscription(owner, 999L));
 
             // then
             assertThat(exception).isInstanceOf(NotFoundException.class);

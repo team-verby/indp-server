@@ -2,17 +2,23 @@ package com.verby.indp.domain.store.dto.response;
 
 import com.verby.indp.domain.store.*;
 import com.verby.indp.domain.subscription.StoreSubscription;
+import com.verby.indp.domain.subscription.SubscriptionStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 
 public record FindStoreByAdminResponse(
     ApplyInfo applyInfo,
     StoreInfo storeInfo,
     MusicInfo musicInfo,
-    SubscriptionInfo subscriptionInfo
+    List<SubscriptionInfo> subscriptions
 ) {
+
+    private static final Set<SubscriptionStatus> ACTIVE_STATUSES = Set.of(
+        SubscriptionStatus.ACTIVE, SubscriptionStatus.PENDING_ACTIVE
+    );
 
     public static FindStoreByAdminResponse from(Store store) {
         StoreApply storeApply = store.getStoreApply();
@@ -20,9 +26,12 @@ public record FindStoreByAdminResponse(
         ApplyInfo applyInfo = ApplyInfo.from(storeApply);
         StoreInfo storeInfo = StoreInfo.from(store);
         MusicInfo musicInfo = MusicInfo.from(store.getStoreMusic());
-        SubscriptionInfo subscriptionInfo = SubscriptionInfo.from(store.getLatestSubscription());
+        List<SubscriptionInfo> subscriptions = store.getSubscriptions().stream()
+            .filter(s -> ACTIVE_STATUSES.contains(s.getStatus()))
+            .map(SubscriptionInfo::from)
+            .toList();
 
-        return new FindStoreByAdminResponse(applyInfo, storeInfo, musicInfo, subscriptionInfo);
+        return new FindStoreByAdminResponse(applyInfo, storeInfo, musicInfo, subscriptions);
     }
 
     private record ApplyInfo(String applicantName, String applicantPhone) {
@@ -104,7 +113,7 @@ public record FindStoreByAdminResponse(
         }
     }
 
-    private record SubscriptionInfo(String planType, LocalDate startDate, LocalDate endTime,
+    private record SubscriptionInfo(String planType, LocalDate startDate, LocalDate endDate,
                                     String status) {
 
         private static SubscriptionInfo from(StoreSubscription subscription) {

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "owner")
+@Table(name = "owner", uniqueConstraints = @UniqueConstraint(columnNames = "login_id"))
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class Owner {
 

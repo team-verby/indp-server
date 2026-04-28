@@ -1,5 +1,27 @@
 package com.verby.indp.domain.store.controller;
 
+import com.verby.indp.domain.BaseControllerTest;
+import com.verby.indp.domain.auth.Owner;
+import com.verby.indp.domain.store.PlayMethod;
+import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.store.dto.request.BusinessHour;
+import com.verby.indp.domain.store.dto.request.UpdateStoreRequest;
+import com.verby.indp.domain.store.dto.response.FindActiveSubscriptionResponse;
+import com.verby.indp.domain.store.dto.response.FindStoreByOwnerResponse;
+import com.verby.indp.domain.store.dto.response.FindStoresByOwnerResponse;
+import com.verby.indp.domain.store.vo.PlaylistType;
+import com.verby.indp.domain.store.vo.Tempo;
+import com.verby.indp.domain.store.vo.Vibe;
+import com.verby.indp.fixture.StoreFixture;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.ResultActions;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
 import static com.verby.indp.fixture.OwnerFixture.owner;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -8,40 +30,11 @@ import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
-import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
-import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
-import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
-import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
-import static org.springframework.restdocs.payload.JsonFieldType.STRING;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.verby.indp.domain.BaseControllerTest;
-import com.verby.indp.domain.auth.Owner;
-import com.verby.indp.domain.store.PlayMethod;
-import com.verby.indp.domain.store.Store;
-import com.verby.indp.domain.store.dto.request.BusinessHour;
-import com.verby.indp.domain.store.dto.request.UpdateStoreRequest;
-import com.verby.indp.domain.store.dto.response.FindLatestSubscriptionResponse;
-import com.verby.indp.domain.store.dto.response.FindStoreByOwnerResponse;
-import com.verby.indp.domain.store.dto.response.FindStoresByOwnerResponse;
-import com.verby.indp.domain.store.vo.PlaylistType;
-import com.verby.indp.domain.store.vo.Tempo;
-import com.verby.indp.domain.store.vo.Vibe;
-import com.verby.indp.domain.subscription.SubscriptionStatus;
-import com.verby.indp.fixture.StoreFixture;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.springframework.test.web.servlet.ResultActions;
 
 class OwnerStoreControllerTest extends BaseControllerTest {
 
@@ -173,13 +166,14 @@ class OwnerStoreControllerTest extends BaseControllerTest {
             Owner owner = owner();
             givenOwnerAuth(owner);
 
-            FindLatestSubscriptionResponse response = new FindLatestSubscriptionResponse(
-                SubscriptionStatus.ACTIVE, "PLAN_A",
-                LocalDate.of(2026, 1, 12), LocalDate.of(2027, 1, 12),
-                LocalDateTime.of(2026, 1, 10, 14, 30),
-                "ACTIVE"
+            FindActiveSubscriptionResponse response = new FindActiveSubscriptionResponse(
+                List.of(new FindActiveSubscriptionResponse.SubscriptionItem(
+                    "PLAN_A",
+                    LocalDate.of(2026, 1, 12), LocalDate.of(2027, 1, 12),
+                    "ACTIVE"
+                ))
             );
-            given(ownerStoreService.getLatestSubscription(any(), eq(1L))).willReturn(response);
+            given(ownerStoreService.getActiveSubscription(any(), eq(1L))).willReturn(response);
 
             // when
             ResultActions resultActions = mockMvc.perform(
@@ -194,15 +188,14 @@ class OwnerStoreControllerTest extends BaseControllerTest {
                             parameterWithName("storeId").description("매장 ID")
                         ),
                         responseFields(
-                            fieldWithPath("status").type(STRING)
-                                .description("구독 상태 (Enum 객체)"),
-                            fieldWithPath("planType").type(STRING)
+                            fieldWithPath("subscriptions").type(ARRAY)
+                                .description("활성 구독 목록 (ACTIVE, PENDING_ACTIVE)"),
+                            fieldWithPath("subscriptions[].planType").type(STRING)
                                 .description("플랜 종류 +\n`PLAN_A`, `PLAN_B`"),
-                            fieldWithPath("startDate").type(STRING).description("구독 시작일"),
-                            fieldWithPath("endDate").type(STRING).description("구독 종료일"),
-                            fieldWithPath("paidAt").type(STRING).description("결제 완료 시각"),
-                            fieldWithPath("subscriptionStatus").type(STRING)
-                                .description("구독 상태 문자열 +\n`PENDING_PAYMENT`, `PENDING_ACTIVE`, `ACTIVE`, `EXPIRED`")
+                            fieldWithPath("subscriptions[].startDate").type(STRING).description("구독 시작일"),
+                            fieldWithPath("subscriptions[].endDate").type(STRING).description("구독 종료일"),
+                            fieldWithPath("subscriptions[].status").type(STRING)
+                                .description("구독 상태 +\n`PENDING_ACTIVE`, `ACTIVE`")
                         )
                     )
                 );

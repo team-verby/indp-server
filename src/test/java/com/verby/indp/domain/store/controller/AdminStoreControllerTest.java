@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
+import static org.springframework.restdocs.payload.JsonFieldType.NULL;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -18,6 +19,7 @@ import com.verby.indp.domain.auth.Admin;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse;
+import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse.StoreItem;
 import com.verby.indp.fixture.AdminFixture;
 import com.verby.indp.fixture.StoreFixture;
 import java.util.List;
@@ -43,7 +45,9 @@ class AdminStoreControllerTest extends BaseControllerTest {
             Admin admin = admin();
             givenAdminAuth(admin);
 
-            FindStoresByAdminResponse response = new FindStoresByAdminResponse(List.of(), 0, 0);
+            Store store = StoreFixture.store();
+            FindStoresByAdminResponse response = new FindStoresByAdminResponse(
+                List.of(StoreItem.from(store, null)), 1, 1);
             given(adminStoreService.findStores(any())).willReturn(response);
 
             // when
@@ -56,6 +60,20 @@ class AdminStoreControllerTest extends BaseControllerTest {
                     restDocs.document(
                         responseFields(
                             fieldWithPath("stores").type(ARRAY).description("매장 목록"),
+                            fieldWithPath("stores[].storeId").type(NUMBER).description("매장 ID"),
+                            fieldWithPath("stores[].name").type(STRING).description("매장명"),
+                            fieldWithPath("stores[].subscriptions").type(ARRAY)
+                                .description("활성 구독 목록 (ACTIVE, PENDING_ACTIVE)"),
+                            fieldWithPath("stores[].subscriptions[].plan").type(STRING)
+                                .description("플랜 종류"),
+                            fieldWithPath("stores[].subscriptions[].startDate").type(STRING)
+                                .description("구독 시작일"),
+                            fieldWithPath("stores[].subscriptions[].endDate").type(STRING)
+                                .description("구독 종료일"),
+                            fieldWithPath("stores[].subscriptions[].status").type(STRING)
+                                .description("구독 상태"),
+                            fieldWithPath("stores[].currentSong").type(NULL)
+                                .description("현재 재생 중인 곡 (없으면 null)").optional(),
                             fieldWithPath("totalPages").type(NUMBER).description("전체 페이지 수"),
                             fieldWithPath("totalElements").type(NUMBER).description("전체 매장 수")
                         )
@@ -135,13 +153,15 @@ class AdminStoreControllerTest extends BaseControllerTest {
                             fieldWithPath("musicInfo.musicTempo").type(STRING).description("음악 템포"),
                             fieldWithPath("musicInfo.rejectedGenres").type(ARRAY)
                                 .description("차단 장르 목록"),
-                            fieldWithPath("subscriptionInfo.planType").type(STRING)
+                            fieldWithPath("subscriptions").type(ARRAY)
+                                .description("활성 구독 목록 (ACTIVE, PENDING_ACTIVE)"),
+                            fieldWithPath("subscriptions[].planType").type(STRING)
                                 .description("플랜 종류"),
-                            fieldWithPath("subscriptionInfo.startDate").type(STRING)
+                            fieldWithPath("subscriptions[].startDate").type(STRING)
                                 .description("구독 시작일"),
-                            fieldWithPath("subscriptionInfo.endTime").type(STRING)
+                            fieldWithPath("subscriptions[].endDate").type(STRING)
                                 .description("구독 종료일"),
-                            fieldWithPath("subscriptionInfo.status").type(STRING).description("구독 상태")
+                            fieldWithPath("subscriptions[].status").type(STRING).description("구독 상태")
                         )
                     )
                 );
