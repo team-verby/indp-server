@@ -7,18 +7,16 @@ import com.verby.indp.domain.payment.dto.request.ConfirmPaymentRequest;
 import com.verby.indp.domain.payment.exception.PaymentBadRequestException;
 import com.verby.indp.domain.payment.exception.PaymentFailException;
 import com.verby.indp.domain.payment.repository.PaymentRepository;
-import com.verby.indp.domain.recommendation.service.SongRecommendationService;
-import com.verby.indp.domain.subscription.service.SubscriptionService;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -35,7 +33,6 @@ import static org.mockito.BDDMockito.willThrow;
 @ExtendWith(MockitoExtension.class)
 class PaymentConfirmServiceTest {
 
-    @InjectMocks
     private PaymentConfirmService paymentConfirmService;
 
     @Mock
@@ -45,10 +42,10 @@ class PaymentConfirmServiceTest {
     private PaymentClient paymentClient;
 
     @Mock
-    private SongRecommendationService songRecommendationService;
+    private PaymentConfirmHandler subscriptionHandler;
 
     @Mock
-    private SubscriptionService subscriptionService;
+    private PaymentConfirmHandler songRecommendationHandler;
 
     @Mock
     private PaymentService paymentService;
@@ -60,6 +57,17 @@ class PaymentConfirmServiceTest {
     void setUp() {
         lenient().when(clock.instant()).thenReturn(Instant.parse("2026-04-24T03:00:00Z"));
         lenient().when(clock.getZone()).thenReturn(ZoneId.systemDefault());
+
+        lenient().when(subscriptionHandler.supportedType()).thenReturn(PaymentType.SUBSCRIPTION);
+        lenient().when(songRecommendationHandler.supportedType()).thenReturn(PaymentType.SONG_RECOMMENDATION);
+
+        paymentConfirmService = new PaymentConfirmService(
+            paymentRepository,
+            paymentClient,
+            List.of(subscriptionHandler, songRecommendationHandler),
+            paymentService,
+            clock
+        );
     }
 
     @Nested
@@ -73,7 +81,7 @@ class PaymentConfirmServiceTest {
             Payment payment = new Payment("인디피_구독_카페공명", 180000);
             String orderId = payment.getOrderId();
             given(paymentRepository.findByOrderId(orderId)).willReturn(Optional.of(payment));
-            willDoNothing().given(subscriptionService).confirmPayment(payment);
+            willDoNothing().given(subscriptionHandler).handle(payment);
             willDoNothing().given(paymentClient).confirmPayment(orderId, "payment-key", 180000);
 
             ConfirmPaymentRequest request = new ConfirmPaymentRequest(PaymentType.SUBSCRIPTION,
@@ -93,7 +101,7 @@ class PaymentConfirmServiceTest {
             Payment payment = new Payment("인디피_추천_카페공명", 3000);
             String orderId = payment.getOrderId();
             given(paymentRepository.findByOrderId(orderId)).willReturn(Optional.of(payment));
-            willDoNothing().given(songRecommendationService).confirmPayment(payment);
+            willDoNothing().given(songRecommendationHandler).handle(payment);
             willDoNothing().given(paymentClient).confirmPayment(orderId, "payment-key", 3000);
 
             ConfirmPaymentRequest request = new ConfirmPaymentRequest(PaymentType.SONG_RECOMMENDATION,
@@ -113,7 +121,7 @@ class PaymentConfirmServiceTest {
             Payment payment = new Payment("인디피_구독_카페공명", 180000);
             String orderId = payment.getOrderId();
             given(paymentRepository.findByOrderId(orderId)).willReturn(Optional.of(payment));
-            willDoNothing().given(subscriptionService).confirmPayment(payment);
+            willDoNothing().given(subscriptionHandler).handle(payment);
             willThrow(new PaymentFailException("잔액 부족")).given(paymentClient)
                 .confirmPayment(orderId, "payment-key", 180000);
             willDoNothing().given(paymentService).failPayment(orderId);

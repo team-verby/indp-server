@@ -32,11 +32,6 @@ public class AuthController {
         return ResponseEntity.ok(adminService.login(request));
     }
 
-    @PostMapping("/owner/login")
-    public ResponseEntity<LoginResponse> ownerLogin(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(ownerService.login(request));
-    }
-
     @PostMapping("/auth/refresh")
     public ResponseEntity<RefreshResponse> refresh(@RequestBody RefreshRequest request) {
         return ResponseEntity.ok(authTokenService.refresh(request));
@@ -46,6 +41,11 @@ public class AuthController {
     public ResponseEntity<Void> adminLogout(@LoginAdmin Admin admin) {
         adminService.logout(admin.getAdminId());
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/owner/login")
+    public ResponseEntity<LoginResponse> ownerLogin(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(ownerService.login(request));
     }
 
     @PostMapping("/owner/logout")

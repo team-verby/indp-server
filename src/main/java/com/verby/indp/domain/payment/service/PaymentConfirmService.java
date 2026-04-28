@@ -8,25 +8,40 @@ import com.verby.indp.domain.payment.dto.request.ConfirmPaymentRequest;
 import com.verby.indp.domain.payment.exception.PaymentBadRequestException;
 import com.verby.indp.domain.payment.exception.PaymentFailException;
 import com.verby.indp.domain.payment.repository.PaymentRepository;
-import com.verby.indp.domain.recommendation.service.SongRecommendationService;
-import com.verby.indp.domain.subscription.service.SubscriptionService;
-import java.text.MessageFormat;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
+import java.text.MessageFormat;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 @Service
 public class PaymentConfirmService {
 
+    private final Map<PaymentType, PaymentConfirmHandler> handlers;
     private final PaymentRepository paymentRepository;
     private final PaymentClient paymentClient;
-    private final SongRecommendationService songRecommendationService;
-    private final SubscriptionService subscriptionService;
     private final PaymentService paymentService;
     private final Clock clock;
+
+    public PaymentConfirmService(
+        PaymentRepository paymentRepository,
+        PaymentClient paymentClient,
+        List<PaymentConfirmHandler> handlers,
+        PaymentService paymentService,
+        Clock clock
+    ) {
+        this.paymentRepository = paymentRepository;
+        this.paymentClient = paymentClient;
+        this.handlers = handlers.stream()
+            .collect(Collectors.toMap(PaymentConfirmHandler::supportedType, Function.identity()));
+        this.paymentService = paymentService;
+        this.clock = clock;
+    }
 
     @Transactional
     public void confirm(ConfirmPaymentRequest request) {
@@ -35,11 +50,7 @@ public class PaymentConfirmService {
         validatePaymentStatus(payment);
         validatePaymentAmount(payment, request.amount());
 
-        if (request.paymentType() == PaymentType.SUBSCRIPTION) {
-            subscriptionService.confirmPayment(payment);
-        } else if (request.paymentType() == PaymentType.SONG_RECOMMENDATION) {
-            songRecommendationService.confirmPayment(payment);
-        }
+        getHandler(request.paymentType()).handle(payment);
 
         try {
             paymentClient.confirmPayment(request.orderId(), request.paymentKey(), request.amount());
@@ -50,6 +61,15 @@ public class PaymentConfirmService {
 
         payment.updatePaymentKey(request.paymentKey());
         payment.success(LocalDateTime.now(clock));
+    }
+
+    private PaymentConfirmHandler getHandler(PaymentType paymentType) {
+        PaymentConfirmHandler handler = handlers.get(paymentType);
+        if (handler == null) {
+            throw new PaymentBadRequestException(
+                MessageFormat.format("지원하지 않는 결제 타입입니다: {0}", paymentType));
+        }
+        return handler;
     }
 
     private void validatePaymentStatus(Payment payment) {
