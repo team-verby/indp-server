@@ -6,6 +6,7 @@ import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreApply;
 import com.verby.indp.domain.store.StoreMusic;
+import com.verby.indp.domain.store.StoreStatus;
 import com.verby.indp.domain.store.dto.request.ApplyStoreRequest;
 import com.verby.indp.domain.store.dto.response.AddFirstSubscriptionResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
@@ -36,7 +37,7 @@ public class ApplyStoreService {
     }
 
     private void validateDuplicateName(String name) {
-        if (storeRepository.existsByName(name)) {
+        if (storeRepository.existsByNameAndStatus(name, StoreStatus.ACTIVE)) {
             throw new BadRequestException("이미 존재하는 매장 이름입니다.");
         }
     }

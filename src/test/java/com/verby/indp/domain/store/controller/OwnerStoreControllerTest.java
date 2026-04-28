@@ -151,7 +151,11 @@ class OwnerStoreControllerTest extends BaseControllerTest {
                             fieldWithPath("musicInfo.rejectedGenres").type(ARRAY)
                                 .description("차단 장르 목록"),
                             fieldWithPath("musicInfo.rejectedSongNote").type(STRING)
-                                .description("제외 음악 메모")
+                                .description("제외 음악 메모"),
+                            fieldWithPath("musicInfo.platform").type(STRING)
+                                .description("기존에 사용하던 음악 플랫폼"),
+                            fieldWithPath("musicInfo.playedMusic").type(STRING)
+                                .description("매장에서 재생하던 장르 혹은 음악")
                         )
                     )
                 );

@@ -12,6 +12,7 @@ import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.store.MusicGenre;
 import com.verby.indp.domain.store.PlayMethod;
 import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.store.StoreStatus;
 import com.verby.indp.domain.store.dto.request.ApplyStoreRequest;
 import com.verby.indp.domain.store.dto.request.BusinessHour;
 import com.verby.indp.domain.store.dto.request.GenreItem;
@@ -56,7 +57,7 @@ class ApplyStoreServiceTest {
         @DisplayName("실패 : 이미 존재하는 매장 이름이면 예외를 던진다.")
         void applyStoreWithDuplicateName() {
             // given
-            given(storeRepository.existsByName("카페공명")).willReturn(true);
+            given(storeRepository.existsByNameAndStatus("카페공명", StoreStatus.ACTIVE)).willReturn(true);
 
             ApplyStoreRequest request = new ApplyStoreRequest(
                 "홍길동", "010-1234-5678", 1L, 3, "카페공명", "카페", "서울",
@@ -84,7 +85,7 @@ class ApplyStoreServiceTest {
                 List.of(PlayMethod.Method.BLUETOOTH), List.of(Vibe.CALM), 3,
                 PlaylistType.CONSISTENT_MOOD, List.of(), Tempo.CALM, List.of(), "", "아늑한");
 
-            given(storeRepository.existsByName("카페 공명")).willReturn(false);
+            given(storeRepository.existsByNameAndStatus("카페 공명", StoreStatus.ACTIVE)).willReturn(false);
 
             Owner owner = owner();
             given(ownerService.createOwner("홍길동", "카페 공명")).willReturn(owner);

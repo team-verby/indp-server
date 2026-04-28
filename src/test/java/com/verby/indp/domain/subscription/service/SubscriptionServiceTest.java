@@ -9,6 +9,7 @@ import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.subscription.dto.response.AddRenewalSubscriptionResponse;
 import com.verby.indp.domain.store.service.StoreService;
 import com.verby.indp.domain.subscription.StoreSubscription;
+import com.verby.indp.domain.store.StoreStatus;
 import com.verby.indp.domain.subscription.SubscriptionStatus;
 import com.verby.indp.domain.subscription.dto.request.AddSubscriptionRequest;
 import com.verby.indp.domain.subscription.dto.response.FindSubscriptionsResponse;
@@ -290,11 +291,13 @@ class SubscriptionServiceTest {
     class ConfirmPayment {
 
         @Test
-        @DisplayName("성공 : 결제를 확인하고 구독을 활성화 대기 상태로 변경한다.")
+        @DisplayName("성공 : 결제를 확인하고 구독을 활성화 대기 상태로 변경하고 매장을 활성화한다.")
         void confirmPayment() {
             // given
             Payment payment = PaymentFixture.payment();
             StoreSubscription subscription = StoreSubscriptionFixture.pendingPaymentSubscription();
+            Store store = StoreFixture.inactiveStore();
+            store.addSubscription(subscription);
             given(storeSubscriptionRepository.findByPayment(payment))
                 .willReturn(Optional.of(subscription));
 
@@ -303,6 +306,7 @@ class SubscriptionServiceTest {
 
             // then
             assertThat(subscription.getStatus()).isEqualTo(SubscriptionStatus.PENDING_ACTIVE);
+            assertThat(subscription.getStore().getStatus()).isEqualTo(StoreStatus.ACTIVE);
         }
 
         @Test

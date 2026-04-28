@@ -72,7 +72,9 @@ public record FindStoreByOwnerResponse(
         String musicTempo,
         List<String> preferredGenres,
         List<String> rejectedGenres,
-        String rejectedSongNote
+        String rejectedSongNote,
+        String platform,
+        String playedMusic
     ) {
 
         private static MusicInfo from(StoreMusic storeMusic) {
@@ -88,10 +90,15 @@ public record FindStoreByOwnerResponse(
                 .filter(MusicGenre::isRejected)
                 .map(genre -> genre.getGenre().name()).toList();
 
-            return new MusicInfo(methods, storeMusic.getPlaylistType().name(), timePreferences,
+            return new MusicInfo(
+                methods,
+                storeMusic.getPlaylistType().name(),
+                timePreferences,
                 storeMusic.getMusicMood(),
                 storeMusic.getMusicTempo().name(), preferredGenres, rejectedGenres,
-                storeMusic.getRejectedSongNote());
+                storeMusic.getRejectedSongNote(),
+                storeMusic.getPlatform(),
+                storeMusic.getPlayedMusic());
         }
     }
 

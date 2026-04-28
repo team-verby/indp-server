@@ -2,6 +2,7 @@ package com.verby.indp.domain.store.repository;
 
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.store.StoreStatus;
 import com.verby.indp.domain.subscription.SubscriptionStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,11 +22,11 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     Page<Store> findAllBySubscriptionStatus(@Param("status") SubscriptionStatus status,
         Pageable pageable);
 
-    Page<Store> findAllByOrderByStoreIdAsc(Pageable pageable);
+    Page<Store> findAllByStatusOrderByStoreIdAsc(StoreStatus status, Pageable pageable);
 
     List<Store> findAllByOwner(Owner owner);
 
-    boolean existsByName(String name);
+    boolean existsByNameAndStatus(String name, StoreStatus status);
 
     Optional<Store> findByName(String name);
 }
