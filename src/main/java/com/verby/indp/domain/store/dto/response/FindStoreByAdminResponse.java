@@ -85,7 +85,8 @@ public record FindStoreByAdminResponse(
         String playedMusic,
         String musicMood,
         String musicTempo,
-        List<String> rejectedGenres
+        List<String> rejectedGenres,
+        String rejectedSongNote
     ) {
 
         private static MusicInfo from(StoreMusic storeMusic) {
@@ -101,7 +102,7 @@ public record FindStoreByAdminResponse(
             return new MusicInfo(methods, storeMusic.getPlaylistType().name(), timePreferences,
                 storeMusic.getPlatform(),
                 storeMusic.getPlayedMusic(), storeMusic.getMusicMood(),
-                storeMusic.getMusicTempo().name(), rejectedGenres);
+                storeMusic.getMusicTempo().name(), rejectedGenres, storeMusic.getRejectedSongNote());
         }
     }
 

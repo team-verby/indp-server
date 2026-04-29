@@ -251,6 +251,8 @@ class AdminStoreControllerTest extends BaseControllerTest {
                             fieldWithPath("musicInfo.musicTempo").type(STRING).description("음악 템포"),
                             fieldWithPath("musicInfo.rejectedGenres").type(ARRAY)
                                 .description("차단 장르 목록"),
+                            fieldWithPath("musicInfo.rejectedSongNote").type(STRING)
+                                .description("제외 음악 메모"),
                             fieldWithPath("subscriptions").type(ARRAY)
                                 .description("활성 구독 목록 (ACTIVE, PENDING_ACTIVE)"),
                             fieldWithPath("subscriptions[].planType").type(STRING)
