@@ -141,31 +141,36 @@ class PaymentTest {
     class Cancel {
 
         @Test
-        @DisplayName("성공 : 결제 상태가 CANCELED로 변경된다.")
+        @DisplayName("성공 : 결제 상태가 CANCELED로 변경되고 환불 내역이 추가된다.")
         void cancel() {
             // given
             Payment payment = new Payment("인디피_구독_카페공명", 180000);
 
             // when
-            payment.cancel(PaymentStatus.CANCELED, 0);
+            payment.refund(PaymentStatus.CANCELED, 0, 180000, "단순 변심");
 
             // then
             assertThat(payment.isStatusWith(PaymentStatus.CANCELED)).isTrue();
             assertThat(payment.getBalanceAmount()).isZero();
+            assertThat(payment.getRefunds()).hasSize(1);
+            assertThat(payment.getRefunds().get(0).getCancelAmount()).isEqualTo(180000);
+            assertThat(payment.getRefunds().get(0).getCancelReason()).isEqualTo("단순 변심");
         }
 
         @Test
-        @DisplayName("성공 : 부분 취소 시 결제 상태가 PARTIAL_CANCELED로 변경된다.")
+        @DisplayName("성공 : 부분 취소 시 결제 상태가 PARTIAL_CANCELED로 변경되고 환불 내역이 추가된다.")
         void partialCancel() {
             // given
             Payment payment = new Payment("인디피_구독_카페공명", 180000);
 
             // when
-            payment.cancel(PaymentStatus.PARTIAL_CANCELED, 90000);
+            payment.refund(PaymentStatus.PARTIAL_CANCELED, 90000, 90000, "부분 환불");
 
             // then
             assertThat(payment.isStatusWith(PaymentStatus.PARTIAL_CANCELED)).isTrue();
             assertThat(payment.getBalanceAmount()).isEqualTo(90000);
+            assertThat(payment.getRefunds()).hasSize(1);
+            assertThat(payment.getRefunds().get(0).getCancelAmount()).isEqualTo(90000);
         }
     }
 

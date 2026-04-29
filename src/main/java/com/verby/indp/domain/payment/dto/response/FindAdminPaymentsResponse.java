@@ -1,6 +1,7 @@
 package com.verby.indp.domain.payment.dto.response;
 
 import com.verby.indp.domain.payment.Payment;
+import com.verby.indp.domain.payment.Refund;
 import com.verby.indp.domain.subscription.StoreSubscription;
 import org.springframework.data.domain.Page;
 
@@ -27,19 +28,40 @@ public record FindAdminPaymentsResponse(
         String paymentStatus,
         int totalAmount,
         int balanceAmount,
+        List<RefundItem> refunds,
         SubscriptionItem subscription
     ) {
 
         private static PaymentItem from(StoreSubscription subscription) {
             Payment payment = subscription.getPayment();
+            List<RefundItem> refundItems = payment.getRefunds().stream()
+                .map(RefundItem::from)
+                .toList();
             return new PaymentItem(
                 payment.getPaymentId(),
                 payment.getPaidAt(),
                 payment.getStatus().name(),
                 payment.getTotalAmount(),
                 payment.getBalanceAmount(),
+                refundItems,
                 SubscriptionItem.from(subscription)
             );
+        }
+
+        private record RefundItem(
+            long refundId,
+            int cancelAmount,
+            String cancelReason,
+            LocalDateTime refundedAt
+        ) {
+            private static RefundItem from(Refund refund) {
+                return new RefundItem(
+                    refund.getRefundId(),
+                    refund.getCancelAmount(),
+                    refund.getCancelReason(),
+                    refund.getRefundedAt()
+                );
+            }
         }
 
         private record SubscriptionItem(

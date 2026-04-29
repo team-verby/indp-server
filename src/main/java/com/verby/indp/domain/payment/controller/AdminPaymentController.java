@@ -1,6 +1,6 @@
 package com.verby.indp.domain.payment.controller;
 
-import com.verby.indp.domain.payment.dto.request.CancelPaymentRequest;
+import com.verby.indp.domain.payment.dto.request.RefundPaymentRequest;
 import com.verby.indp.domain.payment.dto.response.FindAdminPaymentsResponse;
 import com.verby.indp.domain.payment.service.AdminPaymentService;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +24,9 @@ public class AdminPaymentController {
         return ResponseEntity.ok(adminPaymentService.findPayments(storeId, pageable));
     }
 
-    @PostMapping("/{paymentId}/cancel")
-    public ResponseEntity<Void> cancelPayment(@PathVariable long paymentId, @RequestBody CancelPaymentRequest request) {
-        adminPaymentService.cancelPayment(paymentId, request);
+    @PostMapping("/{paymentId}/refund")
+    public ResponseEntity<Void> refundPayment(@PathVariable long paymentId, @RequestBody RefundPaymentRequest request) {
+        adminPaymentService.refundPayment(paymentId, request);
         return ResponseEntity.ok().build();
     }
 }

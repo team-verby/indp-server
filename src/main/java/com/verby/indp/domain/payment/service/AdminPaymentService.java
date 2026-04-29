@@ -4,7 +4,7 @@ import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.payment.PaymentStatus;
 import com.verby.indp.domain.payment.dto.reponse.TossPaymentApiResponse;
-import com.verby.indp.domain.payment.dto.request.CancelPaymentRequest;
+import com.verby.indp.domain.payment.dto.request.RefundPaymentRequest;
 import com.verby.indp.domain.payment.dto.response.FindAdminPaymentsResponse;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.service.StoreService;
@@ -36,7 +36,7 @@ public class AdminPaymentService {
     }
 
     @Transactional
-    public void cancelPayment(long paymentId, CancelPaymentRequest request) {
+    public void refundPayment(long paymentId, RefundPaymentRequest request) {
         Payment payment = paymentService.getPaymentById(paymentId);
 
         validateCancelAmount(request.cancelAmount(), payment.getBalanceAmount());
@@ -46,9 +46,9 @@ public class AdminPaymentService {
         int balanceAmount = response.balanceAmount();
 
         if (balanceAmount == 0) {
-            payment.cancel(PaymentStatus.CANCELED, balanceAmount);
+            payment.refund(PaymentStatus.CANCELED, balanceAmount, request.cancelAmount(), request.cancelReason());
         } else {
-            payment.cancel(PaymentStatus.PARTIAL_CANCELED, balanceAmount);
+            payment.refund(PaymentStatus.PARTIAL_CANCELED, balanceAmount, request.cancelAmount(), request.cancelReason());
         }
     }
 

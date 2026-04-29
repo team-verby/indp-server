@@ -5,7 +5,7 @@ import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.payment.PaymentStatus;
 import com.verby.indp.domain.payment.dto.reponse.TossPaymentApiResponse;
-import com.verby.indp.domain.payment.dto.request.CancelPaymentRequest;
+import com.verby.indp.domain.payment.dto.request.RefundPaymentRequest;
 import com.verby.indp.domain.payment.dto.response.FindAdminPaymentsResponse;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.service.StoreService;
@@ -117,10 +117,10 @@ class AdminPaymentServiceTest {
 
         @Test
         @DisplayName("성공 : 잔액이 0이면 결제 상태를 CANCELED로 변경한다.")
-        void cancelPaymentFull() {
+        void refundPaymentFull() {
             // given
             Payment payment = PaymentFixture.donePayment();
-            CancelPaymentRequest request = new CancelPaymentRequest(180000, "단순 변심");
+            RefundPaymentRequest request = new RefundPaymentRequest(180000, "단순 변심");
             TossPaymentApiResponse tossResponse = new TossPaymentApiResponse("카드", "CANCELED", 0, 180000);
 
             given(paymentService.getPaymentById(1L)).willReturn(payment);
@@ -128,19 +128,22 @@ class AdminPaymentServiceTest {
                 .willReturn(tossResponse);
 
             // when
-            adminPaymentService.cancelPayment(1L, request);
+            adminPaymentService.refundPayment(1L, request);
 
             // then
             assertThat(payment.isStatusWith(PaymentStatus.CANCELED)).isTrue();
             assertThat(payment.getBalanceAmount()).isZero();
+            assertThat(payment.getRefunds()).hasSize(1);
+            assertThat(payment.getRefunds().get(0).getCancelAmount()).isEqualTo(180000);
+            assertThat(payment.getRefunds().get(0).getCancelReason()).isEqualTo("단순 변심");
         }
 
         @Test
         @DisplayName("성공 : 잔액이 남으면 결제 상태를 PARTIAL_CANCELED로 변경한다.")
-        void cancelPaymentPartial() {
+        void refundPaymentPartial() {
             // given
             Payment payment = PaymentFixture.donePayment();
-            CancelPaymentRequest request = new CancelPaymentRequest(90000, "부분 환불");
+            RefundPaymentRequest request = new RefundPaymentRequest(90000, "부분 환불");
             TossPaymentApiResponse tossResponse = new TossPaymentApiResponse("카드", "PARTIAL_CANCELED", 90000, 180000);
 
             given(paymentService.getPaymentById(1L)).willReturn(payment);
@@ -148,25 +151,28 @@ class AdminPaymentServiceTest {
                 .willReturn(tossResponse);
 
             // when
-            adminPaymentService.cancelPayment(1L, request);
+            adminPaymentService.refundPayment(1L, request);
 
             // then
             assertThat(payment.isStatusWith(PaymentStatus.PARTIAL_CANCELED)).isTrue();
             assertThat(payment.getBalanceAmount()).isEqualTo(90000);
+            assertThat(payment.getRefunds()).hasSize(1);
+            assertThat(payment.getRefunds().get(0).getCancelAmount()).isEqualTo(90000);
+            assertThat(payment.getRefunds().get(0).getCancelReason()).isEqualTo("부분 환불");
         }
 
         @Test
         @DisplayName("실패 : 환불 요청 금액이 잔액을 초과하면 예외를 던진다.")
-        void cancelPaymentWithExceedingAmount() {
+        void refundPaymentWithExceedingAmount() {
             // given
             Payment payment = PaymentFixture.donePayment();
-            CancelPaymentRequest request = new CancelPaymentRequest(200000, "단순 변심");
+            RefundPaymentRequest request = new RefundPaymentRequest(200000, "단순 변심");
 
             given(paymentService.getPaymentById(1L)).willReturn(payment);
 
             // when
             Exception exception = catchException(
-                () -> adminPaymentService.cancelPayment(1L, request));
+                () -> adminPaymentService.refundPayment(1L, request));
 
             // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
@@ -174,14 +180,14 @@ class AdminPaymentServiceTest {
 
         @Test
         @DisplayName("실패 : 결제 정보가 없으면 예외를 던진다.")
-        void cancelPaymentWithNotFound() {
+        void refundPaymentWithNotFound() {
             // given
-            CancelPaymentRequest request = new CancelPaymentRequest(180000, "단순 변심");
+            RefundPaymentRequest request = new RefundPaymentRequest(180000, "단순 변심");
             given(paymentService.getPaymentById(999L)).willThrow(new NotFoundException("결제 정보가 존재하지 않습니다."));
 
             // when
             Exception exception = catchException(
-                () -> adminPaymentService.cancelPayment(999L, request));
+                () -> adminPaymentService.refundPayment(999L, request));
 
             // then
             assertThat(exception).isInstanceOf(NotFoundException.class);

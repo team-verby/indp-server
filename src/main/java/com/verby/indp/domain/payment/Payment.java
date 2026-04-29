@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static com.verby.indp.domain.payment.PaymentStatus.*;
@@ -44,6 +46,9 @@ public class Payment extends BaseTimeEntity {
     @Column(name = "status")
     private PaymentStatus status = PaymentStatus.PENDING;
 
+    @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Refund> refunds = new ArrayList<>();
+
     public Payment(String orderName, int totalAmount) {
         validateOrderName(orderName);
         validateAmount(totalAmount);
@@ -67,9 +72,10 @@ public class Payment extends BaseTimeEntity {
         this.status = ABORTED;
     }
 
-    public void cancel(PaymentStatus status, int balanceAmount) {
+    public void refund(PaymentStatus status, int balanceAmount, int cancelAmount, String cancelReason) {
         this.status = status;
         this.balanceAmount = balanceAmount;
+        this.refunds.add(new Refund(this, cancelAmount, cancelReason, LocalDateTime.now()));
     }
 
     public boolean isStatusWith(PaymentStatus status) {

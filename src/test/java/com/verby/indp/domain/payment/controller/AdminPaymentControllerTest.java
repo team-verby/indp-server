@@ -2,7 +2,7 @@ package com.verby.indp.domain.payment.controller;
 
 import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.domain.auth.Admin;
-import com.verby.indp.domain.payment.dto.request.CancelPaymentRequest;
+import com.verby.indp.domain.payment.dto.request.RefundPaymentRequest;
 import com.verby.indp.domain.payment.dto.response.FindAdminPaymentsResponse;
 import com.verby.indp.fixture.AdminFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -72,14 +72,14 @@ class AdminPaymentControllerTest extends BaseControllerTest {
 
         @Test
         @DisplayName("성공 : 결제를 취소한다.")
-        void cancelPayment() throws Exception {
+        void refundPayment() throws Exception {
             // given
             Admin admin = AdminFixture.admin();
             givenAdminAuth(admin);
 
-            willDoNothing().given(adminPaymentService).cancelPayment(eq(1L), any());
+            willDoNothing().given(adminPaymentService).refundPayment(eq(1L), any());
 
-            CancelPaymentRequest request = new CancelPaymentRequest(180000, "단순 변심");
+            RefundPaymentRequest request = new RefundPaymentRequest(180000, "단순 변심");
 
             // when
             ResultActions resultActions = mockMvc.perform(post("/api/admin/payments/{paymentId}/cancel", 1L)
