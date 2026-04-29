@@ -1,5 +1,6 @@
 package com.verby.indp.domain.store.controller;
 
+import com.verby.indp.domain.store.dto.request.UpdateGenresByAdminRequest;
 import com.verby.indp.domain.store.dto.request.UpdateTimePreferencesByAdminRequest;
 import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse;
@@ -31,6 +32,13 @@ public class AdminStoreController {
     @GetMapping("/{storeId}")
     public ResponseEntity<FindStoreByAdminResponse> findStore(@PathVariable long storeId) {
         return ResponseEntity.ok(storeService.findStore(storeId));
+    }
+
+    @PatchMapping("/{storeId}/genres")
+    public ResponseEntity<Void> updateGenres(@PathVariable long storeId,
+        @RequestBody UpdateGenresByAdminRequest request) {
+        storeService.updateGenres(storeId, request);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{storeId}/time-preferences")

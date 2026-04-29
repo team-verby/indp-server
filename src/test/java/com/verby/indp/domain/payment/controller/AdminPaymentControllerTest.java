@@ -67,7 +67,7 @@ class AdminPaymentControllerTest extends BaseControllerTest {
     }
 
     @Nested
-    @DisplayName("POST /api/admin/payments/{paymentId}/cancel 실행 시")
+    @DisplayName("POST /api/admin/payments/{paymentId}/refund 실행 시")
     class CancelPayment {
 
         @Test
@@ -82,7 +82,7 @@ class AdminPaymentControllerTest extends BaseControllerTest {
             RefundPaymentRequest request = new RefundPaymentRequest(180000, "단순 변심");
 
             // when
-            ResultActions resultActions = mockMvc.perform(post("/api/admin/payments/{paymentId}/cancel", 1L)
+            ResultActions resultActions = mockMvc.perform(post("/api/admin/payments/{paymentId}/refund", 1L)
                 .header(AUTHORIZATION_HEADER, BEARER_TOKEN)
                 .contentType(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));

@@ -4,7 +4,9 @@ import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.playlist.dto.response.CurrentSong;
 import com.verby.indp.domain.playlist.service.CurrentSongResolver;
 import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.store.dto.request.GenreItem;
 import com.verby.indp.domain.store.dto.request.TimePreference;
+import com.verby.indp.domain.store.dto.request.UpdateGenresByAdminRequest;
 import com.verby.indp.domain.store.dto.request.UpdateTimePreferencesByAdminRequest;
 import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse;
@@ -40,6 +42,15 @@ public class AdminStoreService {
     public FindStoreByAdminResponse findStore(long storeId) {
         Store store = getStoreById(storeId);
         return FindStoreByAdminResponse.from(store);
+    }
+
+    @Transactional
+    public void updateGenres(long storeId, UpdateGenresByAdminRequest request) {
+        Store store = getStoreById(storeId);
+        List<GenreItem> genreItems = request.genres().stream()
+            .map(item -> new GenreItem(item.genre(), item.preferenceType()))
+            .toList();
+        store.getStoreMusic().updateGenres(genreItems);
     }
 
     @Transactional

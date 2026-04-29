@@ -3,8 +3,12 @@ package com.verby.indp.domain.store.controller;
 import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.domain.auth.Admin;
 import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.store.MusicGenre.PreferenceType;
 import com.verby.indp.domain.store.dto.request.TimePreference;
+import com.verby.indp.domain.store.dto.request.UpdateGenresByAdminRequest;
+import com.verby.indp.domain.store.dto.request.UpdateGenresByAdminRequest.GenrePreferenceItem;
 import com.verby.indp.domain.store.dto.request.UpdateTimePreferencesByAdminRequest;
+import com.verby.indp.domain.store.vo.Genre;
 import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse.StoreItem;
@@ -78,6 +82,52 @@ class AdminStoreControllerTest extends BaseControllerTest {
                                 .description("현재 재생 중인 곡 (없으면 null)").optional(),
                             fieldWithPath("totalPages").type(NUMBER).description("전체 페이지 수"),
                             fieldWithPath("totalElements").type(NUMBER).description("전체 매장 수")
+                        )
+                    )
+                );
+        }
+    }
+
+    @Nested
+    @DisplayName("PATCH /api/admin/stores/{storeId}/genres 실행 시")
+    class UpdateGenres {
+
+        @Test
+        @DisplayName("성공 : 어드민이 매장의 선호/비선호 장르를 수정한다.")
+        void updateGenres() throws Exception {
+            // given
+            Admin admin = admin();
+            givenAdminAuth(admin);
+
+            UpdateGenresByAdminRequest request = new UpdateGenresByAdminRequest(
+                List.of(
+                    new GenrePreferenceItem(Genre.BALLAD, PreferenceType.LIKE),
+                    new GenrePreferenceItem(Genre.ROCK, PreferenceType.DISLIKE)
+                )
+            );
+            willDoNothing().given(adminStoreService).updateGenres(eq(1L), any());
+
+            // when
+            ResultActions resultActions = mockMvc.perform(
+                patch("/api/admin/stores/{storeId}/genres", 1L)
+                    .header(AUTHORIZATION_HEADER, BEARER_TOKEN)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)));
+
+            // then
+            resultActions.andExpect(status().isNoContent())
+                .andDo(
+                    restDocs.document(
+                        pathParameters(
+                            parameterWithName("storeId").description("매장 ID")
+                        ),
+                        requestFields(
+                            fieldWithPath("genres").type(ARRAY)
+                                .description("수정할 장르 목록"),
+                            fieldWithPath("genres[].genre").type(STRING)
+                                .description("장르 (BALLAD, HIPHOP, INDIE, ROCK, DANCE, CLASSIC, CHILDREN)"),
+                            fieldWithPath("genres[].preferenceType").type(STRING)
+                                .description("선호 유형 (LIKE, DISLIKE)")
                         )
                     )
                 );

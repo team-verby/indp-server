@@ -78,9 +78,16 @@ public class StoreMusic {
         this.genres = genreItems.stream()
             .map(preferenceGenre -> new MusicGenre(this, preferenceGenre.genre(),
                 preferenceGenre.preferenceType()))
-            .toList();
+            .collect(Collectors.toCollection(ArrayList::new));
         this.musicTimePreferences = buildMusicTimePreferences(playlistType, timePreferences,
             musicMood, businessHours);
+    }
+
+    public void updateGenres(List<GenreItem> genreItems) {
+        this.genres.clear();
+        genreItems.stream()
+            .map(item -> new MusicGenre(this, item.genre(), item.preferenceType()))
+            .forEach(this.genres::add);
     }
 
     public void updateTimePreferences(List<TimePreference> timePreferences) {
@@ -129,12 +136,12 @@ public class StoreMusic {
                 .map(timePreference -> new MusicTimePreference(this,
                     timePreference.startTime().getHour(), timePreference.endTime().getHour(),
                     timePreference.mood()))
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
         }
 
         List<BusinessHour> openHours = businessHours.stream()
             .filter(bh -> !bh.isClosed())
-            .collect(Collectors.toCollection(ArrayList::new));;
+            .toList();
 
         LocalTime openTime = openHours.stream().map(BusinessHour::openTime)
             .min(LocalTime::compareTo).orElse(LocalTime.MIN);

@@ -3,8 +3,12 @@ package com.verby.indp.domain.store.service;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.playlist.service.CurrentSongResolver;
 import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.store.MusicGenre.PreferenceType;
 import com.verby.indp.domain.store.dto.request.TimePreference;
+import com.verby.indp.domain.store.dto.request.UpdateGenresByAdminRequest;
+import com.verby.indp.domain.store.dto.request.UpdateGenresByAdminRequest.GenrePreferenceItem;
 import com.verby.indp.domain.store.dto.request.UpdateTimePreferencesByAdminRequest;
+import com.verby.indp.domain.store.vo.Genre;
 import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
@@ -57,6 +61,50 @@ class AdminStoreServiceTest {
 
             // then
             assertThat(result).isNotNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("updateGenres 메서드 실행 시")
+    class UpdateGenres {
+
+        @Test
+        @DisplayName("성공 : 기존 장르를 새 목록으로 교체한다.")
+        void updateGenres() {
+            // given
+            Store mockStore = store();
+            given(storeRepository.findById(1L)).willReturn(Optional.of(mockStore));
+
+            UpdateGenresByAdminRequest request = new UpdateGenresByAdminRequest(
+                List.of(
+                    new GenrePreferenceItem(Genre.BALLAD, PreferenceType.LIKE),
+                    new GenrePreferenceItem(Genre.ROCK, PreferenceType.DISLIKE)
+                )
+            );
+
+            // when
+            adminStoreService.updateGenres(1L, request);
+
+            // then
+            assertThat(mockStore.getStoreMusic().getGenres()).hasSize(2);
+        }
+
+        @Test
+        @DisplayName("실패 : 존재하지 않는 매장이면 예외를 던진다.")
+        void updateGenresWithNotExistStore() {
+            // given
+            given(storeRepository.findById(999L)).willReturn(Optional.empty());
+
+            UpdateGenresByAdminRequest request = new UpdateGenresByAdminRequest(
+                List.of(new GenrePreferenceItem(Genre.BALLAD, PreferenceType.LIKE))
+            );
+
+            // when
+            Exception exception = catchException(
+                () -> adminStoreService.updateGenres(999L, request));
+
+            // then
+            assertThat(exception).isInstanceOf(NotFoundException.class);
         }
     }
 
