@@ -55,20 +55,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
-          script: |
-            DEPLOY_PATH=/home/ubuntu/app/deploy
-            APP_LOG=$DEPLOY_PATH/application.log
-            ERROR_LOG=$DEPLOY_PATH/deploy-error.log
-
-            CURRENT_PID=$(lsof -ti tcp:8080)
-            if [ -n "$CURRENT_PID" ]; then
-              kill -15 $CURRENT_PID
-              sleep 5
-            fi
-
-            JAR_NAME=$(ls -tr $DEPLOY_PATH | grep jar | tail -n 1)
-            nohup java -jar $DEPLOY_PATH/$JAR_NAME --spring.profiles.active=dev >> $APP_LOG 2>> $ERROR_LOG &
-            echo "dev 배포 완료: $JAR_NAME"
+          script: bash /home/ubuntu/app/indp-server/scripts/deploy-dev.sh
 
       - name: Deploy prod
         if: github.ref == 'refs/heads/main'
