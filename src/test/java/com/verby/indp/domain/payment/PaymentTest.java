@@ -1,11 +1,13 @@
 package com.verby.indp.domain.payment;
 
 import com.verby.indp.domain.common.exception.BadRequestException;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+
+import static com.verby.indp.domain.payment.PaymentType.SUBSCRIPTION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 
@@ -20,7 +22,7 @@ class PaymentTest {
         void newPayment() {
             // when
             Exception exception = catchException(
-                () -> new Payment("인디피_구독_카페공명", 180000));
+                () -> new Payment(SUBSCRIPTION, "인디피_구독_카페공명", 180000));
 
             // then
             assertThat(exception).isNull();
@@ -30,7 +32,7 @@ class PaymentTest {
         @DisplayName("실패 : orderName이 null이면 예외를 던진다.")
         void newPaymentWithNullOrderName() {
             // when
-            Exception exception = catchException(() -> new Payment(null, 180000));
+            Exception exception = catchException(() -> new Payment(SUBSCRIPTION, null, 180000));
 
             // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
@@ -40,7 +42,7 @@ class PaymentTest {
         @DisplayName("실패 : orderName이 blank이면 예외를 던진다.")
         void newPaymentWithBlankOrderName() {
             // when
-            Exception exception = catchException(() -> new Payment("  ", 180000));
+            Exception exception = catchException(() -> new Payment(SUBSCRIPTION, "  ", 180000));
 
             // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
@@ -51,7 +53,7 @@ class PaymentTest {
         void newPaymentWithZeroAmount() {
             // when
             Exception exception = catchException(
-                () -> new Payment("인디피_구독_카페공명", 0));
+                () -> new Payment(SUBSCRIPTION, "인디피_구독_카페공명", 0));
 
             // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
@@ -62,7 +64,7 @@ class PaymentTest {
         void newPaymentWithNegativeAmount() {
             // when
             Exception exception = catchException(
-                () -> new Payment("인디피_구독_카페공명", -1000));
+                () -> new Payment(SUBSCRIPTION, "인디피_구독_카페공명", -1000));
 
             // then
             assertThat(exception).isInstanceOf(BadRequestException.class);
@@ -77,7 +79,7 @@ class PaymentTest {
         @DisplayName("성공 : 금액이 일치하면 false를 반환한다.")
         void isDifferentAmountFalse() {
             // given
-            Payment payment = new Payment("인디피_구독_카페공명", 180000);
+            Payment payment = new Payment(SUBSCRIPTION, "인디피_구독_카페공명", 180000);
 
             // when
             boolean result = payment.isDifferentAmount(180000);
@@ -90,7 +92,7 @@ class PaymentTest {
         @DisplayName("성공 : 금액이 다르면 true를 반환한다.")
         void isDifferentAmountTrue() {
             // given
-            Payment payment = new Payment("인디피_구독_카페공명", 180000);
+            Payment payment = new Payment(SUBSCRIPTION, "인디피_구독_카페공명", 180000);
 
             // when
             boolean result = payment.isDifferentAmount(100000);
@@ -108,7 +110,7 @@ class PaymentTest {
         @DisplayName("성공 : 결제 상태가 DONE으로 변경된다.")
         void success() {
             // given
-            Payment payment = new Payment("인디피_구독_카페공명", 180000);
+            Payment payment = new Payment(SUBSCRIPTION, "인디피_구독_카페공명", 180000);
 
             // when
             payment.success(LocalDateTime.now());
@@ -126,7 +128,7 @@ class PaymentTest {
         @DisplayName("성공 : 결제 상태가 ABORTED로 변경된다.")
         void fail() {
             // given
-            Payment payment = new Payment("인디피_구독_카페공명", 180000);
+            Payment payment = new Payment(SUBSCRIPTION, "인디피_구독_카페공명", 180000);
 
             // when
             payment.fail();
@@ -144,7 +146,7 @@ class PaymentTest {
         @DisplayName("성공 : 결제 상태가 CANCELED로 변경되고 환불 내역이 추가된다.")
         void cancel() {
             // given
-            Payment payment = new Payment("인디피_구독_카페공명", 180000);
+            Payment payment = new Payment(SUBSCRIPTION, "인디피_구독_카페공명", 180000);
 
             // when
             payment.refund(PaymentStatus.CANCELED, 0, 180000, "단순 변심");
@@ -161,7 +163,7 @@ class PaymentTest {
         @DisplayName("성공 : 부분 취소 시 결제 상태가 PARTIAL_CANCELED로 변경되고 환불 내역이 추가된다.")
         void partialCancel() {
             // given
-            Payment payment = new Payment("인디피_구독_카페공명", 180000);
+            Payment payment = new Payment(SUBSCRIPTION, "인디피_구독_카페공명", 180000);
 
             // when
             payment.refund(PaymentStatus.PARTIAL_CANCELED, 90000, 90000, "부분 환불");
@@ -182,7 +184,7 @@ class PaymentTest {
         @DisplayName("성공 : 결제 키를 업데이트한다.")
         void updatePaymentKey() {
             // given
-            Payment payment = new Payment("인디피_구독_카페공명", 180000);
+            Payment payment = new Payment(SUBSCRIPTION, "인디피_구독_카페공명", 180000);
 
             // when
             Exception exception = catchException(() -> payment.updatePaymentKey("payment-key"));
@@ -195,7 +197,7 @@ class PaymentTest {
         @DisplayName("실패 : paymentKey가 null이면 예외를 던진다.")
         void updatePaymentKeyWithNull() {
             // given
-            Payment payment = new Payment("인디피_구독_카페공명", 180000);
+            Payment payment = new Payment(SUBSCRIPTION, "인디피_구독_카페공명", 180000);
 
             // when
             Exception exception = catchException(() -> payment.updatePaymentKey(null));
@@ -208,7 +210,7 @@ class PaymentTest {
         @DisplayName("실패 : paymentKey가 blank이면 예외를 던진다.")
         void updatePaymentKeyWithBlank() {
             // given
-            Payment payment = new Payment("인디피_구독_카페공명", 180000);
+            Payment payment = new Payment(SUBSCRIPTION, "인디피_구독_카페공명", 180000);
 
             // when
             Exception exception = catchException(() -> payment.updatePaymentKey("  "));

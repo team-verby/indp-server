@@ -78,7 +78,7 @@ class PaymentConfirmServiceTest {
         @DisplayName("성공 : 구독 결제를 확인한다.")
         void confirmSubscriptionPayment() {
             // given
-            Payment payment = new Payment("인디피_구독_카페공명", 180000);
+            Payment payment = new Payment(PaymentType.SUBSCRIPTION, "인디피_구독_카페공명", 180000);
             String orderId = payment.getOrderId();
             given(paymentRepository.findByOrderId(orderId)).willReturn(Optional.of(payment));
             willDoNothing().given(subscriptionHandler).handle(payment);
@@ -98,7 +98,7 @@ class PaymentConfirmServiceTest {
         @DisplayName("성공 : 음악 추천 결제를 확인한다.")
         void confirmSongRecommendationPayment() {
             // given
-            Payment payment = new Payment("인디피_추천_카페공명", 3000);
+            Payment payment = new Payment(PaymentType.SONG_RECOMMENDATION, "인디피_추천_카페공명", 3000);
             String orderId = payment.getOrderId();
             given(paymentRepository.findByOrderId(orderId)).willReturn(Optional.of(payment));
             willDoNothing().given(songRecommendationHandler).handle(payment);
@@ -118,7 +118,7 @@ class PaymentConfirmServiceTest {
         @DisplayName("성공 : Toss API 실패 시 결제를 ABORTED로 변경한다.")
         void confirmWithTossApiFail() {
             // given
-            Payment payment = new Payment("인디피_구독_카페공명", 180000);
+            Payment payment = new Payment(PaymentType.SUBSCRIPTION, "인디피_구독_카페공명", 180000);
             String orderId = payment.getOrderId();
             given(paymentRepository.findByOrderId(orderId)).willReturn(Optional.of(payment));
             willDoNothing().given(subscriptionHandler).handle(payment);
@@ -156,7 +156,7 @@ class PaymentConfirmServiceTest {
         @DisplayName("실패 : 이미 처리된 결제이면 예외를 던진다.")
         void confirmWithAlreadyProcessed() {
             // given
-            Payment payment = new Payment("인디피_구독_카페공명", 180000);
+            Payment payment = new Payment(PaymentType.SUBSCRIPTION, "인디피_구독_카페공명", 180000);
             payment.success(LocalDateTime.now());
             String orderId = payment.getOrderId();
             given(paymentRepository.findByOrderId(orderId)).willReturn(Optional.of(payment));
@@ -175,7 +175,7 @@ class PaymentConfirmServiceTest {
         @DisplayName("실패 : 결제 금액이 다르면 예외를 던진다.")
         void confirmWithDifferentAmount() {
             // given
-            Payment payment = new Payment("인디피_구독_카페공명", 180000);
+            Payment payment = new Payment(PaymentType.SUBSCRIPTION, "인디피_구독_카페공명", 180000);
             String orderId = payment.getOrderId();
             given(paymentRepository.findByOrderId(orderId)).willReturn(Optional.of(payment));
 

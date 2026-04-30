@@ -43,15 +43,20 @@ public class Payment extends BaseTimeEntity {
     private int balanceAmount;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    private PaymentType type;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private PaymentStatus status = PaymentStatus.PENDING;
 
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Refund> refunds = new ArrayList<>();
 
-    public Payment(String orderName, int totalAmount) {
+    public Payment(PaymentType type, String orderName, int totalAmount) {
         validateOrderName(orderName);
         validateAmount(totalAmount);
+        this.type = type;
         this.orderId = UUID.randomUUID().toString();
         this.orderName = orderName;
         this.totalAmount = totalAmount;

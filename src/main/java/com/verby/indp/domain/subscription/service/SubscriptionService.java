@@ -3,27 +3,29 @@ package com.verby.indp.domain.subscription.service;
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.payment.Payment;
+import com.verby.indp.domain.payment.PaymentType;
 import com.verby.indp.domain.plan.Plan;
 import com.verby.indp.domain.plan.PlanDiscount;
 import com.verby.indp.domain.plan.service.PlanService;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.dto.response.AddFirstSubscriptionResponse;
-import com.verby.indp.domain.subscription.dto.response.AddRenewalSubscriptionResponse;
 import com.verby.indp.domain.store.service.StoreService;
 import com.verby.indp.domain.subscription.StoreSubscription;
 import com.verby.indp.domain.subscription.SubscriptionStatus;
 import com.verby.indp.domain.subscription.dto.request.AddSubscriptionRequest;
+import com.verby.indp.domain.subscription.dto.response.AddRenewalSubscriptionResponse;
 import com.verby.indp.domain.subscription.dto.response.FindSubscriptionsResponse;
 import com.verby.indp.domain.subscription.repository.StoreSubscriptionRepository;
 import com.verby.indp.global.slack.SlackNotificationService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +40,13 @@ public class SubscriptionService {
     private final StoreSubscriptionRepository storeSubscriptionRepository;
     private final SlackNotificationService slackNotificationService;
     private final Clock clock;
+
+    @Transactional
+    public void cancelSubscriptionByPayment(Payment payment) {
+        StoreSubscription subscription = storeSubscriptionRepository.findByPayment(payment)
+            .orElseThrow(() -> new NotFoundException("결제에 대한 구독 정보가 존재하지 않습니다."));
+        subscription.updateStatus(SubscriptionStatus.CANCELLED);
+    }
 
     @Transactional
     public AddFirstSubscriptionResponse orderFirstSubscription(Store store,
@@ -62,17 +71,6 @@ public class SubscriptionService {
         return FindSubscriptionsResponse.from(subscriptions);
     }
 
-    private StoreSubscription createSubscription(Store store, AddSubscriptionRequest request) {
-        Plan plan = planService.getPlan(request.planId());
-        Payment payment = buildPayment(store.getName(), plan, request.usagePeriod());
-        LocalDate startDate = resolveStartDate(store);
-        StoreSubscription subscription = new StoreSubscription(plan, payment, request.usagePeriod(),
-            startDate);
-        store.addSubscription(subscription);
-
-        return subscription;
-    }
-
     @Transactional
     public void activateSubscriptions() {
         List<StoreSubscription> toActivate = storeSubscriptionRepository
@@ -95,10 +93,21 @@ public class SubscriptionService {
         slackNotificationService.handleApplyStoreStore(subscription.getStore());
     }
 
+    private StoreSubscription createSubscription(Store store, AddSubscriptionRequest request) {
+        Plan plan = planService.getPlan(request.planId());
+        Payment payment = buildPayment(store.getName(), plan, request.usagePeriod());
+        LocalDate startDate = resolveStartDate(store);
+        StoreSubscription subscription = new StoreSubscription(plan, payment, request.usagePeriod(),
+            startDate);
+        store.addSubscription(subscription);
+
+        return subscription;
+    }
+
     private Payment buildPayment(String storeName, Plan plan, int usagePeriod) {
         int amount = calculateAmount(plan, usagePeriod);
         String orderName = createOrderName(storeName);
-        return new Payment(orderName, amount);
+        return new Payment(PaymentType.SUBSCRIPTION, orderName, amount);
     }
 
     private String createOrderName(String storeName) {

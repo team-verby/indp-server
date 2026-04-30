@@ -369,26 +369,26 @@ INSERT INTO store_business_hour (store_id, day_of_week, open_time, close_time, i
 -- PLAN_B 33,000원 x 60% 할인 = 13,200원
 -- status=DONE, paid_at=신청일(2026-04-27)
 -- ===========================
-INSERT INTO payment (order_id, order_name, total_amount, balance_amount, payment_key, status, paid_at, created_at) VALUES
-('order-store-01',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-01',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-02',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-02',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-03',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-03',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-04',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-04',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-05',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-05',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-06',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-06',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-07',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-07',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-08',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-08',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-09',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-09',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-10',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-10',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-11',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-11',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-12',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-12',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-13',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-13',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-14',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-14',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-15',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-15',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-16',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-16',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-17',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-17',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-18',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-18',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
-('order-store-19',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-19',  'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00');
+INSERT INTO payment (order_id, order_name, total_amount, balance_amount, payment_key, type, status, paid_at, created_at) VALUES
+('order-store-01',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-01',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-02',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-02',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-03',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-03',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-04',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-04',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-05',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-05',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-06',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-06',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-07',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-07',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-08',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-08',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-09',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-09',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-10',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-10',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-11',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-11',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-12',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-12',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-13',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-13',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-14',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-14',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-15',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-15',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-16',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-16',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-17',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-17',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-18',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-18',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00'),
+('order-store-19',  '인디피뮤직 프리미엄 1개월', 13200, 13200, 'paymentKey-store-19',  'SUBSCRIPTION', 'DONE', '2026-04-27 00:00:00', '2026-04-27 00:00:00');
 
 -- ===========================
 -- Store Subscription (19)

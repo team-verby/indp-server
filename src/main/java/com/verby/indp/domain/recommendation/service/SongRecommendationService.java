@@ -8,6 +8,7 @@ import com.verby.indp.domain.store.StoreBusinessHour;
 import com.verby.indp.domain.subscription.StoreSubscription;
 import com.verby.indp.domain.subscription.SubscriptionStatus;
 import com.verby.indp.domain.payment.Payment;
+import com.verby.indp.domain.payment.PaymentType;
 import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.service.PlaylistService;
 import com.verby.indp.domain.playlist.service.PlaylistWebSocketService;
@@ -76,7 +77,7 @@ public class SongRecommendationService {
     private Payment buildPayment(String storeName) {
         String orderName = createOrderName(storeName);
         int amount = pricePolicyService.getByPolicyKey(RECOMMENDATION_FEE_KEY).getAmount();
-        return new Payment(orderName, amount);
+        return new Payment(PaymentType.SONG_RECOMMENDATION, orderName, amount);
     }
 
     private String createOrderName(String storeName) {

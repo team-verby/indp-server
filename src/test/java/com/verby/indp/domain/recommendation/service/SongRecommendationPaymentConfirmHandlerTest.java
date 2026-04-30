@@ -31,7 +31,7 @@ class SongRecommendationPaymentConfirmHandlerTest {
     @Test
     @DisplayName("handle 호출 시 songRecommendationService.confirmPayment를 위임한다.")
     void handle() {
-        Payment payment = new Payment("인디피_노래추천_카페공명", 3000);
+        Payment payment = new Payment(PaymentType.SONG_RECOMMENDATION, "인디피_노래추천_카페공명", 3000);
         willDoNothing().given(songRecommendationService).confirmPayment(payment);
 
         handler.handle(payment);

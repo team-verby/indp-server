@@ -31,7 +31,7 @@ class SubscriptionPaymentConfirmHandlerTest {
     @Test
     @DisplayName("handle 호출 시 subscriptionService.confirmPayment를 위임한다.")
     void handle() {
-        Payment payment = new Payment("인디피_구독_카페공명", 180000);
+        Payment payment = new Payment(PaymentType.SUBSCRIPTION, "인디피_구독_카페공명", 180000);
         willDoNothing().given(subscriptionService).confirmPayment(payment);
 
         handler.handle(payment);

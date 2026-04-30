@@ -28,6 +28,7 @@ public class PaymentService {
         return paymentRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("결제 정보가 존재하지 않습니다."));
     }
+
     private Payment getPaymentByOrderId(String orderId) {
         return paymentRepository.findByOrderId(orderId)
             .orElseThrow(() -> new NotFoundException("결제 정보가 존재하지 않습니다."));
