@@ -2,7 +2,7 @@ name: CD
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "dev", "main" ]
 
 permissions:
   contents: read
@@ -39,7 +39,17 @@ jobs:
           target: /home/ubuntu/app/deploy/
           strip_components: 2
 
-      - name: Deploy on EC2
+      - name: Upload scripts to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          source: "scripts/"
+          target: /home/ubuntu/app/indp-server/
+
+      - name: Deploy dev
+        if: github.ref == 'refs/heads/dev'
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -50,14 +60,21 @@ jobs:
             APP_LOG=$DEPLOY_PATH/application.log
             ERROR_LOG=$DEPLOY_PATH/deploy-error.log
 
-            # 기존 프로세스 종료
             CURRENT_PID=$(lsof -ti tcp:8080)
             if [ -n "$CURRENT_PID" ]; then
               kill -15 $CURRENT_PID
               sleep 5
             fi
 
-            # 최신 jar 실행
             JAR_NAME=$(ls -tr $DEPLOY_PATH | grep jar | tail -n 1)
             nohup java -jar $DEPLOY_PATH/$JAR_NAME --spring.profiles.active=dev >> $APP_LOG 2>> $ERROR_LOG &
-            echo "배포 완료: $JAR_NAME"
+            echo "dev 배포 완료: $JAR_NAME"
+
+      - name: Deploy prod
+        if: github.ref == 'refs/heads/main'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          script: bash /home/ubuntu/app/indp-server/scripts/deploy.sh
