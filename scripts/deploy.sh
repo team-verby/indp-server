@@ -1,8 +1,6 @@
 PROJECT_ROOT=/home/ubuntu/app
 PROJECT_NAME=indp-server
 
-SERVER_URL=api.verby.co.kr
-
 DEPLOY_PATH=$PROJECT_ROOT/deploy
 SCRIPT_PATH=$PROJECT_ROOT/$PROJECT_NAME/scripts/
 
@@ -12,10 +10,7 @@ DEPLOY_LOG=$DEPLOY_PATH/deploy.log
 
 echo "[ $(date +%c) ] 배포 시작" >> $DEPLOY_LOG
 
-echo "[ $(date +%c) ] Build 파일 복사" >> $DEPLOY_LOG
-cp $PROJECT_ROOT/$PROJECT_NAME/build/libs/*.jar $DEPLOY_PATH/
-
-CURRENT_PROFILE=$(curl -s https://$SERVER_URL/profile)
+CURRENT_PROFILE=$(curl -s http://127.0.0.1/profile)
 echo "[ $(date +%c) ] 현재 구동 중인 Profile: $CURRENT_PROFILE" >> $DEPLOY_LOG
 
 if [ $CURRENT_PROFILE = "prod1" ]

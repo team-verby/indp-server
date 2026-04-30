@@ -2,11 +2,7 @@ name: CD
 
 on:
   push:
-    branches: [ "main" ]
-
-env:
-  S3_BUCKET_NAME: verby-bucket
-  PROJECT_NAME: indp-server
+    branches: [ "dev" ]
 
 permissions:
   contents: read
@@ -27,30 +23,41 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
 
-      - name: Build with Gradle
-        run: ./gradlew clean build
-
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Make zip file
-        run: zip -r ./$GITHUB_SHA.zip .
-        shell: bash
+      - name: Build with Gradle
+        run: ./gradlew clean build
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Upload jar to EC2
+        uses: appleboy/scp-action@v0.1.7
         with:
-          aws-region: ap-northeast-2
-          aws-access-key-id: ${{ secrets.AWS_ACCESS }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS }}
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          source: "build/libs/*.jar"
+          target: /home/ubuntu/app/deploy/
+          strip_components: 2
 
-      - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$GITHUB_SHA.zip
+      - name: Deploy on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            DEPLOY_PATH=/home/ubuntu/app/deploy
+            APP_LOG=$DEPLOY_PATH/application.log
+            ERROR_LOG=$DEPLOY_PATH/deploy-error.log
 
-      - name: Code Deploy
-        run: |
-          aws deploy create-deployment \
-            --application-name verby-deploy \
-            --deployment-config-name CodeDeployDefault.AllAtOnce \
-            --deployment-group-name verby-prod \
-            --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip \
+            # 기존 프로세스 종료
+            CURRENT_PID=$(lsof -ti tcp:8080)
+            if [ -n "$CURRENT_PID" ]; then
+              kill -15 $CURRENT_PID
+              sleep 5
+            fi
+
+            # 최신 jar 실행
+            JAR_NAME=$(ls -tr $DEPLOY_PATH | grep jar | tail -n 1)
+            nohup java -jar $DEPLOY_PATH/$JAR_NAME --spring.profiles.active=dev >> $APP_LOG 2>> $ERROR_LOG &
+            echo "배포 완료: $JAR_NAME"
