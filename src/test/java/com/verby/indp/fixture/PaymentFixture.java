@@ -20,4 +20,10 @@ public class PaymentFixture {
         payment.success(LocalDateTime.now());
         return payment;
     }
+
+    public static Payment donePayment(PaymentType type, String orderName, int amount) {
+        Payment payment = new Payment(type, orderName, amount);
+        payment.success(LocalDateTime.now());
+        return payment;
+    }
 }
