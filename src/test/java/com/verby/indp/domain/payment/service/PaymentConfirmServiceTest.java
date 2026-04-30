@@ -5,7 +5,7 @@ import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.payment.PaymentType;
 import com.verby.indp.domain.payment.dto.request.ConfirmPaymentRequest;
 import com.verby.indp.domain.payment.exception.PaymentBadRequestException;
-import com.verby.indp.domain.payment.exception.PaymentFailException;
+import com.verby.indp.domain.payment.exception.TossPaymentFailException;
 import com.verby.indp.domain.payment.repository.PaymentRepository;
 import java.time.Clock;
 import java.time.Instant;
@@ -122,7 +122,7 @@ class PaymentConfirmServiceTest {
             String orderId = payment.getOrderId();
             given(paymentRepository.findByOrderId(orderId)).willReturn(Optional.of(payment));
             willDoNothing().given(subscriptionHandler).handle(payment);
-            willThrow(new PaymentFailException("잔액 부족")).given(paymentClient)
+            willThrow(new TossPaymentFailException("잔액 부족")).given(paymentClient)
                 .confirmPayment(orderId, "payment-key", 180000);
             willDoNothing().given(paymentService).failPayment(orderId);
 
@@ -133,7 +133,7 @@ class PaymentConfirmServiceTest {
             Exception exception = catchException(() -> paymentConfirmService.confirm(request));
 
             // then
-            assertThat(exception).isInstanceOf(PaymentFailException.class);
+            assertThat(exception).isInstanceOf(TossPaymentFailException.class);
         }
 
         @Test

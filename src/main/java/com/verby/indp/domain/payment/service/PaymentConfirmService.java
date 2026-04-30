@@ -6,7 +6,7 @@ import com.verby.indp.domain.payment.PaymentStatus;
 import com.verby.indp.domain.payment.PaymentType;
 import com.verby.indp.domain.payment.dto.request.ConfirmPaymentRequest;
 import com.verby.indp.domain.payment.exception.PaymentBadRequestException;
-import com.verby.indp.domain.payment.exception.PaymentFailException;
+import com.verby.indp.domain.payment.exception.TossPaymentFailException;
 import com.verby.indp.domain.payment.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +54,7 @@ public class PaymentConfirmService {
 
         try {
             paymentClient.confirmPayment(request.orderId(), request.paymentKey(), request.amount());
-        } catch (PaymentFailException e) {
+        } catch (TossPaymentFailException e) {
             paymentService.failPayment(request.orderId());
             throw e;
         }

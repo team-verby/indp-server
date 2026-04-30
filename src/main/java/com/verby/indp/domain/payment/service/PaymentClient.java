@@ -2,7 +2,7 @@ package com.verby.indp.domain.payment.service;
 
 import com.verby.indp.domain.payment.dto.reponse.TossErrorResponse;
 import com.verby.indp.domain.payment.dto.reponse.TossPaymentApiResponse;
-import com.verby.indp.domain.payment.exception.PaymentFailException;
+import com.verby.indp.domain.payment.exception.TossPaymentFailException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,7 +58,7 @@ public class PaymentClient {
             .retrieve()
             .onStatus(HttpStatusCode::isError, response ->
                 response.bodyToMono(TossErrorResponse.class)
-                    .map(err -> new PaymentFailException(err.message()))
+                    .map(err -> new TossPaymentFailException(err.message()))
             )
             .bodyToMono((Class<T>) TossPaymentApiResponse.class)
             .block();

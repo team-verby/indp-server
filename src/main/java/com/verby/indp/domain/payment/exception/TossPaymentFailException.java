@@ -2,9 +2,9 @@ package com.verby.indp.domain.payment.exception;
 
 import com.verby.indp.domain.common.exception.ServiceUnavailableException;
 
-public class PaymentFailException extends ServiceUnavailableException {
+public class TossPaymentFailException extends ServiceUnavailableException {
 
-    public PaymentFailException(String message) {
+    public TossPaymentFailException(String message) {
         super(message);
     }
 }

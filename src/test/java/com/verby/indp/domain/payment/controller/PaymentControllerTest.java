@@ -4,7 +4,7 @@ import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.domain.payment.PaymentType;
 import com.verby.indp.domain.payment.dto.request.ConfirmPaymentRequest;
 import com.verby.indp.domain.payment.dto.request.FailPaymentRequest;
-import com.verby.indp.domain.payment.exception.PaymentFailException;
+import com.verby.indp.domain.payment.exception.TossPaymentFailException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -64,7 +64,7 @@ class PaymentControllerTest extends BaseControllerTest {
             ConfirmPaymentRequest request = new ConfirmPaymentRequest(
                 PaymentType.SUBSCRIPTION, "toss_payment_key_123", "INDP-20260101-uuid", 180000);
 
-            willThrow(new PaymentFailException("결제 승인에 실패하였습니다.")).given(paymentConfirmService).confirm(any());
+            willThrow(new TossPaymentFailException("결제 승인에 실패하였습니다.")).given(paymentConfirmService).confirm(any());
             willDoNothing().given(paymentService).failPayment(any());
 
             // when
