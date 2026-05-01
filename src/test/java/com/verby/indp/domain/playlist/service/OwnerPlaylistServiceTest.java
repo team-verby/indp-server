@@ -1,13 +1,8 @@
 package com.verby.indp.domain.playlist.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchException;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.common.exception.BadRequestException;
-import com.verby.indp.domain.common.exception.NotFoundException;
+import com.verby.indp.domain.common.exception.ForbiddenException;
 import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistByOwnerResponse;
 import com.verby.indp.domain.store.Store;
@@ -16,7 +11,6 @@ import com.verby.indp.fixture.OwnerFixture;
 import com.verby.indp.fixture.PlaylistFixture;
 import com.verby.indp.fixture.StoreFixture;
 import com.verby.indp.global.slack.SlackNotificationService;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,6 +18,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchException;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
 class OwnerPlaylistServiceTest {
@@ -94,7 +95,7 @@ class OwnerPlaylistServiceTest {
             Exception exception = catchException(() -> ownerPlaylistService.getStorePlaylist(owner, 1L));
 
             // then
-            assertThat(exception).isInstanceOf(NotFoundException.class);
+            assertThat(exception).isInstanceOf(ForbiddenException.class);
         }
 
         @Test
@@ -145,7 +146,7 @@ class OwnerPlaylistServiceTest {
             Exception exception = catchException(() -> ownerPlaylistService.regeneratePlaylist(owner, 1L));
 
             // then
-            assertThat(exception).isInstanceOf(NotFoundException.class);
+            assertThat(exception).isInstanceOf(ForbiddenException.class);
         }
 
         @Test

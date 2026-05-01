@@ -2,6 +2,7 @@ package com.verby.indp.domain.playlist.service;
 
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.common.exception.BadRequestException;
+import com.verby.indp.domain.common.exception.ForbiddenException;
 import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.dto.response.CurrentSong;
@@ -58,7 +59,7 @@ public class OwnerPlaylistService {
 
     private void validateOwnership(Store store, Owner owner) {
         if (!store.getOwner().getOwnerId().equals(owner.getOwnerId())) {
-            throw new BadRequestException("접근할 수 없는 매장입니다.");
+            throw new ForbiddenException("접근할 수 없는 매장입니다.");
         }
     }
 }
