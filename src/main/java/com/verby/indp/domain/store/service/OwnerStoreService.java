@@ -5,7 +5,6 @@ import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.StoreMusic;
 import com.verby.indp.domain.store.dto.request.UpdateStoreRequest;
-import com.verby.indp.domain.store.dto.response.FindActiveSubscriptionResponse;
 import com.verby.indp.domain.store.dto.response.FindStoreByOwnerResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByOwnerResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
@@ -46,12 +45,6 @@ public class OwnerStoreService {
         store.update(request.name(), request.industry(), request.address(),
             request.customerAgeGroup(), request.lighting(), storeMusic, request.vibes(),
             request.businessHours(), request.photoUrls());
-    }
-
-    public FindActiveSubscriptionResponse getActiveSubscription(Owner owner, long storeId) {
-        Store store = getStoreById(storeId);
-        validateOwnership(store, owner);
-        return FindActiveSubscriptionResponse.from(store.getSubscriptions());
     }
 
     private void validateOwnership(Store store, Owner owner) {

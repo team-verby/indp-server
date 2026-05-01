@@ -2,12 +2,10 @@ package com.verby.indp.domain.store.dto.response;
 
 import com.verby.indp.domain.store.*;
 import com.verby.indp.domain.subscription.StoreSubscription;
-import com.verby.indp.domain.subscription.SubscriptionStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Set;
 
 public record FindStoreByAdminResponse(
     ApplyInfo applyInfo,
@@ -15,11 +13,6 @@ public record FindStoreByAdminResponse(
     MusicInfo musicInfo,
     List<SubscriptionInfo> subscriptions
 ) {
-
-    private static final Set<SubscriptionStatus> ACTIVE_STATUSES = Set.of(
-        SubscriptionStatus.ACTIVE, SubscriptionStatus.PENDING_ACTIVE
-    );
-
     public static FindStoreByAdminResponse from(Store store) {
         StoreApply storeApply = store.getStoreApply();
 
@@ -27,7 +20,6 @@ public record FindStoreByAdminResponse(
         StoreInfo storeInfo = StoreInfo.from(store);
         MusicInfo musicInfo = MusicInfo.from(store.getStoreMusic());
         List<SubscriptionInfo> subscriptions = store.getSubscriptions().stream()
-            .filter(s -> ACTIVE_STATUSES.contains(s.getStatus()))
             .map(SubscriptionInfo::from)
             .toList();
 

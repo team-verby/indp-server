@@ -3,11 +3,9 @@ package com.verby.indp.domain.store.dto.response;
 import com.verby.indp.domain.playlist.dto.response.CurrentSong;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.subscription.StoreSubscription;
-import com.verby.indp.domain.subscription.SubscriptionStatus;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 public record FindStoresByAdminResponse(
     List<StoreItem> stores, int totalPages, long totalElements
@@ -19,14 +17,8 @@ public record FindStoresByAdminResponse(
         List<SubscriptionItem> subscriptions,
         CurrentSongItem currentSong
     ) {
-
-        private static final Set<SubscriptionStatus> ACTIVE_STATUSES = Set.of(
-            SubscriptionStatus.ACTIVE, SubscriptionStatus.PENDING_ACTIVE
-        );
-
         public static StoreItem from(Store store, CurrentSong currentSong) {
             List<SubscriptionItem> subscriptions = store.getSubscriptions().stream()
-                .filter(s -> ACTIVE_STATUSES.contains(s.getStatus()))
                 .map(SubscriptionItem::from)
                 .toList();
             CurrentSongItem currentSongItem =

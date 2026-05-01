@@ -8,7 +8,6 @@ import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.dto.request.BusinessHour;
 import com.verby.indp.domain.store.dto.request.GenreItem;
 import com.verby.indp.domain.store.dto.request.UpdateStoreRequest;
-import com.verby.indp.domain.store.dto.response.FindActiveSubscriptionResponse;
 import com.verby.indp.domain.store.dto.response.FindStoreByOwnerResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByOwnerResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
@@ -163,56 +162,4 @@ class OwnerStoreServiceTest {
         }
     }
 
-    @Nested
-    @DisplayName("getLatestSubscription 메서드 실행 시")
-    class GetLatestSubscription {
-
-        @Test
-        @DisplayName("성공 : 최신 구독 정보를 반환한다.")
-        void getLatestSubscription() {
-            // given
-            Owner owner = OwnerFixture.ownerWithId(1L);
-            Store mockStore = StoreFixture.storeWithOwner(owner);
-            given(storeRepository.findById(1L)).willReturn(Optional.of(mockStore));
-
-            // when
-            FindActiveSubscriptionResponse result = ownerStoreService.getActiveSubscription(owner,
-                1L);
-
-            // then
-            assertThat(result).isNotNull();
-        }
-
-        @Test
-        @DisplayName("실패 : 소유하지 않은 매장이면 예외를 던진다.")
-        void getLatestSubscriptionWithNotOwned() {
-            // given
-            Owner owner = OwnerFixture.ownerWithId(1L);
-            Owner otherOwner = OwnerFixture.ownerWithId(2L);
-            Store mockStore = StoreFixture.storeWithOwner(otherOwner);
-            given(storeRepository.findById(1L)).willReturn(Optional.of(mockStore));
-
-            // when
-            Exception exception = catchException(
-                () -> ownerStoreService.getActiveSubscription(owner, 1L));
-
-            // then
-            assertThat(exception).isInstanceOf(NotFoundException.class);
-        }
-
-        @Test
-        @DisplayName("실패 : 존재하지 않는 매장이면 예외를 던진다.")
-        void getLatestSubscriptionWithNotExist() {
-            // given
-            Owner owner = owner();
-            given(storeRepository.findById(999L)).willReturn(Optional.empty());
-
-            // when
-            Exception exception = catchException(
-                () -> ownerStoreService.getActiveSubscription(owner, 999L));
-
-            // then
-            assertThat(exception).isInstanceOf(NotFoundException.class);
-        }
-    }
 }

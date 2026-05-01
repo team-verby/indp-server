@@ -2,7 +2,6 @@ package com.verby.indp.domain.store.controller;
 
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.store.dto.request.UpdateStoreRequest;
-import com.verby.indp.domain.store.dto.response.FindActiveSubscriptionResponse;
 import com.verby.indp.domain.store.dto.response.FindStoreByOwnerResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByOwnerResponse;
 import com.verby.indp.domain.store.service.OwnerStoreService;
@@ -26,12 +25,6 @@ public class OwnerStoreController {
     public ResponseEntity<FindStoreByOwnerResponse> findMyStore(
         @RequestAttribute("owner") Owner owner, @PathVariable long storeId) {
         return ResponseEntity.ok(ownerStoreService.getMyStore(owner, storeId));
-    }
-
-    @GetMapping("/{storeId}/subscription")
-    public ResponseEntity<FindActiveSubscriptionResponse> findActiveSubscription(
-        @RequestAttribute("owner") Owner owner, @PathVariable long storeId) {
-        return ResponseEntity.ok(ownerStoreService.getActiveSubscription(owner, storeId));
     }
 
     @PutMapping("/{storeId}")

@@ -6,7 +6,6 @@ import com.verby.indp.domain.store.PlayMethod;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.dto.request.BusinessHour;
 import com.verby.indp.domain.store.dto.request.UpdateStoreRequest;
-import com.verby.indp.domain.store.dto.response.FindActiveSubscriptionResponse;
 import com.verby.indp.domain.store.dto.response.FindStoreByOwnerResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresByOwnerResponse;
 import com.verby.indp.domain.store.vo.PlaylistType;
@@ -149,53 +148,6 @@ class OwnerStoreControllerTest extends BaseControllerTest {
                                 .description("기존에 사용하던 음악 플랫폼"),
                             fieldWithPath("musicInfo.playedMusic").type(STRING)
                                 .description("매장에서 재생하던 장르 혹은 음악")
-                        )
-                    )
-                );
-        }
-    }
-
-    @Nested
-    @DisplayName("GET /api/owner/stores/{storeId}/subscription 실행 시")
-    class FindLatestSubscription {
-
-        @Test
-        @DisplayName("성공 : 최신 구독 정보를 조회한다.")
-        void findLatestSubscription() throws Exception {
-            // given
-            Owner owner = owner();
-            givenOwnerAuth(owner);
-
-            FindActiveSubscriptionResponse response = new FindActiveSubscriptionResponse(
-                List.of(new FindActiveSubscriptionResponse.SubscriptionItem(
-                    "PLAN_A",
-                    LocalDate.of(2026, 1, 12), LocalDate.of(2027, 1, 12),
-                    "ACTIVE"
-                ))
-            );
-            given(ownerStoreService.getActiveSubscription(any(), eq(1L))).willReturn(response);
-
-            // when
-            ResultActions resultActions = mockMvc.perform(
-                get("/api/owner/stores/{storeId}/subscription", 1L)
-                    .header(AUTHORIZATION_HEADER, BEARER_TOKEN));
-
-            // then
-            resultActions.andExpect(status().isOk())
-                .andDo(
-                    restDocs.document(
-                        pathParameters(
-                            parameterWithName("storeId").description("매장 ID")
-                        ),
-                        responseFields(
-                            fieldWithPath("subscriptions").type(ARRAY)
-                                .description("활성 구독 목록 (ACTIVE, PENDING_ACTIVE)"),
-                            fieldWithPath("subscriptions[].planType").type(STRING)
-                                .description("플랜 종류 +\n`PLAN_A`, `PLAN_B`"),
-                            fieldWithPath("subscriptions[].startDate").type(STRING).description("구독 시작일"),
-                            fieldWithPath("subscriptions[].endDate").type(STRING).description("구독 종료일"),
-                            fieldWithPath("subscriptions[].status").type(STRING)
-                                .description("구독 상태 +\n`PENDING_ACTIVE`, `ACTIVE`")
                         )
                     )
                 );
