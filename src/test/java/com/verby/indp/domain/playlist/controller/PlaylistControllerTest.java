@@ -1,31 +1,29 @@
 package com.verby.indp.domain.playlist.controller;
 
-import static com.verby.indp.fixture.PlaylistSongFixture.playlistSongWithId;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
-import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
-import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
-import static org.springframework.restdocs.payload.JsonFieldType.STRING;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistResponse;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.List;
+
+import static com.verby.indp.fixture.PlaylistSongFixture.playlistSongWithId;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 class PlaylistControllerTest extends BaseControllerTest {
 
     @Nested
-    @DisplayName("GET /api/stores/{storeId}/playlist 실행 시")
+    @DisplayName("GET /api/stores/{storeId}/playlists 실행 시")
     class FindStorePlaylist {
 
         @Test
@@ -37,7 +35,7 @@ class PlaylistControllerTest extends BaseControllerTest {
 
             // when
             ResultActions resultActions = mockMvc.perform(
-                get("/api/stores/{storeId}/playlist", 1L));
+                get("/api/stores/{storeId}/playlists", 1L));
 
             // then
             resultActions.andExpect(status().isOk())
@@ -78,7 +76,7 @@ class PlaylistControllerTest extends BaseControllerTest {
 
             // when
             ResultActions resultActions = mockMvc.perform(
-                get("/api/stores/{storeId}/playlist", 1L));
+                get("/api/stores/{storeId}/playlists", 1L));
 
             // then
             resultActions.andExpect(status().isOk())

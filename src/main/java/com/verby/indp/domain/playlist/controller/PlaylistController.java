@@ -16,7 +16,7 @@ public class PlaylistController {
 
     private final PlaylistService playlistService;
 
-    @GetMapping("/stores/{storeId}/playlist")
+    @GetMapping("/stores/{storeId}/playlists")
     public ResponseEntity<FindStorePlaylistResponse> findStorePlaylist(@PathVariable long storeId) {
         return ResponseEntity.ok(playlistService.getStorePlaylist(storeId));
     }

@@ -21,7 +21,7 @@ public class StoreController {
     private final StoreService storeService;
     private final ApplyStoreService applyStoreService;
 
-    @PostMapping("/apply")
+    @PostMapping("/applications")
     public ResponseEntity<AddFirstSubscriptionResponse> applyStore(
         @RequestBody ApplyStoreRequest request) {
         AddFirstSubscriptionResponse response = applyStoreService.applyStore(request);

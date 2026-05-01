@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class StoreControllerTest extends BaseControllerTest {
 
     @Nested
-    @DisplayName("POST /api/stores/apply 실행 시")
+    @DisplayName("POST /api/stores/applications 실행 시")
     class ApplyStore {
 
         @Test
@@ -79,7 +79,7 @@ class StoreControllerTest extends BaseControllerTest {
             );
 
             // when
-            ResultActions resultActions = mockMvc.perform(post("/api/stores/apply")
+            ResultActions resultActions = mockMvc.perform(post("/api/stores/applications")
                 .contentType(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
 

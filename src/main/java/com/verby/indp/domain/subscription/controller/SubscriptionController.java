@@ -12,19 +12,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/owner")
+@RequestMapping("/api/owner/stores/{storeId}/subscriptions")
 @RequiredArgsConstructor
 public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
 
-    @GetMapping("/stores/{storeId}/subscriptions")
+    @GetMapping
     public ResponseEntity<FindSubscriptionsResponse> findSubscriptions(@LoginOwner Owner owner,
         @PathVariable long storeId) {
         return ResponseEntity.ok(subscriptionService.findSubscriptions(owner, storeId));
     }
 
-    @PostMapping("/stores/{storeId}/subscriptions")
+    @PostMapping
     public ResponseEntity<AddRenewalSubscriptionResponse> addSubscription(
         @LoginOwner Owner owner,
         @PathVariable long storeId,

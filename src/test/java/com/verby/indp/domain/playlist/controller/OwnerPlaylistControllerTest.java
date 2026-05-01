@@ -1,23 +1,5 @@
 package com.verby.indp.domain.playlist.controller;
 
-import static com.verby.indp.fixture.OwnerFixture.owner;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
-import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
-import static org.springframework.restdocs.payload.JsonFieldType.NULL;
-import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
-import static org.springframework.restdocs.payload.JsonFieldType.STRING;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistByOwnerResponse;
@@ -26,10 +8,24 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static com.verby.indp.fixture.OwnerFixture.owner;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.JsonFieldType.NULL;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 class OwnerPlaylistControllerTest extends BaseControllerTest {
 
     @Nested
-    @DisplayName("GET /api/owner/stores/{storeId}/playlist 실행 시")
+    @DisplayName("GET /api/owner/stores/{storeId}/playlists 실행 시")
     class FindStorePlaylist {
 
         @Test
@@ -45,7 +41,7 @@ class OwnerPlaylistControllerTest extends BaseControllerTest {
 
             // when
             ResultActions resultActions = mockMvc.perform(
-                get("/api/owner/stores/{storeId}/playlist", 1L)
+                get("/api/owner/stores/{storeId}/playlists", 1L)
                     .header(AUTHORIZATION_HEADER, BEARER_TOKEN));
 
             // then
@@ -67,7 +63,7 @@ class OwnerPlaylistControllerTest extends BaseControllerTest {
     }
 
     @Nested
-    @DisplayName("POST /api/owner/stores/{storeId}/playlist/regenerate 실행 시")
+    @DisplayName("POST /api/owner/stores/{storeId}/playlists/regenerations 실행 시")
     class RegeneratePlaylist {
 
         @Test
@@ -80,7 +76,7 @@ class OwnerPlaylistControllerTest extends BaseControllerTest {
 
             // when
             ResultActions resultActions = mockMvc.perform(
-                post("/api/owner/stores/{storeId}/playlist/regenerate", 1L)
+                post("/api/owner/stores/{storeId}/playlists/regenerations", 1L)
                     .header(AUTHORIZATION_HEADER, BEARER_TOKEN));
 
             // then

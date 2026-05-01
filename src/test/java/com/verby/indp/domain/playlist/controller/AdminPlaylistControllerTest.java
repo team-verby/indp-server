@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AdminPlaylistControllerTest extends BaseControllerTest {
 
     @Nested
-    @DisplayName("POST /api/admin/playlists/schedule 실행 시")
+    @DisplayName("POST /api/admin/scheduled-playlists 실행 시")
     class SchedulePlaylistUpdates {
 
         @Test
@@ -46,7 +46,7 @@ class AdminPlaylistControllerTest extends BaseControllerTest {
             );
 
             // when
-            ResultActions resultActions = mockMvc.perform(post("/api/admin/playlists/schedule")
+            ResultActions resultActions = mockMvc.perform(post("/api/admin/scheduled-playlists")
                 .header(AUTHORIZATION_HEADER, BEARER_TOKEN)
                 .contentType(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));

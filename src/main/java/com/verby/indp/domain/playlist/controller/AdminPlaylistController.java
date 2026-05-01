@@ -7,14 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/admin/playlists")
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor
 public class AdminPlaylistController {
 
     private final AdminPlaylistService playlistService;
 
-    @PostMapping("/schedule")
-    public ResponseEntity<Void> schedulePlaylistUpdates(
+    @PostMapping("/scheduled-playlists")
+    public ResponseEntity<Void> scheduledPlaylistUpdates(
         @RequestBody SchedulePlaylistsUpdateRequest request) {
         playlistService.addScheduledPlaylists(request);
         return ResponseEntity.noContent().build();
