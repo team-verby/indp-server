@@ -20,14 +20,16 @@ public record FindSubscriptionsResponse(
     private record SubscriptionItem(
         LocalDate startDate,
         LocalDate endDate,
-        String planType
+        String planType,
+        String status
     ) {
 
         private static SubscriptionItem from(StoreSubscription subscription) {
             return new SubscriptionItem(
                 subscription.getStartDate(),
                 subscription.getEndDate(),
-                subscription.getPlan().getType().name()
+                subscription.getPlan().getType().name(),
+                subscription.getStatus().name()
             );
         }
     }
