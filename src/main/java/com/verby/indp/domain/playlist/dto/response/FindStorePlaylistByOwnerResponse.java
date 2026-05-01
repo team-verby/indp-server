@@ -1,8 +1,6 @@
 package com.verby.indp.domain.playlist.dto.response;
 
 import com.verby.indp.domain.playlist.PlaylistSong;
-import com.verby.indp.domain.playlist.service.CurrentSongResolver;
-import com.verby.indp.domain.store.Store;
 
 import java.util.List;
 
@@ -11,9 +9,10 @@ public record FindStorePlaylistByOwnerResponse(
     CurrentSongItem currentSong
 ) {
 
-    public static FindStorePlaylistByOwnerResponse from(List<PlaylistSong> sortedSongs, CurrentSong currentSong) {
-        PlaylistInfo playlistInfo = PlaylistInfo.from(sortedSongs);
-        return new FindStorePlaylistByOwnerResponse(playlistInfo, CurrentSongItem.from(currentSong));
+    public static FindStorePlaylistByOwnerResponse from(List<PlaylistSong> songs, CurrentSong currentSong) {
+        PlaylistInfo playlistInfo = PlaylistInfo.from(songs);
+        CurrentSongItem song = currentSong != null ? CurrentSongItem.from(currentSong) : null;
+        return new FindStorePlaylistByOwnerResponse(playlistInfo, song);
     }
 
     private record PlaylistInfo(
@@ -58,9 +57,6 @@ public record FindStorePlaylistByOwnerResponse(
                                    int elapsedSeconds) {
 
         private static CurrentSongItem from(CurrentSong song) {
-            if (song == null) {
-                return null;
-            }
             return new CurrentSongItem(song.playlistSongId(), song.title(), song.artist(),
                 song.vid(), song.elapsedSeconds());
         }

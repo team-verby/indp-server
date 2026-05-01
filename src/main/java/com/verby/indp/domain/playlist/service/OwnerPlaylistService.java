@@ -2,7 +2,6 @@ package com.verby.indp.domain.playlist.service;
 
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.common.exception.BadRequestException;
-import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.playlist.Playlist;
 import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.dto.response.CurrentSong;
@@ -10,11 +9,11 @@ import com.verby.indp.domain.playlist.dto.response.FindStorePlaylistByOwnerRespo
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.service.StoreService;
 import com.verby.indp.global.slack.SlackNotificationService;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -59,7 +58,7 @@ public class OwnerPlaylistService {
 
     private void validateOwnership(Store store, Owner owner) {
         if (!store.getOwner().getOwnerId().equals(owner.getOwnerId())) {
-            throw new NotFoundException("접근할 수 없는 매장입니다.");
+            throw new BadRequestException("접근할 수 없는 매장입니다.");
         }
     }
 }
