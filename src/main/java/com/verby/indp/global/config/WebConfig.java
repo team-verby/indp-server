@@ -25,15 +25,6 @@ public class WebConfig implements WebMvcConfigurer {
     private final OwnerRepository ownerRepository;
 
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-            .allowedOriginPatterns("*")
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
-            .allowedHeaders("*")
-            .allowCredentials(true);
-    }
-
-    @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new LoginOwnerArgumentResolver());
         resolvers.add(new LoginAdminArgumentResolver());
