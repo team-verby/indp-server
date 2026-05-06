@@ -53,6 +53,7 @@ public class StoreSseService {
             "artist", recommendation.getArtist(),
             "vid", recommendation.getVid(),
             "playTime", playlistSong.getPlayTime(),
+            "playlistSongId", playlistSong.getPlaylistSongId(),
             "playOrder", playlistSong.getPlayOrder(),
             "refereeName", recommendation.getRefereeName()
         );
