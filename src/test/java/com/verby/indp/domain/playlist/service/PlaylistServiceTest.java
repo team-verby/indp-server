@@ -310,5 +310,94 @@ class PlaylistServiceTest {
             // when
             assertThat(result).isNotNull();
         }
+
+        @Test
+        @DisplayName("성공 : 두 번 추천 시 먼저 추천한 곡이 앞 순서에 위치한다 (FIFO)")
+        void addRecommendedSongTwiceMaintainsFifoOrder() {
+            // given
+            SongRecommendation recommendation1 = songRecommendation();
+            SongRecommendation recommendation2 = songRecommendation();
+
+            PlaylistSong resolverSong = playlistSongWithId(1L, 10.0, 86400);
+            Playlist playlist = playlistWithSongs(List.of(resolverSong));
+            Store store = storeWithPlaylist(playlist);
+
+            PlaylistSong song1 = playlistSongWithId(1L, 10.0);
+            PlaylistSong song2 = playlistSongWithId(2L, 20.0);
+            PlaylistSong song3 = playlistSongWithId(3L, 30.0);
+            PlaylistSong song4 = playlistSongWithId(4L, 40.0);
+            PlaylistSong song5 = playlistSongWithId(5L, 50.0);
+            PlaylistSong song6 = playlistSongWithId(6L, 60.0);
+            PlaylistSong song7 = playlistSongWithId(7L, 70.0);
+
+            given(currentSongResolver.resolveCurrentSong(store))
+                .willReturn(Optional.of(new CurrentSong(1L, "title", "artist", "vid", 0)));
+
+            // 첫 번째 추천: 추천곡 없음
+            given(playlistSongRepository.findAllByPlaylistPlaylistIdOrderByPlayOrder(1L))
+                .willReturn(List.of(song1, song2, song3, song4, song5, song6, song7));
+
+            // when
+            PlaylistSong result1 = playlistService.addRecommendedSong(store, recommendation1);
+
+            // 두 번째 추천: 첫 번째 추천곡이 포함된 상태
+            PlaylistSong recommended1 = recommendedSongWithId(100L, result1.getPlayOrder());
+            given(playlistSongRepository.findAllByPlaylistPlaylistIdOrderByPlayOrder(1L))
+                .willReturn(List.of(song1, song2, song3, song4, song5, recommended1, song6, song7));
+
+            PlaylistSong result2 = playlistService.addRecommendedSong(store, recommendation2);
+
+            // then
+            assertThat(result1.getPlayOrder()).isLessThan(result2.getPlayOrder());
+            assertThat(result2.getPlayOrder()).isLessThan(60.0);
+        }
+
+        @Test
+        @DisplayName("성공 : 다섯 번 추천 시 추천 순서대로 playOrder가 증가한다 (FIFO)")
+        void addRecommendedSongFiveTimesMaintainsFifoOrder() {
+            // given
+            Playlist playlist = playlistWithSongs(List.of(playlistSongWithId(1L, 10.0, 86400)));
+            Store store = storeWithPlaylist(playlist);
+
+            PlaylistSong song1 = playlistSongWithId(1L, 10.0);
+            PlaylistSong song2 = playlistSongWithId(2L, 20.0);
+            PlaylistSong song3 = playlistSongWithId(3L, 30.0);
+            PlaylistSong song4 = playlistSongWithId(4L, 40.0);
+            PlaylistSong song5 = playlistSongWithId(5L, 50.0);
+            PlaylistSong song6 = playlistSongWithId(6L, 60.0);
+            PlaylistSong song7 = playlistSongWithId(7L, 70.0);
+            PlaylistSong song8 = playlistSongWithId(8L, 80.0);
+
+            given(currentSongResolver.resolveCurrentSong(store))
+                .willReturn(Optional.of(new CurrentSong(1L, "title", "artist", "vid", 0)));
+
+            List<PlaylistSong> currentSongs = new ArrayList<>(
+                List.of(song1, song2, song3, song4, song5, song6, song7, song8));
+
+            double[] orders = new double[5];
+            for (int i = 0; i < 5; i++) {
+                given(playlistSongRepository.findAllByPlaylistPlaylistIdOrderByPlayOrder(1L))
+                    .willReturn(new ArrayList<>(currentSongs));
+
+                // when
+                PlaylistSong result = playlistService.addRecommendedSong(store, songRecommendation());
+                orders[i] = result.getPlayOrder();
+
+                // 다음 호출을 위해 추천곡을 리스트에 삽입
+                PlaylistSong inserted = recommendedSongWithId(100L + i, result.getPlayOrder());
+                currentSongs.add(inserted);
+                currentSongs.sort((a, b) -> Double.compare(a.getPlayOrder(), b.getPlayOrder()));
+            }
+
+            // then: 추천 순서대로 playOrder가 증가해야 한다
+            for (int i = 0; i < 4; i++) {
+                assertThat(orders[i]).isLessThan(orders[i + 1]);
+            }
+            // 모든 추천곡이 song5(50)과 song6(60) 사이에 있어야 한다
+            for (double order : orders) {
+                assertThat(order).isGreaterThan(50.0);
+                assertThat(order).isLessThan(60.0);
+            }
+        }
     }
 }

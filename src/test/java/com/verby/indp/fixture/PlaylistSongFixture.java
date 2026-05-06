@@ -27,6 +27,13 @@ public class PlaylistSongFixture {
         return new PlaylistSong(null, true, "5zAEiu3SaO4", 259, "안녕 나의 사랑", "성시경", 1.0);
     }
 
+    public static PlaylistSong recommendedSongWithId(Long id, double playOrder) {
+        PlaylistSong song = new PlaylistSong(null, true, "5zAEiu3SaO4", 259, "추천곡", "아티스트",
+            playOrder);
+        ReflectionTestUtils.setField(song, "playlistSongId", id);
+        return song;
+    }
+
     public static PlaylistSong normalSong(String vid, String title, String artist, int playTime,
         double playOrder) {
         return new PlaylistSong(null, false, vid, playTime, title, artist, playOrder);

@@ -122,13 +122,20 @@ public class PlaylistService {
         for (int i = 0; i < songs.size(); i++) {
             if (songs.get(i).getPlaylistSongId() == currentSong.playlistSongId()) {
                 int nextSongIndex = Math.min(songs.size() - 1, i + RECOMMENDATION_INSERT_OFFSET);
-                if (nextSongIndex == i) {
+
+                while (nextSongIndex < songs.size() && songs.get(nextSongIndex).isRecommended()) {
+                    nextSongIndex++;
+                }
+
+                if (nextSongIndex >= songs.size()) {
+                    prevOrder = songs.get(songs.size() - 1).getPlayOrder();
+                } else if (nextSongIndex == i) {
                     prevOrder = songs.get(i).getPlayOrder();
                 } else {
                     nextOrder = songs.get(nextSongIndex).getPlayOrder();
                     prevOrder = songs.get(nextSongIndex - 1).getPlayOrder();
 
-                    if (nextSongIndex - prevOrder < MIN_GAP) {
+                    if (nextOrder - prevOrder < MIN_GAP) {
                         rebalancePlayOrder(songs);
                         nextOrder = songs.get(nextSongIndex).getPlayOrder();
                         prevOrder = songs.get(nextSongIndex - 1).getPlayOrder();
