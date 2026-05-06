@@ -17,6 +17,7 @@ import com.verby.indp.domain.plan.service.PlanService;
 import com.verby.indp.domain.playlist.service.AdminPlaylistService;
 import com.verby.indp.domain.playlist.service.OwnerPlaylistService;
 import com.verby.indp.domain.playlist.service.PlaylistService;
+import com.verby.indp.domain.playlist.service.PlaylistSseService;
 import com.verby.indp.domain.policy.PricePolicyService;
 import com.verby.indp.domain.recommendation.service.SongRecommendationService;
 import com.verby.indp.domain.store.service.AdminStoreService;
@@ -124,6 +125,9 @@ public abstract class BaseControllerTest {
 
     @MockBean
     protected ImageService imageService;
+
+    @MockBean
+    protected PlaylistSseService playlistSseService;
 
     @BeforeEach
     void setUp(final WebApplicationContext context,
