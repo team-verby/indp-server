@@ -11,7 +11,7 @@ import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.payment.PaymentType;
 import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.service.PlaylistService;
-import com.verby.indp.domain.playlist.service.PlaylistSseService;
+import com.verby.indp.domain.playlist.service.StoreSseService;
 import com.verby.indp.domain.recommendation.SongRecommendation;
 import com.verby.indp.domain.recommendation.dto.response.FindStoreRecommendationsResponse;
 import com.verby.indp.domain.recommendation.dto.response.RegisterSongRecommendationResponse;
@@ -39,7 +39,7 @@ public class SongRecommendationService {
     private final StoreService storeService;
     private final PricePolicyService pricePolicyService;
     private final PlaylistService playlistService;
-    private final PlaylistSseService playlistSseService;
+    private final StoreSseService storeSseService;
     private final SlackNotificationService slackNotificationService;
     private final Clock clock;
 
@@ -70,7 +70,7 @@ public class SongRecommendationService {
         PlaylistSong playlistSong = playlistService.addRecommendedSong(recommendation.getStore(),
             recommendation);
 
-        playlistSseService.sendSongRecommended(recommendation, playlistSong);
+        storeSseService.sendSongRecommended(recommendation, playlistSong);
         slackNotificationService.handleMusicRecommendation(recommendation);
     }
 

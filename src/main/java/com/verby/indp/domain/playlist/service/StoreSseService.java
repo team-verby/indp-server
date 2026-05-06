@@ -15,7 +15,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Slf4j
 @Service
-public class PlaylistSseService {
+public class StoreSseService {
 
     private final Map<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 

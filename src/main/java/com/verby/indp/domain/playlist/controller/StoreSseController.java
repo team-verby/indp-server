@@ -1,6 +1,6 @@
 package com.verby.indp.domain.playlist.controller;
 
-import com.verby.indp.domain.playlist.service.PlaylistSseService;
+import com.verby.indp.domain.playlist.service.StoreSseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,12 +12,12 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RestController
 @RequestMapping("/api/stores")
 @RequiredArgsConstructor
-public class PlaylistSseController {
+public class StoreSseController {
 
-    private final PlaylistSseService playlistSseService;
+    private final StoreSseService storeSseService;
 
     @GetMapping(value = "/{storeId}/sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(@PathVariable long storeId) {
-        return playlistSseService.subscribe(storeId);
+        return storeSseService.subscribe(storeId);
     }
 }
