@@ -6,7 +6,7 @@ import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.plan.Plan;
 import com.verby.indp.domain.playlist.PlaylistSong;
 import com.verby.indp.domain.playlist.service.PlaylistService;
-import com.verby.indp.domain.playlist.service.PlaylistWebSocketService;
+import com.verby.indp.domain.playlist.service.PlaylistSseService;
 import com.verby.indp.domain.policy.PricePolicy;
 import com.verby.indp.domain.policy.PricePolicyService;
 import com.verby.indp.domain.recommendation.SongRecommendation;
@@ -58,7 +58,7 @@ class SongRecommendationServiceTest {
     private PlaylistService playlistService;
 
     @Mock
-    private PlaylistWebSocketService playlistWebSocketService;
+    private PlaylistSseService playlistSseService;
 
     @Mock
     private SlackNotificationService slackNotificationService;
@@ -239,7 +239,7 @@ class SongRecommendationServiceTest {
             PlaylistSong playlistSong = PlaylistSongFixture.playlistSong();
             given(playlistService.addRecommendedSong(store, recommendation))
                 .willReturn(playlistSong);
-            willDoNothing().given(playlistWebSocketService)
+            willDoNothing().given(playlistSseService)
                 .sendSongRecommended(recommendation, playlistSong);
 
             // when
