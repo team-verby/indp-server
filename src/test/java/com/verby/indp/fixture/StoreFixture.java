@@ -94,6 +94,14 @@ public class StoreFixture {
         return store;
     }
 
+    public static Store createStoreWithHours(List<BusinessHour> hours) {
+        Store store = createStore(OwnerFixture.owner(), hours);
+        StoreSubscription subscription = StoreSubscriptionFixture.activeSubscription();
+        store.addSubscription(subscription);
+        ReflectionTestUtils.setField(store, "storeId", 1L);
+        return store;
+    }
+
     private static Store createStore(Owner owner, List<BusinessHour> businessHours) {
         StoreApply storeApply = new StoreApply("홍길동", "010-1234-5678");
         return new Store(

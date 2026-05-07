@@ -43,6 +43,11 @@ public class ControllerAdvice {
             .body(new ErrorResponse("잘못된 요청입니다."));
     }
 
+    @ExceptionHandler(org.apache.catalina.connector.ClientAbortException.class)
+    public void handleClientAbortException(org.apache.catalina.connector.ClientAbortException exception) {
+        log.debug("[ClientAbortException] 클라이언트 연결 끊김: {}", exception.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception exception) {
         String exName = exception.getClass().getSimpleName();
