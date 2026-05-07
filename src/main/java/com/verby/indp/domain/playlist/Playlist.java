@@ -23,6 +23,7 @@ public class Playlist extends BaseTimeEntity {
     private Long playlistId;
 
     @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("playOrder ASC")
     private List<PlaylistSong> songs = new ArrayList<>();
 
     @Setter
