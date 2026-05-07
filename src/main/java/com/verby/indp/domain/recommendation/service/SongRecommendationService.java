@@ -2,29 +2,31 @@ package com.verby.indp.domain.recommendation.service;
 
 import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.common.exception.NotFoundException;
-import com.verby.indp.domain.policy.PricePolicyService;
-import com.verby.indp.domain.plan.Plan;
-import com.verby.indp.domain.store.StoreBusinessHour;
-import com.verby.indp.domain.subscription.StoreSubscription;
-import com.verby.indp.domain.subscription.SubscriptionStatus;
 import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.payment.PaymentType;
+import com.verby.indp.domain.plan.Plan;
 import com.verby.indp.domain.playlist.PlaylistSong;
+import com.verby.indp.domain.playlist.repository.PlaylistSongRepository;
 import com.verby.indp.domain.playlist.service.PlaylistService;
 import com.verby.indp.domain.playlist.service.StoreSseService;
+import com.verby.indp.domain.policy.PricePolicyService;
 import com.verby.indp.domain.recommendation.SongRecommendation;
 import com.verby.indp.domain.recommendation.dto.response.FindStoreRecommendationsResponse;
 import com.verby.indp.domain.recommendation.dto.response.RegisterSongRecommendationResponse;
 import com.verby.indp.domain.recommendation.repository.SongRecommendationRepository;
 import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.store.StoreBusinessHour;
 import com.verby.indp.domain.store.service.StoreService;
+import com.verby.indp.domain.subscription.StoreSubscription;
+import com.verby.indp.domain.subscription.SubscriptionStatus;
 import com.verby.indp.global.slack.SlackNotificationService;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +41,7 @@ public class SongRecommendationService {
     private final StoreService storeService;
     private final PricePolicyService pricePolicyService;
     private final PlaylistService playlistService;
+    private final PlaylistSongRepository playlistSongRepository;
     private final StoreSseService storeSseService;
     private final SlackNotificationService slackNotificationService;
     private final Clock clock;
@@ -69,6 +72,7 @@ public class SongRecommendationService {
         recommendation.updateStatus(SongRecommendation.RecommendationStatus.RECOMMENDED);
         PlaylistSong playlistSong = playlistService.addRecommendedSong(recommendation.getStore(),
             recommendation);
+        playlistSongRepository.flush();
 
         storeSseService.sendSongRecommended(recommendation, playlistSong);
         slackNotificationService.handleMusicRecommendation(recommendation);

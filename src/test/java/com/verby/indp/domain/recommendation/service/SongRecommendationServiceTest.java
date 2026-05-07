@@ -5,6 +5,7 @@ import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.plan.Plan;
 import com.verby.indp.domain.playlist.PlaylistSong;
+import com.verby.indp.domain.playlist.repository.PlaylistSongRepository;
 import com.verby.indp.domain.playlist.service.PlaylistService;
 import com.verby.indp.domain.playlist.service.StoreSseService;
 import com.verby.indp.domain.policy.PricePolicy;
@@ -56,6 +57,9 @@ class SongRecommendationServiceTest {
 
     @Mock
     private PlaylistService playlistService;
+
+    @Mock
+    private PlaylistSongRepository playlistSongRepository;
 
     @Mock
     private StoreSseService storeSseService;
