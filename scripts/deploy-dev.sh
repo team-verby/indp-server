@@ -1,7 +1,8 @@
 DEPLOY_PATH=/home/ubuntu/app/deploy
-APP_LOG=$DEPLOY_PATH/application.log
-ERROR_LOG=$DEPLOY_PATH/deploy-error.log
-DEPLOY_LOG=$DEPLOY_PATH/deploy.log
+LOG_PATH=$DEPLOY_PATH/prod
+APP_LOG=$LOG_PATH/application.log
+ERROR_LOG=$LOG_PATH/deploy-error.log
+DEPLOY_LOG=$LOG_PATH/deploy.log
 
 echo "[ $(date +%c) ] dev 배포 시작" >> $DEPLOY_LOG
 

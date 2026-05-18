@@ -2,11 +2,12 @@ PROJECT_ROOT=/home/ubuntu/app
 PROJECT_NAME=indp-server
 
 DEPLOY_PATH=$PROJECT_ROOT/deploy
+LOG_PATH=$DEPLOY_PATH/prod
 SCRIPT_PATH=$PROJECT_ROOT/$PROJECT_NAME/scripts/
 
-APP_LOG=$DEPLOY_PATH/application.log
-ERROR_LOG=$DEPLOY_PATH/deploy-error.log
-DEPLOY_LOG=$DEPLOY_PATH/deploy.log
+APP_LOG=$LOG_PATH/application.log
+ERROR_LOG=$LOG_PATH/deploy-error.log
+DEPLOY_LOG=$LOG_PATH/deploy.log
 
 echo "[ $(date +%c) ] 배포 시작" >> $DEPLOY_LOG
 
