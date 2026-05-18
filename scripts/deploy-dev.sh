@@ -1,5 +1,5 @@
 DEPLOY_PATH=/home/ubuntu/app/deploy
-LOG_PATH=$DEPLOY_PATH/prod
+LOG_PATH=$DEPLOY_PATH/dev
 APP_LOG=$LOG_PATH/application.log
 ERROR_LOG=$LOG_PATH/deploy-error.log
 DEPLOY_LOG=$LOG_PATH/deploy.log
