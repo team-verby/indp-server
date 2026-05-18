@@ -1,11 +1,9 @@
 PROJECT_ROOT=/home/ubuntu/app
 
-SERVER_URL=api.verby.co.kr
-
 DEPLOY_PATH=$PROJECT_ROOT/deploy
 DEPLOY_LOG=$DEPLOY_PATH/deploy.log
 
-CURRENT_PROFILE=$(curl -s https://$SERVER_URL/profile)
+CURRENT_PROFILE=$(curl -s http://127.0.0.1/profile)
 echo "[ $(date +%c) ] 현재 구동 중인 Profile: $CURRENT_PROFILE" >> $DEPLOY_LOG
 if [ $CURRENT_PROFILE = "prod1" ]
 then
@@ -32,5 +30,5 @@ echo "[ $(date +%c) ] Nginx Reload" >> $DEPLOY_LOG
 sudo service nginx reload
 sleep 10
 
-CURRENT_PROFILE=$(curl -s https://$SERVER_URL/profile)
+CURRENT_PROFILE=$(curl -s http://127.0.0.1/profile)
 echo "[ $(date +%c) ] Nginx Current Profile: $CURRENT_PROFILE" >> $DEPLOY_LOG

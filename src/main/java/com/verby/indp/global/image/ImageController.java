@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/admin/images")
+@RequestMapping("/api/images")
 public class ImageController {
 
     private final ImageService imageService;

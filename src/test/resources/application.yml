@@ -3,6 +3,9 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     url: jdbc:h2:mem:testdb
+  sql:
+    init:
+      mode: never
   jpa:
     properties:
       hibernate:
@@ -18,6 +21,10 @@ spring:
 jwt:
   secret: SECRET_KEY
 
+slack:
+  webhook:
+    uri: https://mock-slack-webhook
+
 cloud:
   aws:
     credentials:
@@ -27,3 +34,8 @@ cloud:
       static: ap-northeast-2
     s3:
       bucket: bucket
+
+payment:
+  toss:
+    secret-key: tossSecretKey
+    confirm-url: tossConfirmUrl

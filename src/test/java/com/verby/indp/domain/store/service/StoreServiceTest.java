@@ -1,35 +1,17 @@
 package com.verby.indp.domain.store.service;
 
-
-import static com.verby.indp.domain.region.fixture.RegionFixture.region;
-import static com.verby.indp.domain.song.fixture.SongFormFixture.songForm;
-import static com.verby.indp.domain.store.fixture.StoreFixture.store;
-import static com.verby.indp.domain.store.fixture.StoreFixture.storesWithId;
-import static com.verby.indp.domain.theme.fixture.ThemeFixture.theme;
+import static com.verby.indp.fixture.StoreFixture.store;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
 
 import com.verby.indp.domain.common.exception.NotFoundException;
-import com.verby.indp.domain.region.Region;
-import com.verby.indp.domain.region.repository.RegionRepository;
-import com.verby.indp.domain.song.SongForm;
-import com.verby.indp.domain.song.repository.SongFormRepository;
-import com.verby.indp.domain.song.vo.SongFormName;
 import com.verby.indp.domain.store.Store;
-import com.verby.indp.domain.store.dto.request.AddStoreByAdminRequest;
-import com.verby.indp.domain.store.dto.response.FindSimpleStoresResponse;
-import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
-import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse;
+import com.verby.indp.domain.store.dto.response.FindStoreSummaryResponse;
 import com.verby.indp.domain.store.dto.response.FindStoresResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
-import com.verby.indp.domain.theme.Theme;
-import com.verby.indp.domain.theme.repository.ThemeRepository;
-import com.verby.indp.domain.theme.vo.ThemeName;
-import java.util.ArrayList;
+import com.verby.indp.domain.subscription.SubscriptionStatus;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -42,8 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class StoreServiceTest {
@@ -54,194 +34,52 @@ class StoreServiceTest {
     @Mock
     private StoreRepository storeRepository;
 
-    @Mock
-    private ThemeRepository themeRepository;
-
-    @Mock
-    private SongFormRepository songFormRepository;
-
-    @Mock
-    private RegionRepository regionRepository;
-
     @Nested
-    @DisplayName("findSimpleStores 메소드 실행 시")
-    class FindSimpleStores {
-
-        @Test
-        @DisplayName("성공: size 만큼 간단한 매장 정보를 조회 한다.")
-        void findSimpleStores() {
-            // given
-            Region 서울 = region("서울");
-
-            int count = 20;
-            int page = 0;
-            int size = 10;
-
-            List<Store> stores = storesWithId(서울, List.of(), List.of(), count);
-            Pageable pageable = PageRequest.of(page, size);
-            Page<Store> pageStores = new PageImpl<>(stores.subList(page, size), pageable, count);
-
-            FindSimpleStoresResponse expected = FindSimpleStoresResponse.from(pageStores);
-
-            when(storeRepository.findAllByOrderByStoreIdAsc(pageable)).thenReturn(pageStores);
-
-            // when
-            FindSimpleStoresResponse result = storeService.findSimpleStores(pageable);
-
-            // then
-            assertThat(result).isEqualTo(expected);
-            assertThat(result.pageInfo().hasNext()).isTrue();
-            assertThat(result.pageInfo().totalElements()).isEqualTo(count);
-            assertThat(result.stores()).hasSize(size);
-
-        }
-    }
-
-    @Nested
-    @DisplayName("findStores 메소드 실행 시")
+    @DisplayName("findStores 메서드 실행 시")
     class FindStores {
 
         @Test
-        @DisplayName("성공: size 만큼 특정 지역의 매장 정보를 조회 한다.")
-        void findStoresOfRegion() {
-            // given
-            Region 서울  = region("서울");
-            int seoulCount = 5;
-
-            int page = 0;
-            int size = 10;
-
-            List<Store> seoulStores = storesWithId(List.of(), List.of(), seoulCount, 서울);
-            Pageable pageable = PageRequest.of(page, size);
-            Page<Store> pageStores = new PageImpl<>(
-                seoulStores.subList(page, Math.min(size, seoulCount)), pageable, seoulCount);
-
-            FindStoresResponse expected = FindStoresResponse.from(pageStores);
-
-            when(regionRepository.findByName(any())).thenReturn(Optional.of(서울));
-            when(storeRepository.findAllByRegionOrderByStoreIdAsc(pageable, 서울)).thenReturn(
-                pageStores);
-
-            // when
-            FindStoresResponse result = storeService.findStores(pageable, 서울.getRegion());
-
-            // then
-            assertThat(result).isEqualTo(expected);
-            assertThat(result.pageInfo().hasNext()).isFalse();
-            assertThat(result.pageInfo().totalElements()).isEqualTo(seoulCount);
-            assertThat(result.stores()).hasSize(Math.min(size, seoulCount));
-
-        }
-
-        @Test
-        @DisplayName("성공: size 만큼 전체 지역의 매장 정보를 조회 한다.")
+        @DisplayName("성공 : 활성 구독 매장 목록을 반환한다.")
         void findStores() {
             // given
-            Region 서울  = region("서울");
-            Region 경기  = region("경기");
-
-            String nullRegion = null;
-            int seoulCount = 5;
-            int gyeonggiCount = 15;
-
-            int page = 0;
-            int size = 10;
-
-            List<Store> seoulStores = storesWithId(List.of(), List.of(), seoulCount, 서울);
-            List<Store> gyeonggiStores = storesWithId(List.of(), List.of(), gyeonggiCount, 경기);
-            List<Store> allStores = new ArrayList<>();
-            allStores.addAll(seoulStores);
-            allStores.addAll(gyeonggiStores);
-
-            Pageable pageable = PageRequest.of(page, size);
-            Page<Store> pageStores = new PageImpl<>(
-                allStores.subList(page, size), pageable, seoulCount + gyeonggiCount);
-
-            FindStoresResponse expected = FindStoresResponse.from(pageStores);
-
-            when(storeRepository.findAllByOrderByStoreIdAsc(pageable)).thenReturn(
-                pageStores);
+            Page<Store> page = new PageImpl<>(List.of());
+            given(storeRepository.findAllBySubscriptionStatus(any(SubscriptionStatus.class), any()))
+                .willReturn(page);
 
             // when
-            FindStoresResponse result = storeService.findStores(pageable, nullRegion);
+            FindStoresResponse result = storeService.findStores(PageRequest.of(0, 10));
 
             // then
-            assertThat(result).isEqualTo(expected);
-            assertThat(result.pageInfo().hasNext()).isTrue();
-            assertThat(result.pageInfo().totalElements()).isEqualTo(seoulCount + gyeonggiCount);
-            assertThat(result.stores()).hasSize(size);
-
+            assertThat(result).isNotNull();
         }
     }
 
     @Nested
-    @DisplayName("findStoresByAdmin 메소드 실행 시")
-    class FindStoresByAdmin {
+    @DisplayName("findStoreSummary 메서드 실행 시")
+    class FindStoreSummary {
 
         @Test
-        @DisplayName("성공: size 만큼 매장 정보를 조회 한다.")
-        void findStoresOfRegion() {
+        @DisplayName("성공 : 매장 요약 정보를 반환한다.")
+        void findStoreSummary() {
             // given
-            Region 서울  = region("서울");
-
-            int page = 0;
-            int size = 10;
-            int count = 1;
-
-            List<Store> stores = storesWithId(List.of(theme()), List.of(songForm()), count, 서울);
-            Pageable pageable = PageRequest.of(page, size);
-            Page<Store> pageStores = new PageImpl<>(stores, pageable, count);
-
-            FindStoresByAdminResponse expected = FindStoresByAdminResponse.from(pageStores);
-
-            when(storeRepository.findAllByOrderByStoreIdAsc(pageable)).thenReturn(
-                pageStores);
+            Store mockStore = store();
+            given(storeRepository.findById(1L)).willReturn(Optional.of(mockStore));
 
             // when
-            FindStoresByAdminResponse result = storeService.findStoresByAdmin(pageable);
+            FindStoreSummaryResponse result = storeService.findStoreSummary(1L);
 
             // then
-            assertThat(result).isEqualTo(expected);
-            assertThat(result.pageInfo().hasNext()).isFalse();
-            assertThat(result.pageInfo().totalElements()).isEqualTo(count);
-            assertThat(result.stores()).hasSize(count);
-        }
-
-    }
-
-    @Nested
-    @DisplayName("findStoreByAdmin 메소드 실행 시")
-    class FindStoreByAdmin {
-
-        @Test
-        @DisplayName("성공 : storeId 에 해당하는 매장 정보를 조회한다.")
-        void findStoreById() {
-            // given
-            Region 서울  = region("서울");
-            long storeId = 1;
-            Store store = store(서울);
-
-            FindStoreByAdminResponse expected = FindStoreByAdminResponse.from(store);
-
-            when(storeRepository.findById(storeId)).thenReturn(Optional.of(store));
-
-            // when
-            FindStoreByAdminResponse result = storeService.findStoreByAdmin(storeId);
-
-            // then
-            assertThat(result).isEqualTo(expected);
+            assertThat(result).isNotNull();
         }
 
         @Test
-        @DisplayName("예외(NotFoundException) : storeId 에 해당하는 매장이 없을 경우 예외가 발생한다.")
-        void exceptionWhenStoreNotFound() {
+        @DisplayName("실패 : 존재하지 않는 매장이면 예외를 던진다.")
+        void findStoreSummaryWithNotExist() {
             // given
-            long storeId = 1;
-
-            when(storeRepository.findById(storeId)).thenReturn(Optional.empty());
+            given(storeRepository.findById(999L)).willReturn(Optional.empty());
 
             // when
-            Exception exception = catchException(() -> storeService.findStoreByAdmin(storeId));
+            Exception exception = catchException(() -> storeService.findStoreSummary(999L));
 
             // then
             assertThat(exception).isInstanceOf(NotFoundException.class);
@@ -249,96 +87,66 @@ class StoreServiceTest {
     }
 
     @Nested
-    @DisplayName("deleteStoreByAdmin 메소드 실행 시")
-    class DeleteStoreByAdmin {
+    @DisplayName("getStoreById 메서드 실행 시")
+    class GetStoreById {
 
         @Test
-        @DisplayName("성공 : storeId 에 해당하는 매장 정보를 삭제한다.")
-        void deleteStoreById() {
+        @DisplayName("성공 : 매장을 반환한다.")
+        void getStoreById() {
             // given
-            long storeId = 1;
+            Store store = store();
+            given(storeRepository.findById(1L)).willReturn(Optional.of(store));
 
             // when
-            storeService.deleteStoreByAdmin(storeId);
+            Store result = storeService.getStoreById(1L);
 
             // then
-            verify(storeRepository, times(1)).deleteById(storeId);
+            assertThat(result).isEqualTo(store);
+        }
+
+        @Test
+        @DisplayName("실패 : 존재하지 않는 매장이면 예외를 던진다.")
+        void getStoreByIdWithNotExist() {
+            // given
+            given(storeRepository.findById(999L)).willReturn(Optional.empty());
+
+            // when
+            Exception exception = catchException(() -> storeService.getStoreById(999L));
+
+            // then
+            assertThat(exception).isInstanceOf(NotFoundException.class);
         }
     }
 
     @Nested
-    @DisplayName("addStore 메소드 실행 시")
-    class AddStores {
+    @DisplayName("getStoreByName 메서드 실행 시")
+    class GetStoreByName {
 
         @Test
-        @DisplayName("성공 : 새로운 매장 정보가 저징된다.")
-        void saveStore() {
+        @DisplayName("성공 : 매장명으로 매장을 반환한다.")
+        void getStoreByName() {
             // given
-            Region 서울 = region("서울");
-            Store store = store(서울);
-            ReflectionTestUtils.setField(store, "storeId", 1L);
-            AddStoreByAdminRequest request = new AddStoreByAdminRequest(
-                store.getName(), store.getAddress(), store.getRegion(),
-                store.getImage().get(0), store.getThemes(), store.getSongForms());
-
-            when(storeRepository.save(any(Store.class))).thenReturn(store);
+            Store store = store();
+            given(storeRepository.findByName("카페공명")).willReturn(Optional.of(store));
 
             // when
-            long result = storeService.addStore(request);
+            Store result = storeService.getStoreByName("카페공명");
 
             // then
-            assertThat(result).isEqualTo(store.getStoreId());
+            assertThat(result).isEqualTo(store);
         }
 
         @Test
-        @DisplayName("성공 : 새로운 테마와 매장 정보가 저징된다.")
-        void saveStoreWithNewTheme() {
+        @DisplayName("실패 : 존재하지 않는 매장명이면 예외를 던진다.")
+        void getStoreByNameWithNotExist() {
             // given
-            Region 서울 = region("서울");
-            ThemeName newThemeName = new ThemeName("newThemeName");
-            Theme newTheme = new Theme(newThemeName.getName());
-            Store store = store(서울, List.of(newTheme), List.of());
-            ReflectionTestUtils.setField(store, "storeId", 1L);
-
-            AddStoreByAdminRequest request = new AddStoreByAdminRequest(
-                store.getName(), store.getAddress(), store.getRegion(),
-                store.getImage().get(0), store.getThemes(), store.getSongForms());
-
-            when(themeRepository.findByName(any(ThemeName.class))).thenReturn(Optional.empty());
-            when(storeRepository.save(any(Store.class))).thenReturn(store);
+            given(storeRepository.findByName("없는매장")).willReturn(Optional.empty());
 
             // when
-            long result = storeService.addStore(request);
+            Exception exception = catchException(() -> storeService.getStoreByName("없는매장"));
 
             // then
-            assertThat(result).isEqualTo(store.getStoreId());
-            verify(themeRepository, times(1)).save(newTheme);
-        }
-
-        @Test
-        @DisplayName("성공 : 새로운 곡 구성과 매장 정보가 저징된다.")
-        void saveStoreWithSongForm() {
-            // given
-            Region 서울 = region("서울");
-            SongFormName newSongFormName = new SongFormName("newSongFormName");
-            SongForm newSongForm = new SongForm(newSongFormName.getName());
-            Store store = store(서울, List.of(), List.of(newSongForm));
-            ReflectionTestUtils.setField(store, "storeId", 1L);
-
-            AddStoreByAdminRequest request = new AddStoreByAdminRequest(
-                store.getName(), store.getAddress(), store.getRegion(),
-                store.getImage().get(0), store.getThemes(), store.getSongForms());
-
-            when(songFormRepository.findByName(any(SongFormName.class))).thenReturn(Optional.empty());
-            when(storeRepository.save(any(Store.class))).thenReturn(store);
-
-            // when
-            long result = storeService.addStore(request);
-
-            // then
-            assertThat(result).isEqualTo(store.getStoreId());
-            verify(songFormRepository, times(1)).save(newSongForm);
+            assertThat(exception).isInstanceOf(NotFoundException.class);
         }
     }
-
 }

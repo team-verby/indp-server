@@ -1,363 +1,224 @@
 package com.verby.indp.domain.store.controller;
 
-import static com.verby.indp.domain.auth.fixture.AdminFixture.admin;
-import static com.verby.indp.domain.region.fixture.RegionFixture.region;
-import static com.verby.indp.domain.store.fixture.StoreFixture.store;
-import static com.verby.indp.domain.store.fixture.StoreFixture.storesWithId;
+import com.verby.indp.domain.BaseControllerTest;
+import com.verby.indp.domain.store.MusicGenre;
+import com.verby.indp.domain.store.PlayMethod;
+import com.verby.indp.domain.store.dto.request.ApplyStoreRequest;
+import com.verby.indp.domain.store.dto.request.BusinessHour;
+import com.verby.indp.domain.store.dto.request.GenreItem;
+import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.store.dto.response.AddFirstSubscriptionResponse;
+import com.verby.indp.domain.store.dto.response.FindStoreSummaryResponse;
+import com.verby.indp.domain.store.dto.response.FindStoresResponse;
+import com.verby.indp.domain.store.vo.Genre;
+import com.verby.indp.domain.store.vo.PlaylistType;
+import com.verby.indp.domain.store.vo.Tempo;
+import com.verby.indp.domain.store.vo.Vibe;
+import com.verby.indp.domain.subscription.StoreSubscription;
+import com.verby.indp.fixture.OwnerFixture;
+import com.verby.indp.fixture.StoreFixture;
+import com.verby.indp.fixture.StoreSubscriptionFixture;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.ResultActions;
+
+import java.time.LocalTime;
+import java.util.List;
+
+import static com.verby.indp.fixture.OwnerFixture.owner;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
-import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
-import static org.springframework.restdocs.payload.JsonFieldType.BOOLEAN;
-import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
-import static org.springframework.restdocs.payload.JsonFieldType.OBJECT;
-import static org.springframework.restdocs.payload.JsonFieldType.STRING;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.verby.indp.domain.BaseControllerTest;
-import com.verby.indp.domain.region.Region;
-import com.verby.indp.domain.store.Store;
-import com.verby.indp.domain.store.dto.request.AddStoreByAdminRequest;
-import com.verby.indp.domain.store.dto.request.UpdateStoreByAdminRequest;
-import com.verby.indp.domain.store.dto.response.FindSimpleStoresResponse;
-import com.verby.indp.domain.store.dto.response.FindStoreByAdminResponse;
-import com.verby.indp.domain.store.dto.response.FindStoresByAdminResponse;
-import com.verby.indp.domain.store.dto.response.FindStoresResponse;
-import java.util.List;
-import java.util.Optional;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.test.web.servlet.ResultActions;
 
 class StoreControllerTest extends BaseControllerTest {
 
-    @Test
-    @DisplayName("성공: 매장 목록을 조회한다.(간단 정보)")
-    void findSimpleStores() throws Exception {
-        // given
-        int count = 10;
-        int page = 0;
-        int size = 2;
+    @Nested
+    @DisplayName("POST /api/stores/applications 실행 시")
+    class ApplyStore {
 
-        Region 서울 = region("서울");
-        List<Store> stores = storesWithId(서울, List.of(), List.of(), count);
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Store> pageStores = new PageImpl<>(stores.subList(page * size, size), pageable, count);
+        @Test
+        @DisplayName("성공 : 매장을 신청한다.")
+        void applyStore() throws Exception {
+            // given
+            Store store = StoreFixture.storeWithOwner(OwnerFixture.owner());
+            StoreSubscription subscription = StoreSubscriptionFixture.activeSubscription();
+            subscription.setStore(store);
+            AddFirstSubscriptionResponse response = AddFirstSubscriptionResponse.from(subscription);
+            given(applyStoreService.applyStore(any())).willReturn(response);
 
-        FindSimpleStoresResponse response = FindSimpleStoresResponse.from(pageStores);
-
-        when(storeService.findSimpleStores(pageable)).thenReturn(response);
-
-        // when
-        ResultActions resultActions = mockMvc.perform(
-            get("/api/main/stores")
-                .param("page", String.valueOf(page))
-                .param("size", String.valueOf(size))
-        );
-
-        // then
-        resultActions.andExpect(status().isOk())
-            .andDo(
-                restDocs.document(
-                    queryParameters(
-                        parameterWithName("page").description("페이지 번호").optional(),
-                        parameterWithName("size").description("페이지 사이즈").optional()
-                    ),
-                    responseFields(
-                        fieldWithPath("pageInfo").type(OBJECT).description("페이지 정보"),
-                        fieldWithPath("pageInfo.totalElements").type(NUMBER).description("총 요소 개수"),
-                        fieldWithPath("pageInfo.hasNext").type(BOOLEAN).description("다음 페이지 여부"),
-                        fieldWithPath("stores").type(ARRAY).description("매장 목록"),
-                        fieldWithPath("stores[].id").type(NUMBER).description("매장 ID"),
-                        fieldWithPath("stores[].name").type(STRING).description("매장 이름"),
-                        fieldWithPath("stores[].address").type(STRING).description("매장 주소"),
-                        fieldWithPath("stores[].imageUrl").type(STRING).description("매장 이미지 URL")
-                    )
-                )
-            );
-    }
-
-    @Test
-    @DisplayName("성공: 지역별 매장 목록을 조회한다.")
-    void findStores() throws Exception {
-        // given
-        Region 서울  = region("서울");
-
-        int count = 10;
-        int page = 0;
-        int size = 2;
-
-        List<Store> stores = storesWithId(List.of(), List.of(), count, 서울);
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Store> pageStores = new PageImpl<>(stores.subList(page * size, size), pageable, count);
-
-        FindStoresResponse response = FindStoresResponse.from(pageStores);
-
-        when(storeService.findStores(pageable, 서울.getRegion())).thenReturn(response);
-
-        // when
-        ResultActions resultActions = mockMvc.perform(
-            get("/api/stores")
-                .param("page", String.valueOf(page))
-                .param("size", String.valueOf(size))
-                .param("region", 서울.getRegion()
-                )
-        );
-
-        // then
-        resultActions.andExpect(status().isOk())
-            .andDo(
-                restDocs.document(
-                    queryParameters(
-                        parameterWithName("page").description("페이지 번호").optional(),
-                        parameterWithName("size").description("페이지 사이즈").optional(),
-                        parameterWithName("region").description("지역").optional()
-                    ),
-                    responseFields(
-                        fieldWithPath("pageInfo").type(OBJECT).description("페이지 정보"),
-                        fieldWithPath("pageInfo.totalElements").type(NUMBER).description("총 요소 개수"),
-                        fieldWithPath("pageInfo.hasNext").type(BOOLEAN).description("다음 페이지 여부"),
-                        fieldWithPath("stores").type(ARRAY).description("매장 목록"),
-                        fieldWithPath("stores[].id").type(NUMBER).description("매장 ID"),
-                        fieldWithPath("stores[].name").type(STRING).description("매장 이름"),
-                        fieldWithPath("stores[].address").type(STRING).description("매장 주소"),
-                        fieldWithPath("stores[].imageUrl").type(STRING).description("매장 이미지 URL"),
-                        fieldWithPath("stores[].themes[]").type(ARRAY).description("테마 목록"),
-                        fieldWithPath("stores[].songForms[]").type(ARRAY).description("곡 구성 목록")
-                    )
-                )
-            );
-    }
-
-    @Test
-    @DisplayName("성공 : (관리자) 매장 목록을 조회한다.")
-    void findStoresByAdmin() throws Exception {
-        // given
-        com.verby.indp.domain.region.Region 서울  = region("서울");
-
-        int count = 10;
-        int page = 0;
-        int size = 2;
-
-        List<Store> stores = storesWithId(List.of(), List.of(), count, 서울);
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Store> pageStores = new PageImpl<>(stores.subList(page * size, size), pageable, count);
-
-        FindStoresByAdminResponse response = FindStoresByAdminResponse.from(pageStores);
-
-        when(adminRepository.findById(any())).thenReturn(Optional.of(admin()));
-        when(storeService.findStoresByAdmin(pageable)).thenReturn(response);
-
-        // when
-        ResultActions resultActions = mockMvc.perform(
-            get("/api/admin/stores")
-                .param("page", String.valueOf(page))
-                .param("size", String.valueOf(size))
-                .header("Authorization", "Bearer " + accessToken)
-        );
-
-        // then
-        resultActions.andExpect(status().isOk())
-            .andDo(
-                restDocs.document(
-                    requestHeaders(
-                        headerWithName(AUTHORIZATION).description("액세스 토큰")
-                    ),
-                    queryParameters(
-                        parameterWithName("page").description("페이지 번호").optional(),
-                        parameterWithName("size").description("페이지 사이즈").optional()
-                    ),
-                    responseFields(
-                        fieldWithPath("pageInfo").type(OBJECT).description("페이지 정보"),
-                        fieldWithPath("pageInfo.totalElements").type(NUMBER).description("총 요소 개수"),
-                        fieldWithPath("pageInfo.hasNext").type(BOOLEAN).description("다음 페이지 여부"),
-                        fieldWithPath("stores").type(ARRAY).description("매장 목록"),
-                        fieldWithPath("stores[].id").type(NUMBER).description("매장 ID"),
-                        fieldWithPath("stores[].name").type(STRING).description("매장 이름"),
-                        fieldWithPath("stores[].address").type(STRING).description("매장 주소"),
-                        fieldWithPath("stores[].region").type(STRING).description("매장 지역"),
-                        fieldWithPath("stores[].imageUrl").type(STRING).description("매장 이미지 URL"),
-                        fieldWithPath("stores[].themes[]").type(ARRAY).description("테마 목록"),
-                        fieldWithPath("stores[].songForms[]").type(ARRAY).description("곡 구성 목록")
-                    )
-                )
-            );
-    }
-
-    @Test
-    @DisplayName("성공 : (관리자) 매장을 조회한다.")
-    void findStoreByAdmin() throws Exception {
-        // given
-        Region 서울 = region("서울");
-        Store store = store(서울);
-        ReflectionTestUtils.setField(store, "storeId", 1L);
-        FindStoreByAdminResponse response = FindStoreByAdminResponse.from(store);
-
-        when(adminRepository.findById(any())).thenReturn(Optional.of(admin()));
-        when(storeService.findStoreByAdmin(store.getStoreId())).thenReturn(response);
-
-        // when
-        ResultActions resultActions = mockMvc.perform(
-            get("/api/admin/stores/{storeId}", store.getStoreId())
-                .header(AUTHORIZATION, "Bearer " + accessToken)
-        );
-
-        // then
-        resultActions.andExpect(status().isOk())
-            .andDo(
-                restDocs.document(
-                    requestHeaders(
-                        headerWithName(AUTHORIZATION).description("액세스 토큰")
-                    ),
-                    pathParameters(
-                        parameterWithName("storeId").description("매장 ID")
-                    ),
-                    responseFields(
-                        fieldWithPath("name").type(STRING).description("매장 이름"),
-                        fieldWithPath("address").type(STRING).description("매장 주소"),
-                        fieldWithPath("imageUrl").type(STRING).description("매장 이미지 URL"),
-                        fieldWithPath("region").type(STRING).description("매장 지역"),
-                        fieldWithPath("themes[]").type(ARRAY).description("테마 목록"),
-                        fieldWithPath("songForms[]").type(ARRAY).description("곡 구성 목록")
-                    )
-                )
-            );
-    }
-
-    @Test
-    @DisplayName("성공 : (관리자) 매장을 삭제한다.")
-    void removeStoreByAdmin() throws Exception {
-        // given
-        Region 서울 = region("서울");
-        Store store = store(서울);
-        ReflectionTestUtils.setField(store, "storeId", 1L);
-
-        when(adminRepository.findById(any())).thenReturn(Optional.of(admin()));
-
-        // when
-        ResultActions resultActions = mockMvc.perform(
-            delete("/api/admin/stores/{storeId}", store.getStoreId())
-                .header(AUTHORIZATION, "Bearer " + accessToken)
-        );
-
-        // then
-        resultActions.andExpect(status().isOk())
-            .andDo(
-                restDocs.document(
-                    requestHeaders(
-                        headerWithName(AUTHORIZATION).description("액세스 토큰")
-                    ),
-                    pathParameters(
-                        parameterWithName("storeId").description("매장 ID")
-                    )
-                )
+            ApplyStoreRequest request = new ApplyStoreRequest(
+                "홍길동",
+                "010-1234-5678",
+                1L,
+                12,
+                "카페 공명 홍대점",
+                "카페",
+                "서울 마포구 와우산로17길 11-8",
+                List.of(new BusinessHour(1, LocalTime.of(10, 0), LocalTime.of(22, 0), false)),
+                List.of("https://example.com/photo.jpg"),
+                "유튜브 뮤직",
+                "인디, 어쿠스틱",
+                "20대 중반 ~ 30대 초반",
+                List.of(PlayMethod.Method.BLUETOOTH),
+                List.of(Vibe.CALM, Vibe.NATURAL),
+                3,
+                PlaylistType.CONSISTENT_MOOD,
+                List.of(),
+                Tempo.CALM,
+                List.of(new GenreItem(Genre.INDIE, MusicGenre.PreferenceType.LIKE)),
+                "너무 빠른 비트 제외",
+                "아늑하고 조용한"
             );
 
-    }
-
-    @Test
-    @DisplayName("성공 : (관리자) 매장을 추가한다.")
-    void addStoreByAdmin() throws Exception {
-        // given
-        Region 서울 = region("서울");
-        Store store = store(서울);
-        AddStoreByAdminRequest request = new AddStoreByAdminRequest(store.getName(),
-            store.getAddress(), store.getRegion(),
-            store.getImage().get(0), store.getThemes(), store.getSongForms());
-
-        when(adminRepository.findById(any())).thenReturn(Optional.of(admin()));
-
-        // when
-        ResultActions resultActions = mockMvc.perform(
-            post("/api/admin/stores")
-                .header(AUTHORIZATION, "Bearer " + accessToken)
+            // when
+            ResultActions resultActions = mockMvc.perform(post("/api/stores/applications")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
-        );
+                .content(objectMapper.writeValueAsString(request)));
 
-        when(adminRepository.findById(any())).thenReturn(Optional.of(admin()));
-
-        // then
-        resultActions.andExpect(status().isCreated())
-            .andDo(
-                restDocs.document(
-                    requestHeaders(
-                        headerWithName(AUTHORIZATION).description("액세스 토큰")
-                    ),
-                    requestFields(
-                        fieldWithPath("name").type(STRING).description("매장 이름"),
-                        fieldWithPath("address").type(STRING).description("매장 주소"),
-                        fieldWithPath("imageUrl").type(STRING).description("매장 이미지 URL"),
-                        fieldWithPath("region").type(STRING).description("매장 지역"),
-                        fieldWithPath("themes[]").type(ARRAY).description("테마 목록"),
-                        fieldWithPath("songForms[]").type(ARRAY).description("곡 구성 목록")
-                    ),
-                    responseHeaders(
-                        headerWithName("Location").description("생성된 리소스 접근 API")
+            // then
+            resultActions.andExpect(status().isCreated())
+                .andDo(
+                    restDocs.document(
+                        requestFields(
+                            fieldWithPath("applicantName").type(STRING).description("신청자 이름"),
+                            fieldWithPath("applicantPhone").type(STRING).description("신청자 연락처"),
+                            fieldWithPath("planId").type(NUMBER).description("구독할 플랜 ID"),
+                            fieldWithPath("usagePeriod").type(NUMBER).description("구독 개월 수"),
+                            fieldWithPath("name").type(STRING).description("매장명 (중복 불가)"),
+                            fieldWithPath("industry").type(STRING).description("업종"),
+                            fieldWithPath("address").type(STRING).description("매장 주소"),
+                            fieldWithPath("customerAgeGroup").type(STRING).description("주요 고객 연령대"),
+                            fieldWithPath("lighting").type(NUMBER).description("조명 밝기 (1~5)"),
+                            fieldWithPath("platform").type(STRING).description("음악 재생 플랫폼"),
+                            fieldWithPath("playedMusic").type(STRING).description("주로 트는 음악 설명"),
+                            fieldWithPath("rejectedSongNote").type(STRING).description("제외 음악 메모"),
+                            fieldWithPath("mood").type(STRING).description("매장 분위기 묘사"),
+                            fieldWithPath("playlistType").type(STRING)
+                                .description("플레이리스트 유형 +\n`CONSISTENT_MOOD`, `TIME_BASED`, `MUSIC_RECOMMENDED`"),
+                            fieldWithPath("musicTempo").type(STRING)
+                                .description("음악 템포 +\n`SLOW`, `CALM`, `NORMAL`, `LIVELY`, `UPBEAT`"),
+                            fieldWithPath("playMethods").type(ARRAY)
+                                .description("재생 방식 +\n`BLUETOOTH`, `WIRED`, `OTHER`"),
+                            fieldWithPath("vibes").type(ARRAY)
+                                .description("매장 분위기 +\n`CALM`, `MODERN`, `ELEGANT`, `DARK`, `NATURAL`, `OTHER`"),
+                            fieldWithPath("businessHours").type(ARRAY).description("영업시간 목록"),
+                            fieldWithPath("businessHours[].dayOfWeek").type(NUMBER)
+                                .description("요일 (1=월 ~ 7=일)"),
+                            fieldWithPath("businessHours[].openTime").type(STRING)
+                                .description("영업 시작 시간"),
+                            fieldWithPath("businessHours[].closeTime").type(STRING)
+                                .description("영업 종료 시간"),
+                            fieldWithPath("businessHours[].isClosed").type(BOOLEAN)
+                                .description("휴무 여부"),
+                            fieldWithPath("timePreferences").type(ARRAY)
+                                .description("시간대별 무드 목록"),
+                            fieldWithPath("preferenceGenres").type(ARRAY).description("선호/차단 장르"),
+                            fieldWithPath("preferenceGenres[].genre").type(STRING)
+                                .description("장르 +\n`BALLAD`, `HIPHOP`, `INDIE`, `ROCK`, `DANCE`, `CLASSIC`, `CHILDREN`"),
+                            fieldWithPath("preferenceGenres[].preferenceType").type(STRING)
+                                .description("선호 유형 +\n`LIKE` (선호), `DISLIKE` (차단)"),
+                            fieldWithPath("photoUrls").type(ARRAY).description("매장 사진 URL 목록")
+                        ),
+                        responseFields(
+                            fieldWithPath("orderId").type(STRING).description("주문 ID"),
+                            fieldWithPath("amount").type(NUMBER).description("결제 금액 (원)"),
+                            fieldWithPath("orderName").type(STRING).description("주문명"),
+                            fieldWithPath("ownerAccount").type(OBJECT).description("오너 계정 정보"),
+                            fieldWithPath("ownerAccount.loginId").type(STRING).description("로그인 ID"),
+                            fieldWithPath("ownerAccount.password").type(STRING).description("비밀번호")
+                        )
                     )
-                )
-            );
+                );
+        }
     }
 
-    @Test
-    @DisplayName("성공 : (관리자) 매장 정보를 수정한다.")
-    void updateStoreByAdmin() throws Exception {
-        // given
-        Region 서울 = region("서울");
-        Store store = store(서울);
-        ReflectionTestUtils.setField(store, "storeId", 1L);
-        UpdateStoreByAdminRequest request = new UpdateStoreByAdminRequest(
-            store.getName(), store.getAddress(), store.getRegion(),
-            store.getImage().get(0), store.getThemes(), store.getSongForms());
+    @Nested
+    @DisplayName("GET /api/stores 실행 시")
+    class FindStores {
 
-        when(adminRepository.findById(any())).thenReturn(Optional.of(admin()));
+        @Test
+        @DisplayName("성공 : 매장 목록을 조회한다.")
+        void findStores() throws Exception {
+            // given
+            FindStoresResponse response = new FindStoresResponse(List.of(), 0, 0);
+            given(storeService.findStores(any())).willReturn(response);
 
-        // when
-        ResultActions resultActions = mockMvc.perform(
-            put("/api/admin/stores/{storeId}", store.getStoreId())
-                .header(AUTHORIZATION, "Bearer " + accessToken)
-                .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
-        );
+            // when
+            ResultActions resultActions = mockMvc.perform(get("/api/stores"));
 
-        // then
-        resultActions.andExpect(status().isOk())
-            .andDo(
-                restDocs.document(
-                    requestHeaders(
-                        headerWithName(AUTHORIZATION).description("액세스 토큰")
-                    ),
-                    pathParameters(
-                        parameterWithName("storeId").description("매장 ID")
-                    ),
-                    requestFields(
-                        fieldWithPath("name").type(STRING).description("매장 이름"),
-                        fieldWithPath("address").type(STRING).description("매장 주소"),
-                        fieldWithPath("imageUrl").type(STRING).description("매장 이미지 URL"),
-                        fieldWithPath("region").type(STRING).description("매장 지역"),
-                        fieldWithPath("themes[]").type(ARRAY).description("테마 목록"),
-                        fieldWithPath("songForms[]").type(ARRAY).description("곡 구성 목록")
+            // then
+            resultActions.andExpect(status().isOk())
+                .andDo(
+                    restDocs.document(
+                        responseFields(
+                            fieldWithPath("stores").type(ARRAY).description("매장 목록"),
+                            fieldWithPath("totalPages").type(NUMBER).description("전체 페이지 수"),
+                            fieldWithPath("totalElements").type(NUMBER).description("전체 매장 수")
+                        )
                     )
-                )
+                );
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /api/stores/{storeId}/summary 실행 시")
+    class FindStoreSummary {
+
+        @Test
+        @DisplayName("성공 : 매장 요약 정보를 조회한다.")
+        void findStoreSummary() throws Exception {
+            // given
+            FindStoreSummaryResponse response = new FindStoreSummaryResponse(
+                "카페 공명 홍대점", "카페", "서울 마포구 와우산로17길 11-8",
+                List.of(new FindStoreSummaryResponse.BusinessHourItem(1, LocalTime.of(10, 0),
+                    LocalTime.of(22, 0), false)),
+                "ACTIVE", "PLAN_A", "photoUrl"
             );
+            given(storeService.findStoreSummary(1L)).willReturn(response);
+
+            // when
+            ResultActions resultActions = mockMvc.perform(
+                get("/api/stores/{storeId}/summary", 1L)
+                    .requestAttr("owner", owner())
+            );
+
+            // then
+            resultActions.andExpect(status().isOk())
+                .andDo(
+                    restDocs.document(
+                        pathParameters(
+                            parameterWithName("storeId").description("매장 ID")
+                        ),
+                        responseFields(
+                            fieldWithPath("name").type(STRING).description("매장명"),
+                            fieldWithPath("industry").type(STRING).description("업종"),
+                            fieldWithPath("address").type(STRING).description("주소"),
+                            fieldWithPath("businessHours").type(ARRAY).description("영업시간 목록"),
+                            fieldWithPath("businessHours[].dayOfWeek").type(NUMBER)
+                                .description("요일 (1=월 ~ 7=일)"),
+                            fieldWithPath("businessHours[].openTime").type(STRING)
+                                .description("영업 시작 시간"),
+                            fieldWithPath("businessHours[].closeTime").type(STRING)
+                                .description("영업 종료 시간"),
+                            fieldWithPath("businessHours[].isClosed").type(BOOLEAN)
+                                .description("휴무 여부"),
+                            fieldWithPath("subscriptionStatus").type(STRING)
+                                .description("구독 상태 +\n`PENDING_PAYMENT`, `PENDING_ACTIVE`, `ACTIVE`, `EXPIRED`"),
+                            fieldWithPath("planType").type(STRING)
+                                .description("플랜 종류 +\n`PLAN_A`, `PLAN_B`"),
+                            fieldWithPath("mainPhotoUrl").type(STRING)
+                                .description("매장 대표 사진 url")
+                        )
+                    )
+                );
+        }
     }
 }

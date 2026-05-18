@@ -20,8 +20,8 @@ public class Admin {
     @Column(name = "admin_id")
     private Long adminId;
 
-    @Column(name = "user_id")
-    private String userId;
+    @Column(name = "login_id")
+    private String loginId;
 
     @Column(name = "password")
     private String password;

@@ -1,0 +1,60 @@
+<configuration>
+
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+  <springProperty name="SLACK_ERROR_WEBHOOK_URI" source="logging.slack.error.webhook.uri"/>
+  <springProperty name="SLACK_BUSINESS_WEBHOOK_URI" source="logging.slack.business.webhook.uri"/>
+
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+      <charset>utf8</charset>
+    </encoder>
+  </appender>
+
+  <!-- ========================= -->
+  <!-- 🔴 ERROR SLACK -->
+  <!-- ========================= -->
+  <appender name="SLACK_ERROR" class="com.github.maricn.logback.SlackAppender">
+    <webhookUri>${SLACK_ERROR_WEBHOOK_URI}</webhookUri>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - %-5level %logger{35} : %msg%n</pattern>
+    </layout>
+    <username>INDP-SERVER-ERROR</username>
+    <iconEmoji>:hammer_and_wrench:</iconEmoji>
+    <colorCoding>true</colorCoding>
+  </appender>
+
+  <appender name="ASYNC_SLACK_ERROR" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="SLACK_ERROR"/>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>ERROR</level>
+    </filter>
+  </appender>
+
+  <!-- ========================= -->
+  <!-- 🟡 BUSINESS SLACK -->
+  <!-- ========================= -->
+  <appender name="SLACK_BUSINESS" class="com.github.maricn.logback.SlackAppender">
+    <webhookUri>${SLACK_BUSINESS_WEBHOOK_URI}</webhookUri>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%msg%n</pattern>
+    </layout>
+    <username>INDP-BUSINESS</username>
+    <iconEmoji>:bell:</iconEmoji>
+  </appender>
+
+  <appender name="ASYNC_SLACK_BUSINESS" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="SLACK_BUSINESS"/>
+  </appender>
+
+  <logger name="com.verby.indp.slack" level="INFO" additivity="false">
+    <appender-ref ref="ASYNC_SLACK_BUSINESS"/>
+  </logger>
+
+  <root level="INFO">
+    <appender-ref ref="ASYNC_SLACK_ERROR"/>
+    <appender-ref ref="CONSOLE"/>
+  </root>
+
+</configuration>

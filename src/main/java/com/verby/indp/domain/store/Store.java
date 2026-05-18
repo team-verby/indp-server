@@ -1,181 +1,229 @@
 package com.verby.indp.domain.store;
 
+import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.common.entity.BaseTimeEntity;
-import com.verby.indp.domain.common.vo.Address;
-import com.verby.indp.domain.region.Region;
-import com.verby.indp.domain.song.SongForm;
-import com.verby.indp.domain.store.vo.StoreName;
-import com.verby.indp.domain.theme.Theme;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import com.verby.indp.domain.common.exception.BadRequestException;
+import com.verby.indp.domain.common.exception.NotFoundException;
+import com.verby.indp.domain.playlist.Playlist;
+import com.verby.indp.domain.store.dto.request.BusinessHour;
+import com.verby.indp.domain.store.vo.Vibe;
+import com.verby.indp.domain.subscription.StoreSubscription;
+import com.verby.indp.domain.subscription.SubscriptionStatus;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
+
 @Entity
-@Table(name = "store")
+@Table(name = "store", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
+@Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class Store extends BaseTimeEntity {
 
     @Id
-    @Getter
-    @Column(name = "store_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "store_id")
     private Long storeId;
 
-    @Embedded
-    private StoreName name;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "store_apply_id")
+    private StoreApply storeApply;
 
-    @Embedded
-    private Address address;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "owner_id")
+    private Owner owner;
 
-    @ManyToOne
-    @JoinColumn(name = "region_id")
-    private Region region;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "playlist_id")
+    private Playlist playlist;
 
-    @OneToMany(mappedBy = "store", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<StoreImage> images = new ArrayList<>();
+    @Column(name = "name")
+    private String name;
 
-    @OneToMany(mappedBy = "store", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<StoreTheme> themes = new ArrayList<>();
+    @Column(name = "industry")
+    private String industry;
 
-    @OneToMany(mappedBy = "store", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<StoreSongForm> songForms = new ArrayList<>();
+    @Column(name = "address")
+    private String address;
 
-    public Store(
-        String name,
-        String address,
-        Region region,
-        List<String> imageUrls,
-        List<Theme> themes,
-        List<SongForm> songForms
-    ) {
-        this.name = new StoreName(name);
-        this.address = new Address(address);
-        this.region = region;
-        this.images = imageUrls.stream()
-            .map(imageUrl -> new StoreImage(this, imageUrl))
-            .toList();
-        this.themes = themes.stream()
-            .map(theme -> new StoreTheme(this, theme))
-            .toList();
-        this.songForms = songForms.stream()
-            .map(songForm -> new StoreSongForm(this, songForm))
+    @Column(name = "customer_age_group")
+    private String customerAgeGroup;
+
+    @Column(name = "lighting")
+    private int lighting;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "store_music_id")
+    private StoreMusic storeMusic;
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StoreVibe> vibes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StoreBusinessHour> businessHours = new ArrayList<>();
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StorePhoto> photos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StoreSubscription> subscriptions = new ArrayList<>();
+
+    public Store(StoreApply storeApply, Owner owner, String name, String industry, String address,
+        String customerAgeGroup, Integer lighting, StoreMusic storeMusic, List<Vibe> vibes,
+        List<BusinessHour> businessHours, List<String> photoUrls) {
+        validateStoreApply(storeApply);
+        validateOwner(owner);
+        validateName(name);
+        validateAddress(address);
+        validateCustomerAgeGroup(customerAgeGroup);
+        validateLighting(lighting);
+        validateStoreMusic(storeMusic);
+        validateVibes(vibes);
+        validateBusinessHours(businessHours);
+        validateNoDuplicateDayOfWeek(businessHours);
+        this.storeApply = storeApply;
+        this.storeMusic = storeMusic;
+        this.owner = owner;
+        this.name = name;
+        this.industry = industry;
+        this.address = address;
+        this.customerAgeGroup = customerAgeGroup;
+        this.lighting = lighting;
+
+        setBusinessHours(businessHours);
+        setPhotos(photoUrls);
+        setVibes(vibes);
+    }
+
+    public void update(String name, String industry, String address, String customerAgeGroup,
+        Integer lighting,
+        StoreMusic storeMusic, List<Vibe> vibes, List<BusinessHour> businessHours,
+        List<String> photoUrls) {
+        this.storeMusic = storeMusic;
+        this.name = name;
+        this.industry = industry;
+        this.address = address;
+        this.customerAgeGroup = customerAgeGroup;
+        this.lighting = lighting;
+        setBusinessHours(businessHours);
+        setPhotos(photoUrls);
+        setVibes(vibes);
+    }
+
+    public void assignPlaylist(Playlist playlist) {
+        this.playlist = playlist;
+        playlist.setStore(this);
+    }
+
+    public StoreSubscription getLatestSubscription() {
+        return subscriptions.stream()
+            .max(Comparator.comparing(StoreSubscription::getCreatedAt))
+            .orElseThrow(() -> new NotFoundException("구독 정보가 없습니다."));
+    }
+
+    public Optional<StoreSubscription> findLatestActiveOrPendingSubscription() {
+        return subscriptions.stream()
+            .filter(s -> s.getStatus() == SubscriptionStatus.PENDING_ACTIVE
+                || s.getStatus() == SubscriptionStatus.ACTIVE)
+            .max(Comparator.comparing(StoreSubscription::getStartDate));
+    }
+
+    public boolean isInactive() {
+        return subscriptions.stream()
+            .noneMatch(s -> s.getStatus() == SubscriptionStatus.ACTIVE);
+    }
+
+    public void addSubscription(StoreSubscription subscription) {
+        this.subscriptions.add(subscription);
+        subscription.setStore(this);
+    }
+
+    private void setVibes(List<Vibe> vibes) {
+        this.vibes = vibes.stream()
+            .map(vibe -> new StoreVibe(this, vibe))
             .toList();
     }
 
-    public void update(
-        String name,
-        String address,
-        Region region,
-        List<String> imageUrls,
-        List<Theme> themes,
-        List<SongForm> songForms
-    ) {
-        this.name = new StoreName(name);
-        this.address = new Address(address);
-        this.region = region;
-        updateImages(imageUrls);
-        updateThemes(themes);
-        updateSongForms(songForms);
+    private void setPhotos(List<String> photoUrls) {
+        this.photos = IntStream.range(0, photoUrls.size())
+            .mapToObj(i -> new StorePhoto(this, photoUrls.get(i), i, i == 0))
+            .toList();
     }
 
-    private void updateSongForms(List<SongForm> updatedSongForms) {
-        List<StoreSongForm> existSongForms = this.songForms.stream()
-            .filter(songForm -> updatedSongForms.contains(songForm.getSongForm()))
-            .toList();
-
-        List<StoreSongForm> newSongForms = updatedSongForms.stream()
-            .map(songForm -> new StoreSongForm(this, songForm))
-            .filter(storeSongForm -> !this.songForms.contains(storeSongForm))
-            .toList();
-
-        this.songForms.clear();
-        this.songForms.addAll(existSongForms);
-        this.songForms.addAll(newSongForms);
+    private void setBusinessHours(List<BusinessHour> businessHours) {
+        this.businessHours.clear();
+        businessHours.stream()
+            .map(bh -> new StoreBusinessHour(this, bh.dayOfWeek(), bh.openTime(), bh.closeTime(),
+                bh.isClosed()))
+            .forEach(this.businessHours::add);
     }
 
-    private void updateThemes(List<Theme> updatedThemes) {
-        List<StoreTheme> existThemes = this.themes.stream()
-            .filter(theme -> updatedThemes.contains(theme.getTheme()))
-            .toList();
-
-        List<StoreTheme> newThemes = updatedThemes.stream()
-            .map(theme -> new StoreTheme(this, theme))
-            .filter(storeTheme -> !this.themes.contains(storeTheme))
-            .toList();
-
-        this.themes.clear();
-        this.themes.addAll(existThemes);
-        this.themes.addAll(newThemes);
-    }
-
-    private void updateImages(List<String> imageUrls) {
-        String nowImageUrl = images.get(0).getImageUrl();
-        String imageUrl = imageUrls.get(0);
-        if (!nowImageUrl.equals(imageUrl)) {
-            images.clear();
-            images.add(new StoreImage(this, imageUrl));
+    private void validateStoreApply(StoreApply storeApply) {
+        if (storeApply == null) {
+            throw new BadRequestException("storeApply는 필수입니다.");
         }
     }
 
-    public String getName() {
-        return name.getName();
-    }
-
-    public String getRegion() {
-        return region.getRegion();
-    }
-
-    public String getAddress() {
-        return address.getAddress();
-    }
-
-    public List<String> getImage() {
-        return images.stream()
-            .map(StoreImage::getImageUrl)
-            .toList();
-    }
-
-    public List<String> getThemes() {
-        return themes.stream()
-            .map(StoreTheme::getTheme)
-            .map(Theme::getName)
-            .toList();
-    }
-
-    public List<String> getSongForms() {
-        return songForms.stream()
-            .map(StoreSongForm::getSongForm)
-            .map(SongForm::getName)
-            .toList();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
+    private void validateOwner(Owner owner) {
+        if (owner == null) {
+            throw new BadRequestException("owner는 필수입니다.");
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Store store = (Store) o;
-        return Objects.equals(storeId, store.storeId);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(storeId);
+    private void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new BadRequestException("name은 필수입니다.");
+        }
+    }
+
+    private void validateAddress(String address) {
+        if (address == null || address.isBlank()) {
+            throw new BadRequestException("address는 필수입니다.");
+        }
+    }
+
+    private void validateCustomerAgeGroup(String customerAgeGroup) {
+        if (customerAgeGroup == null || customerAgeGroup.isBlank()) {
+            throw new BadRequestException("customerAgeGroup은 필수입니다.");
+        }
+    }
+
+    private void validateLighting(Integer lighting) {
+        if (lighting == null || lighting < 0) {
+            throw new BadRequestException("lighting은 0 이상이어야 합니다.");
+        }
+    }
+
+    private void validateStoreMusic(StoreMusic storeMusic) {
+        if (storeMusic == null) {
+            throw new BadRequestException("storeMusic은 필수입니다.");
+        }
+    }
+
+    private void validateVibes(List<Vibe> vibes) {
+        if (vibes == null || vibes.isEmpty()) {
+            throw new BadRequestException("vibes는 필수이며 비어있을 수 없습니다.");
+        }
+    }
+
+    private void validateBusinessHours(List<BusinessHour> businessHours) {
+        if (businessHours == null || businessHours.isEmpty()) {
+            throw new BadRequestException("businessHours는 필수이며 비어있을 수 없습니다.");
+        }
+    }
+
+    private void validateNoDuplicateDayOfWeek(List<BusinessHour> businessHours) {
+        long distinctCount = businessHours.stream()
+            .map(BusinessHour::dayOfWeek)
+            .distinct()
+            .count();
+        if (distinctCount != businessHours.size()) {
+            throw new BadRequestException("중복된 요일이 존재합니다.");
+        }
     }
 }

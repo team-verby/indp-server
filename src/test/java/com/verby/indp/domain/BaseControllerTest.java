@@ -1,19 +1,31 @@
 package com.verby.indp.domain;
 
-import static com.verby.indp.global.fixture.TokenFixture.accessToken;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.verby.indp.config.RestDocsConfig;
+import com.verby.indp.domain.auth.Admin;
+import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.auth.repository.AdminRepository;
-import com.verby.indp.domain.auth.service.AuthService;
-import com.verby.indp.domain.contact.service.ContactService;
-import com.verby.indp.domain.recommendation.service.RecommendationService;
-import com.verby.indp.domain.region.service.RegionService;
+import com.verby.indp.domain.auth.repository.OwnerRepository;
+import com.verby.indp.domain.auth.service.AdminService;
+import com.verby.indp.domain.auth.service.AuthTokenService;
+import com.verby.indp.domain.auth.service.OwnerService;
+import com.verby.indp.domain.payment.service.AdminPaymentService;
+import com.verby.indp.domain.payment.service.OwnerPaymentService;
+import com.verby.indp.domain.payment.service.PaymentConfirmService;
+import com.verby.indp.domain.payment.service.PaymentService;
+import com.verby.indp.domain.plan.service.PlanService;
+import com.verby.indp.domain.playlist.service.AdminPlaylistService;
+import com.verby.indp.domain.playlist.service.OwnerPlaylistService;
+import com.verby.indp.domain.playlist.service.PlaylistService;
+import com.verby.indp.domain.playlist.service.StoreSseService;
+import com.verby.indp.domain.policy.PricePolicyService;
+import com.verby.indp.domain.recommendation.service.SongRecommendationService;
+import com.verby.indp.domain.store.service.AdminStoreService;
+import com.verby.indp.domain.store.service.ApplyStoreService;
+import com.verby.indp.domain.store.service.OwnerStoreService;
 import com.verby.indp.domain.store.service.StoreService;
+import com.verby.indp.domain.subscription.service.SubscriptionService;
 import com.verby.indp.global.image.ImageService;
-import com.verby.indp.global.jwt.TokenManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +40,20 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+
 @WebMvcTest
 @ExtendWith(RestDocumentationExtension.class)
 @Import({RestDocsConfig.class})
 public abstract class BaseControllerTest {
+
+    protected static final String AUTHORIZATION_HEADER = "Authorization";
+    protected static final String BEARER_TOKEN = "Bearer test-token";
 
     protected MockMvc mockMvc;
 
@@ -42,30 +64,70 @@ public abstract class BaseControllerTest {
     protected RestDocumentationResultHandler restDocs;
 
     @MockBean
-    protected StoreService storeService;
-
-    @MockBean
-    protected ContactService contactService;
-
-    @MockBean
-    protected RecommendationService recommendationService;
-
-    @MockBean
-    protected AuthService authService;
-
-    @MockBean
-    protected TokenManager tokenManager;
+    protected AuthTokenService authTokenService;
 
     @MockBean
     protected AdminRepository adminRepository;
 
     @MockBean
+    protected OwnerRepository ownerRepository;
+
+    @MockBean
+    protected AdminService adminService;
+
+    @MockBean
+    protected OwnerService ownerService;
+
+    @MockBean
+    protected PaymentService paymentService;
+
+    @MockBean
+    protected PaymentConfirmService paymentConfirmService;
+
+    @MockBean
+    protected AdminPaymentService adminPaymentService;
+
+    @MockBean
+    protected OwnerPaymentService ownerPaymentService;
+
+    @MockBean
+    protected PlanService planService;
+
+    @MockBean
+    protected PlaylistService playlistService;
+
+    @MockBean
+    protected OwnerPlaylistService ownerPlaylistService;
+
+    @MockBean
+    protected AdminPlaylistService adminPlaylistService;
+
+    @MockBean
+    protected SongRecommendationService songRecommendationService;
+
+    @MockBean
+    protected PricePolicyService pricePolicyService;
+
+    @MockBean
+    protected StoreService storeService;
+
+    @MockBean
+    protected ApplyStoreService applyStoreService;
+
+    @MockBean
+    protected OwnerStoreService ownerStoreService;
+
+    @MockBean
+    protected AdminStoreService adminStoreService;
+
+    @MockBean
+    protected SubscriptionService subscriptionService;
+
+    @MockBean
     protected ImageService imageService;
 
     @MockBean
-    protected RegionService regionService;
-
-    protected String accessToken = accessToken();
+    protected StoreSseService storeSseService;
 
     @BeforeEach
     void setUp(final WebApplicationContext context,
@@ -78,4 +140,14 @@ public abstract class BaseControllerTest {
             .build();
     }
 
+    protected void givenOwnerAuth(Owner owner) {
+        given(authTokenService.decodeOwnerToken(anyString())).willReturn(owner.getOwnerId());
+        given(ownerRepository.findById(owner.getOwnerId())).willReturn(Optional.of(owner));
+    }
+
+    protected void givenAdminAuth(Admin admin) {
+        Long adminId = admin.getAdminId();
+        given(authTokenService.decodeAdminToken(anyString())).willReturn(adminId);
+        given(adminRepository.findById(adminId)).willReturn(Optional.of(admin));
+    }
 }

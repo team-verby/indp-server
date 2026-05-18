@@ -1,0 +1,36 @@
+package com.verby.indp.domain.subscription.dto.response;
+
+import com.verby.indp.domain.subscription.StoreSubscription;
+
+import java.time.LocalDate;
+import java.util.List;
+
+public record FindSubscriptionsResponse(
+    List<SubscriptionItem> subscriptions
+) {
+
+    public static FindSubscriptionsResponse from(List<StoreSubscription> subscriptions) {
+        return new FindSubscriptionsResponse(
+            subscriptions.stream()
+                .map(SubscriptionItem::from)
+                .toList()
+        );
+    }
+
+    private record SubscriptionItem(
+        LocalDate startDate,
+        LocalDate endDate,
+        String planType,
+        String status
+    ) {
+
+        private static SubscriptionItem from(StoreSubscription subscription) {
+            return new SubscriptionItem(
+                subscription.getStartDate(),
+                subscription.getEndDate(),
+                subscription.getPlan().getType().name(),
+                subscription.getStatus().name()
+            );
+        }
+    }
+}

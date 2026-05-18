@@ -30,10 +30,12 @@ public class ImageService {
 
         try (InputStream inputStream = multipartFile.getInputStream()) {
             amazonS3.putObject(
-                new PutObjectRequest(bucket + "/" + FOLDER_NAME, multipartFile.getOriginalFilename(), inputStream,
+                new PutObjectRequest(bucket + "/" + FOLDER_NAME,
+                    multipartFile.getOriginalFilename(), inputStream,
                     objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
-            return amazonS3.getUrl(bucket + "/" + FOLDER_NAME, multipartFile.getOriginalFilename()).toString();
+            return amazonS3.getUrl(bucket + "/" + FOLDER_NAME, multipartFile.getOriginalFilename())
+                .toString();
         } catch (IOException exception) {
             throw new BadRequestException("이미지를 업로드하는데 실패했습니다.");
         }

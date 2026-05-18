@@ -1,46 +1,49 @@
 package com.verby.indp.domain.store.dto.response;
 
-import com.verby.indp.domain.common.dto.PageInfo;
+import com.verby.indp.domain.playlist.dto.response.CurrentSong;
 import com.verby.indp.domain.store.Store;
+import com.verby.indp.domain.subscription.StoreSubscription;
+
+import java.time.LocalDate;
 import java.util.List;
-import org.springframework.data.domain.Page;
 
 public record FindStoresByAdminResponse(
-    PageInfo pageInfo,
-    List<StoreResponse> stores
+    List<StoreItem> stores, int totalPages, long totalElements
 ) {
 
-    private record StoreResponse(
-        long id,
+    public record StoreItem(
+        Long storeId,
         String name,
-        String address,
-        String region,
-        String imageUrl,
-        List<String> themes,
-        List<String> songForms
+        List<SubscriptionItem> subscriptions,
+        CurrentSongItem currentSong
     ) {
+        public static StoreItem from(Store store, CurrentSong currentSong) {
+            List<SubscriptionItem> subscriptions = store.getSubscriptions().stream()
+                .map(SubscriptionItem::from)
+                .toList();
+            CurrentSongItem currentSongItem =
+                currentSong == null ? null : CurrentSongItem.from(currentSong);
 
-        private static StoreResponse from(Store store) {
-            return new StoreResponse(
-                store.getStoreId(),
-                store.getName(),
-                store.getAddress(),
-                store.getRegion(),
-                store.getImage().isEmpty() ? null : store.getImage().get(0),
-                store.getThemes(),
-                store.getSongForms()
-            );
+            return new StoreItem(store.getStoreId(), store.getName(), subscriptions, currentSongItem);
         }
-
     }
 
-    public static FindStoresByAdminResponse from(Page<Store> page) {
-        PageInfo pageInfo = new PageInfo(page.getTotalElements(), page.hasNext());
-        List<StoreResponse> stores = page.get()
-            .map(StoreResponse::from)
-            .toList();
+    private record SubscriptionItem(String plan, LocalDate startDate, LocalDate endDate,
+                                    String status) {
 
-        return new FindStoresByAdminResponse(pageInfo, stores);
+        private static SubscriptionItem from(StoreSubscription subscription) {
+            return new SubscriptionItem(subscription.getPlan().getType().name(),
+                subscription.getStartDate(), subscription.getEndDate(),
+                subscription.getStatus().name());
+        }
     }
 
+    private record CurrentSongItem(long playlistSongId, String title, String artist, String vid,
+                                   int elapsedSeconds) {
+
+        private static CurrentSongItem from(CurrentSong song) {
+            return new CurrentSongItem(song.playlistSongId(), song.title(), song.artist(),
+                song.vid(), song.elapsedSeconds());
+        }
+    }
 }
