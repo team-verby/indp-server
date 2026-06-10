@@ -65,7 +65,7 @@ public record FindAdminPaymentsResponse(
         }
 
         private record SubscriptionItem(
-            String plan,
+            String planType,
             LocalDate startDate,
             LocalDate endDate
         ) {

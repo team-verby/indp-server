@@ -96,7 +96,7 @@ public class SubscriptionService {
     private StoreSubscription createSubscription(Store store, AddSubscriptionRequest request) {
         Plan plan = planService.getPlan(request.planId());
         Payment payment = buildPayment(store.getName(), plan, request.usagePeriod());
-        LocalDate startDate = resolveStartDate(store);
+        LocalDate startDate = resolveStartDate(store, plan);
         StoreSubscription subscription = new StoreSubscription(plan, payment, request.usagePeriod(),
             startDate);
         store.addSubscription(subscription);
@@ -129,10 +129,12 @@ public class SubscriptionService {
             .orElseThrow(() -> new NotFoundException("결제에 대한 구독이 존재하지 않습니다."));
     }
 
-    private LocalDate resolveStartDate(Store store) {
+    private LocalDate resolveStartDate(Store store, Plan plan) {
         return store.findLatestActiveOrPendingSubscription()
             .map(subscription -> subscription.getEndDate().plusDays(1))
-            .orElseGet(this::nextSubscriptionStartDay);
+            .orElseGet(() -> plan.getType() == Plan.PlanType.PLAN_A
+                ? LocalDate.now(clock)
+                : nextSubscriptionStartDay());
     }
 
     private LocalDate nextSubscriptionStartDay() {

@@ -39,7 +39,7 @@ class SongRecommendationControllerTest extends BaseControllerTest {
         void registerRecommendation() throws Exception {
             // given
             RegisterSongRecommendationResponse response = new RegisterSongRecommendationResponse(
-                "INDP-REC-uuid", 500, "인디피_노래추천_카페공명");
+                1L, "INDP-REC-uuid", 500, "인디피_노래추천_카페공명");
             given(songRecommendationService.orderSongRecommendation(
                 anyLong(), anyString(), anyString(), anyString(), anyInt(), anyString()))
                 .willReturn(response);
@@ -68,6 +68,7 @@ class SongRecommendationControllerTest extends BaseControllerTest {
                             fieldWithPath("refereeName").type(STRING).description("추천자 이름")
                         ),
                         responseFields(
+                            fieldWithPath("songRecommendationId").type(NUMBER).description("노래 추천 ID"),
                             fieldWithPath("orderId").type(STRING).description("주문 ID"),
                             fieldWithPath("amount").type(NUMBER).description("결제 금액 (원)"),
                             fieldWithPath("orderName").type(STRING).description("주문명")

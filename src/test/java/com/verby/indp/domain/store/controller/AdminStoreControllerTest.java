@@ -70,7 +70,7 @@ class AdminStoreControllerTest extends BaseControllerTest {
                             fieldWithPath("stores[].name").type(STRING).description("매장명"),
                             fieldWithPath("stores[].subscriptions").type(ARRAY)
                                 .description("활성 구독 목록 (ACTIVE, PENDING_ACTIVE)"),
-                            fieldWithPath("stores[].subscriptions[].plan").type(STRING)
+                            fieldWithPath("stores[].subscriptions[].planType").type(STRING)
                                 .description("플랜 종류"),
                             fieldWithPath("stores[].subscriptions[].startDate").type(STRING)
                                 .description("구독 시작일"),

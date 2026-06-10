@@ -28,7 +28,7 @@ public record FindStoresByAdminResponse(
         }
     }
 
-    private record SubscriptionItem(String plan, LocalDate startDate, LocalDate endDate,
+    private record SubscriptionItem(String planType, LocalDate startDate, LocalDate endDate,
                                     String status) {
 
         private static SubscriptionItem from(StoreSubscription subscription) {
