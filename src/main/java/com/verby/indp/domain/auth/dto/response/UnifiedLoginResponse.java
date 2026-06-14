@@ -4,7 +4,8 @@ public record UnifiedLoginResponse(
     String accessToken,
     String refreshToken,
     String planType,
-    Long storeId
+    Long storeId,
+    String djName
 ) {
 
 }

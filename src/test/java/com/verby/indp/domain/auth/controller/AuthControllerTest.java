@@ -38,7 +38,7 @@ class AuthControllerTest extends BaseControllerTest {
         @DisplayName("성공 : 통합 로그인한다.")
         void unifiedLogin() throws Exception {
             // given
-            UnifiedLoginResponse response = new UnifiedLoginResponse("access-token", "refresh-token", "PLAN_A", null);
+            UnifiedLoginResponse response = new UnifiedLoginResponse("access-token", "refresh-token", "PLAN_A", null, null);
             given(unifiedAuthService.login(any())).willReturn(response);
 
             LoginRequest request = new LoginRequest("parkwan123", "password123!");
@@ -59,8 +59,9 @@ class AuthControllerTest extends BaseControllerTest {
                         responseFields(
                             fieldWithPath("accessToken").type(STRING).description("액세스 토큰 (유효기간 1시간)"),
                             fieldWithPath("refreshToken").type(STRING).description("리프레시 토큰 (유효기간 30일)"),
-                            fieldWithPath("planType").type(STRING).description("플랜 유형 (PLAN_A / PLAN_B / PLAN_C)"),
-                            fieldWithPath("storeId").type(NULL).description("매장 ID (Plan B/C만 반환, Plan A는 null)")
+                            fieldWithPath("planType").type(STRING).description("플랜 유형 (PLAN_A / PLAN_B / PLAN_C / DJ)"),
+                            fieldWithPath("storeId").type(NULL).description("매장 ID (Plan B/C만 반환, 나머지 null)"),
+                            fieldWithPath("djName").type(NULL).description("DJ 활동명 (DJ 계정만 반환, 나머지 null)")
                         )
                     )
                 );

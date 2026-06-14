@@ -8,6 +8,8 @@ import com.verby.indp.domain.auth.dto.response.UnifiedLoginResponse;
 import com.verby.indp.domain.auth.repository.OwnerRepository;
 import com.verby.indp.domain.auth.repository.UserRepository;
 import com.verby.indp.domain.common.exception.AuthException;
+import com.verby.indp.domain.creator.Creator;
+import com.verby.indp.domain.creator.repository.CreatorRepository;
 import com.verby.indp.domain.plan.Plan;
 import com.verby.indp.domain.store.Store;
 import com.verby.indp.domain.store.repository.StoreRepository;
@@ -27,6 +29,7 @@ public class UnifiedAuthService {
 
     private final UserRepository userRepository;
     private final OwnerRepository ownerRepository;
+    private final CreatorRepository creatorRepository;
     private final StoreRepository storeRepository;
     private final AuthTokenService authTokenService;
 
@@ -35,6 +38,11 @@ public class UnifiedAuthService {
         Optional<User> userOpt = userRepository.findByLoginId(request.loginId());
         if (userOpt.isPresent()) {
             return loginAsUser(userOpt.get(), request.password());
+        }
+
+        Optional<Creator> creatorOpt = creatorRepository.findByEmail(request.loginId());
+        if (creatorOpt.isPresent()) {
+            return loginAsCreator(creatorOpt.get(), request.password());
         }
 
         Optional<Owner> ownerOpt = ownerRepository.findByLoginId(request.loginId());
@@ -51,7 +59,19 @@ public class UnifiedAuthService {
         }
         String accessToken = authTokenService.createUserToken(user.getUserId());
         RefreshToken refreshToken = authTokenService.issueUserRefreshToken(user.getUserId());
-        return new UnifiedLoginResponse(accessToken, refreshToken.getToken(), "PLAN_A", null);
+        return new UnifiedLoginResponse(accessToken, refreshToken.getToken(), "PLAN_A", null, null);
+    }
+
+    private UnifiedLoginResponse loginAsCreator(Creator creator, String password) {
+        if (!creator.isActive()) {
+            throw new AuthException("비활성화된 계정입니다.");
+        }
+        if (creator.mismatchPassword(password)) {
+            throw new AuthException("비밀번호가 일치하지 않습니다.");
+        }
+        String accessToken = authTokenService.createCreatorToken(creator.getCreatorId());
+        RefreshToken refreshToken = authTokenService.issueCreatorRefreshToken(creator.getCreatorId());
+        return new UnifiedLoginResponse(accessToken, refreshToken.getToken(), "DJ", null, creator.getDjName());
     }
 
     private UnifiedLoginResponse loginAsOwner(Owner owner, String password) {
@@ -65,7 +85,7 @@ public class UnifiedAuthService {
         Long storeId = stores.isEmpty() ? null : stores.get(0).getStoreId();
         String planType = resolvePlanType(stores);
 
-        return new UnifiedLoginResponse(accessToken, refreshToken.getToken(), planType, storeId);
+        return new UnifiedLoginResponse(accessToken, refreshToken.getToken(), planType, storeId, null);
     }
 
     private String resolvePlanType(List<Store> stores) {

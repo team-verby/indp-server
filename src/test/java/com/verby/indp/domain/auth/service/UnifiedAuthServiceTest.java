@@ -1,5 +1,6 @@
 package com.verby.indp.domain.auth.service;
 
+import static com.verby.indp.fixture.CreatorFixture.creatorWithId;
 import static com.verby.indp.fixture.OwnerFixture.ownerWithId;
 import static com.verby.indp.fixture.UserFixture.userWithId;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,6 +16,8 @@ import com.verby.indp.domain.auth.dto.response.UnifiedLoginResponse;
 import com.verby.indp.domain.auth.repository.OwnerRepository;
 import com.verby.indp.domain.auth.repository.UserRepository;
 import com.verby.indp.domain.common.exception.AuthException;
+import com.verby.indp.domain.creator.Creator;
+import com.verby.indp.domain.creator.repository.CreatorRepository;
 import com.verby.indp.domain.store.repository.StoreRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,6 +41,9 @@ class UnifiedAuthServiceTest {
 
     @Mock
     private OwnerRepository ownerRepository;
+
+    @Mock
+    private CreatorRepository creatorRepository;
 
     @Mock
     private StoreRepository storeRepository;
@@ -81,6 +87,7 @@ class UnifiedAuthServiceTest {
                 LocalDateTime.now().plusDays(30));
 
             given(userRepository.findByLoginId("store0001")).willReturn(Optional.empty());
+            given(creatorRepository.findByEmail("store0001")).willReturn(Optional.empty());
             given(ownerRepository.findByLoginId("store0001")).willReturn(Optional.of(owner));
             given(authTokenService.createOwnerToken(1L)).willReturn("access-token");
             given(authTokenService.issueOwnerRefreshToken(1L)).willReturn(refreshToken);
@@ -92,6 +99,46 @@ class UnifiedAuthServiceTest {
             // then
             assertThat(response.planType()).isEqualTo("PLAN_B");
             assertThat(response.accessToken()).isEqualTo("access-token");
+        }
+
+        @Test
+        @DisplayName("성공 : 크리에이터(DJ)로 로그인한다.")
+        void loginAsCreator() {
+            // given
+            Creator creator = creatorWithId(1L);
+            LoginRequest request = new LoginRequest("dj@example.com", "password123!");
+            RefreshToken refreshToken = new RefreshToken("refresh-token", SubjectType.CREATOR, 1L,
+                LocalDateTime.now().plusDays(30));
+
+            given(userRepository.findByLoginId("dj@example.com")).willReturn(Optional.empty());
+            given(creatorRepository.findByEmail("dj@example.com")).willReturn(Optional.of(creator));
+            given(authTokenService.createCreatorToken(1L)).willReturn("access-token");
+            given(authTokenService.issueCreatorRefreshToken(1L)).willReturn(refreshToken);
+
+            // when
+            UnifiedLoginResponse response = unifiedAuthService.login(request);
+
+            // then
+            assertThat(response.planType()).isEqualTo("DJ");
+            assertThat(response.accessToken()).isEqualTo("access-token");
+            assertThat(response.djName()).isEqualTo("DJ Parkwan");
+        }
+
+        @Test
+        @DisplayName("실패 : 비활성화된 크리에이터이면 예외를 던진다.")
+        void loginWithDeactivatedCreator() {
+            // given
+            Creator creator = creatorWithId(1L);
+            creator.deactivate();
+            given(userRepository.findByLoginId("dj@example.com")).willReturn(Optional.empty());
+            given(creatorRepository.findByEmail("dj@example.com")).willReturn(Optional.of(creator));
+
+            // when
+            Exception exception = catchException(
+                () -> unifiedAuthService.login(new LoginRequest("dj@example.com", "password123!")));
+
+            // then
+            assertThat(exception).isInstanceOf(AuthException.class);
         }
 
         @Test
@@ -115,6 +162,7 @@ class UnifiedAuthServiceTest {
             // given
             Owner owner = ownerWithId(1L);
             given(userRepository.findByLoginId("store0001")).willReturn(Optional.empty());
+            given(creatorRepository.findByEmail("store0001")).willReturn(Optional.empty());
             given(ownerRepository.findByLoginId("store0001")).willReturn(Optional.of(owner));
 
             // when
@@ -130,6 +178,7 @@ class UnifiedAuthServiceTest {
         void loginWithNotExistAccount() {
             // given
             given(userRepository.findByLoginId("unknown")).willReturn(Optional.empty());
+            given(creatorRepository.findByEmail("unknown")).willReturn(Optional.empty());
             given(ownerRepository.findByLoginId("unknown")).willReturn(Optional.empty());
 
             // when

@@ -29,7 +29,7 @@ public class UserService {
 
         String accessToken = authTokenService.createUserToken(user.getUserId());
         RefreshToken refreshToken = authTokenService.issueUserRefreshToken(user.getUserId());
-        return new UnifiedLoginResponse(accessToken, refreshToken.getToken(), "PLAN_A", null);
+        return new UnifiedLoginResponse(accessToken, refreshToken.getToken(), "PLAN_A", null, null);
     }
 
     public void checkLoginIdDuplicate(String loginId) {
