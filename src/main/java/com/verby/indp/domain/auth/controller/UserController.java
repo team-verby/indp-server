@@ -20,4 +20,10 @@ public class UserController {
         userService.checkLoginIdDuplicate(loginId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/check-email")
+    public ResponseEntity<Void> checkEmail(@RequestParam String email) {
+        userService.checkEmailDuplicate(email);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -40,4 +40,13 @@ public class UserService {
             throw new BadRequestException("이미 사용 중인 아이디입니다.");
         }
     }
+
+    public void checkEmailDuplicate(String email) {
+        if (email == null || email.isBlank()) {
+            throw new BadRequestException("email은 필수입니다.");
+        }
+        if (userRepository.existsByEmail(email)) {
+            throw new BadRequestException("이미 사용 중인 이메일입니다.");
+        }
+    }
 }

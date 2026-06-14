@@ -76,15 +76,68 @@ class CreatorTest {
         @Test
         @DisplayName("성공 : 크리에이터를 비활성화한다.")
         void deactivate() {
-            // given
             Creator creator = new Creator("박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "password123!");
             assertThat(creator.isActive()).isTrue();
-
-            // when
             creator.deactivate();
-
-            // then
             assertThat(creator.isActive()).isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("startLive / stopLive 메서드 실행 시")
+    class LiveStatus {
+
+        @Test
+        @DisplayName("성공 : 라이브를 시작하면 isLive가 true가 된다.")
+        void startLive() {
+            Creator creator = new Creator("박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "pw");
+            assertThat(creator.isLive()).isFalse();
+            creator.startLive();
+            assertThat(creator.isLive()).isTrue();
+        }
+
+        @Test
+        @DisplayName("성공 : 라이브를 종료하면 isLive가 false가 된다.")
+        void stopLive() {
+            Creator creator = new Creator("박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "pw");
+            creator.startLive();
+            creator.stopLive();
+            assertThat(creator.isLive()).isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("updateProfile 메서드 실행 시")
+    class UpdateProfile {
+
+        @Test
+        @DisplayName("성공 : djName을 업데이트한다.")
+        void updateProfileDjName() {
+            Creator creator = new Creator("박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "pw");
+            creator.updateProfile("DJ New", null);
+            assertThat(creator.getDjName()).isEqualTo("DJ New");
+        }
+
+        @Test
+        @DisplayName("성공 : djName이 blank이면 변경하지 않는다.")
+        void updateProfileBlankDjName() {
+            Creator creator = new Creator("박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "pw");
+            creator.updateProfile("", "https://cdn.example.com/thumb.jpg");
+            assertThat(creator.getDjName()).isEqualTo("DJ Parkwan");
+            assertThat(creator.getThumbnailUrl()).isEqualTo("https://cdn.example.com/thumb.jpg");
+        }
+    }
+
+    @Nested
+    @DisplayName("changePassword 메서드 실행 시")
+    class ChangePassword {
+
+        @Test
+        @DisplayName("성공 : 비밀번호를 변경한다.")
+        void changePassword() {
+            Creator creator = new Creator("박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "oldPw");
+            creator.changePassword("newHashedPw");
+            assertThat(creator.getPassword()).isEqualTo("newHashedPw");
         }
     }
 

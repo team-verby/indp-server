@@ -44,15 +44,45 @@ class UserControllerTest extends BaseControllerTest {
         @Test
         @DisplayName("실패 : 이미 사용 중인 아이디이면 400을 반환한다.")
         void checkIdWithDuplicate() throws Exception {
-            // given
             willThrow(new BadRequestException("이미 사용 중인 아이디입니다."))
                 .given(userService).checkLoginIdDuplicate("parkwan123");
 
-            // when
             ResultActions resultActions = mockMvc.perform(get("/api/user/check-id")
                 .param("loginId", "parkwan123"));
 
-            // then
+            resultActions.andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /api/user/check-email 실행 시")
+    class CheckEmail {
+
+        @Test
+        @DisplayName("성공 : 사용 가능한 이메일이면 200을 반환한다.")
+        void checkEmail() throws Exception {
+            willDoNothing().given(userService).checkEmailDuplicate("new@example.com");
+
+            ResultActions resultActions = mockMvc.perform(get("/api/user/check-email")
+                .param("email", "new@example.com"));
+
+            resultActions.andExpect(status().isOk())
+                .andDo(restDocs.document(
+                    queryParameters(
+                        parameterWithName("email").description("중복 확인할 이메일")
+                    )
+                ));
+        }
+
+        @Test
+        @DisplayName("실패 : 이미 사용 중인 이메일이면 400을 반환한다.")
+        void checkEmailWithDuplicate() throws Exception {
+            willThrow(new BadRequestException("이미 사용 중인 이메일입니다."))
+                .given(userService).checkEmailDuplicate("dup@example.com");
+
+            ResultActions resultActions = mockMvc.perform(get("/api/user/check-email")
+                .param("email", "dup@example.com"));
+
             resultActions.andExpect(status().isBadRequest());
         }
     }

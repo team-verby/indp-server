@@ -44,6 +44,12 @@ public class AdminCreatorService {
         return new FindCreatorsResponse(items);
     }
 
+    public FindCreatorsResponse.CreatorItem findCreator(long creatorId) {
+        Creator creator = creatorRepository.findById(creatorId)
+            .orElseThrow(() -> new NotFoundException("존재하지 않는 크리에이터입니다."));
+        return FindCreatorsResponse.CreatorItem.from(creator);
+    }
+
     @Transactional
     public void deactivate(long creatorId) {
         Creator creator = creatorRepository.findById(creatorId)

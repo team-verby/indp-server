@@ -94,6 +94,34 @@ class UserServiceTest {
     }
 
     @Nested
+    @DisplayName("checkEmailDuplicate 메서드 실행 시")
+    class CheckEmailDuplicate {
+
+        @Test
+        @DisplayName("성공 : 사용 가능한 이메일이면 예외를 던지지 않는다.")
+        void checkEmailAvailable() {
+            given(userRepository.existsByEmail("new@example.com")).willReturn(false);
+            Exception exception = catchException(() -> userService.checkEmailDuplicate("new@example.com"));
+            assertThat(exception).isNull();
+        }
+
+        @Test
+        @DisplayName("실패 : 이미 사용 중인 이메일이면 예외를 던진다.")
+        void checkEmailDuplicate() {
+            given(userRepository.existsByEmail("dup@example.com")).willReturn(true);
+            Exception exception = catchException(() -> userService.checkEmailDuplicate("dup@example.com"));
+            assertThat(exception).isInstanceOf(BadRequestException.class);
+        }
+
+        @Test
+        @DisplayName("실패 : 이메일이 blank이면 예외를 던진다.")
+        void checkEmailBlank() {
+            Exception exception = catchException(() -> userService.checkEmailDuplicate(""));
+            assertThat(exception).isInstanceOf(BadRequestException.class);
+        }
+    }
+
+    @Nested
     @DisplayName("checkLoginIdDuplicate 메서드 실행 시")
     class CheckLoginIdDuplicate {
 

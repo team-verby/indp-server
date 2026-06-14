@@ -44,6 +44,9 @@ public class Creator extends BaseTimeEntity {
     @Column(name = "active", nullable = false)
     private boolean active = true;
 
+    @Column(name = "is_live", nullable = false)
+    private boolean isLive = false;
+
     public Creator(String name, String djName, String phone, String email, String password) {
         validateName(name);
         validateDjName(djName);
@@ -59,6 +62,27 @@ public class Creator extends BaseTimeEntity {
 
     public void deactivate() {
         this.active = false;
+    }
+
+    public void startLive() {
+        this.isLive = true;
+    }
+
+    public void stopLive() {
+        this.isLive = false;
+    }
+
+    public void updateProfile(String djName, String thumbnailUrl) {
+        if (djName != null && !djName.isBlank()) {
+            this.djName = djName;
+        }
+        if (thumbnailUrl != null) {
+            this.thumbnailUrl = thumbnailUrl;
+        }
+    }
+
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
     }
 
     public boolean mismatchPassword(String rawPassword, PasswordEncoder encoder) {
