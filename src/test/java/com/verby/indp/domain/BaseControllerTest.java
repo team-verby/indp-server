@@ -11,6 +11,7 @@ import com.verby.indp.domain.auth.service.AuthTokenService;
 import com.verby.indp.domain.auth.service.OwnerService;
 import com.verby.indp.domain.auth.service.UnifiedAuthService;
 import com.verby.indp.domain.auth.service.UserService;
+import com.verby.indp.domain.creator.service.AdminCreatorService;
 import com.verby.indp.domain.payment.service.AdminPaymentService;
 import com.verby.indp.domain.payment.service.OwnerPaymentService;
 import com.verby.indp.domain.payment.service.PaymentConfirmService;
@@ -85,6 +86,9 @@ public abstract class BaseControllerTest {
 
     @MockBean
     protected UserService userService;
+
+    @MockBean
+    protected AdminCreatorService adminCreatorService;
 
     @MockBean
     protected PaymentService paymentService;
