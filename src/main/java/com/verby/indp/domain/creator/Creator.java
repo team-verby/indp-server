@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
@@ -60,8 +61,8 @@ public class Creator extends BaseTimeEntity {
         this.active = false;
     }
 
-    public boolean mismatchPassword(String password) {
-        return !this.password.equals(password);
+    public boolean mismatchPassword(String rawPassword, PasswordEncoder encoder) {
+        return !encoder.matches(rawPassword, this.password);
     }
 
     private void validateName(String name) {

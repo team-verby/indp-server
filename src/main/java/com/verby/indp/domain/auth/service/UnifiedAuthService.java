@@ -16,6 +16,7 @@ import com.verby.indp.domain.store.repository.StoreRepository;
 import com.verby.indp.domain.subscription.StoreSubscription;
 import com.verby.indp.domain.subscription.SubscriptionStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,7 @@ public class UnifiedAuthService {
     private final CreatorRepository creatorRepository;
     private final StoreRepository storeRepository;
     private final AuthTokenService authTokenService;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public UnifiedLoginResponse login(LoginRequest request) {
@@ -66,7 +68,7 @@ public class UnifiedAuthService {
         if (!creator.isActive()) {
             throw new AuthException("비활성화된 계정입니다.");
         }
-        if (creator.mismatchPassword(password)) {
+        if (creator.mismatchPassword(password, passwordEncoder)) {
             throw new AuthException("비밀번호가 일치하지 않습니다.");
         }
         String accessToken = authTokenService.createCreatorToken(creator.getCreatorId());

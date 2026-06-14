@@ -8,6 +8,7 @@ import com.verby.indp.domain.creator.dto.response.FindCreatorsResponse;
 import com.verby.indp.domain.creator.dto.response.FindCreatorsResponse.CreatorItem;
 import com.verby.indp.domain.creator.repository.CreatorRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.List;
 public class AdminCreatorService {
 
     private final CreatorRepository creatorRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void createCreator(CreateCreatorRequest request) {
@@ -30,7 +32,7 @@ public class AdminCreatorService {
             request.djName(),
             request.phone(),
             request.email(),
-            request.password()
+            passwordEncoder.encode(request.password())
         );
         creatorRepository.save(creator);
     }
