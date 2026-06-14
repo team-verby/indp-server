@@ -1,18 +1,19 @@
 package com.verby.indp.domain.auth.controller;
 
+import static com.verby.indp.fixture.AdminFixture.admin;
 import static com.verby.indp.fixture.OwnerFixture.owner;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.JsonFieldType.NULL;
+import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import static com.verby.indp.fixture.AdminFixture.admin;
 
 import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.domain.auth.Admin;
@@ -21,12 +22,50 @@ import com.verby.indp.domain.auth.dto.request.LoginRequest;
 import com.verby.indp.domain.auth.dto.request.RefreshRequest;
 import com.verby.indp.domain.auth.dto.response.LoginResponse;
 import com.verby.indp.domain.auth.dto.response.RefreshResponse;
+import com.verby.indp.domain.auth.dto.response.UnifiedLoginResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.ResultActions;
 
 class AuthControllerTest extends BaseControllerTest {
+
+    @Nested
+    @DisplayName("POST /api/auth/login 실행 시")
+    class UnifiedLogin {
+
+        @Test
+        @DisplayName("성공 : 통합 로그인한다.")
+        void unifiedLogin() throws Exception {
+            // given
+            UnifiedLoginResponse response = new UnifiedLoginResponse("access-token", "refresh-token", "PLAN_A", null);
+            given(unifiedAuthService.login(any())).willReturn(response);
+
+            LoginRequest request = new LoginRequest("parkwan123", "password123!");
+
+            // when
+            ResultActions resultActions = mockMvc.perform(post("/api/auth/login")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+            // then
+            resultActions.andExpect(status().isOk())
+                .andDo(
+                    restDocs.document(
+                        requestFields(
+                            fieldWithPath("loginId").type(STRING).description("로그인 아이디"),
+                            fieldWithPath("password").type(STRING).description("비밀번호")
+                        ),
+                        responseFields(
+                            fieldWithPath("accessToken").type(STRING).description("액세스 토큰 (유효기간 1시간)"),
+                            fieldWithPath("refreshToken").type(STRING).description("리프레시 토큰 (유효기간 30일)"),
+                            fieldWithPath("planType").type(STRING).description("플랜 유형 (PLAN_A / PLAN_B / PLAN_C)"),
+                            fieldWithPath("storeId").type(NULL).description("매장 ID (Plan B/C만 반환, Plan A는 null)")
+                        )
+                    )
+                );
+        }
+    }
 
     @Nested
     @DisplayName("POST /api/admin/login 실행 시")

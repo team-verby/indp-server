@@ -9,6 +9,8 @@ import com.verby.indp.domain.auth.repository.OwnerRepository;
 import com.verby.indp.domain.auth.service.AdminService;
 import com.verby.indp.domain.auth.service.AuthTokenService;
 import com.verby.indp.domain.auth.service.OwnerService;
+import com.verby.indp.domain.auth.service.UnifiedAuthService;
+import com.verby.indp.domain.auth.service.UserService;
 import com.verby.indp.domain.payment.service.AdminPaymentService;
 import com.verby.indp.domain.payment.service.OwnerPaymentService;
 import com.verby.indp.domain.payment.service.PaymentConfirmService;
@@ -77,6 +79,12 @@ public abstract class BaseControllerTest {
 
     @MockBean
     protected OwnerService ownerService;
+
+    @MockBean
+    protected UnifiedAuthService unifiedAuthService;
+
+    @MockBean
+    protected UserService userService;
 
     @MockBean
     protected PaymentService paymentService;
