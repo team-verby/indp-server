@@ -19,7 +19,7 @@ public class DatabaseMigrationConfig {
     }
 
     private void dropRefreshTokenSubjectTypeConstraint() {
-        // MySQL 8.0.16+: information_schema에서 CHECK 제약 이름을 조회 후 명시적으로 DROP
+        // 방법 1: information_schema에서 CHECK 제약 이름 조회 후 DROP CHECK
         try {
             var constraints = jdbcTemplate.queryForList(
                 "SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS " +
@@ -29,14 +29,28 @@ public class DatabaseMigrationConfig {
             );
             for (var row : constraints) {
                 String name = (String) row.get("CONSTRAINT_NAME");
-                jdbcTemplate.execute("ALTER TABLE refresh_token DROP CHECK `" + name + "`");
-                log.info("[Migration] refresh_token CHECK 제약 제거 완료: {}", name);
+                try {
+                    jdbcTemplate.execute("ALTER TABLE refresh_token DROP CHECK `" + name + "`");
+                    log.info("[Migration] refresh_token CHECK 제약 제거 완료: {}", name);
+                } catch (Exception ex) {
+                    log.warn("[Migration] DROP CHECK 실패 ({}): {}", name, ex.getMessage());
+                }
             }
             if (constraints.isEmpty()) {
                 log.debug("[Migration] refresh_token CHECK 제약 없음 — 스킵");
             }
         } catch (Exception e) {
-            log.warn("[Migration] refresh_token CHECK 제약 제거 실패: {}", e.getMessage());
+            log.warn("[Migration] CHECK 제약 조회 실패: {}", e.getMessage());
+        }
+
+        // 방법 2: MODIFY COLUMN으로 컬럼 수준 CHECK 표현식 제거 (fallback)
+        try {
+            jdbcTemplate.execute(
+                "ALTER TABLE refresh_token MODIFY COLUMN subject_type VARCHAR(255) NOT NULL"
+            );
+            log.info("[Migration] refresh_token.subject_type 컬럼 재정의 완료");
+        } catch (Exception e) {
+            log.debug("[Migration] 컬럼 재정의 스킵 (이미 정상): {}", e.getMessage());
         }
     }
 }
