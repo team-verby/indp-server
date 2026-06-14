@@ -7,6 +7,7 @@ import com.verby.indp.domain.auth.dto.response.RefreshResponse;
 import com.verby.indp.domain.auth.repository.AdminRepository;
 import com.verby.indp.domain.auth.repository.OwnerRepository;
 import com.verby.indp.domain.auth.repository.RefreshTokenRepository;
+import com.verby.indp.domain.auth.repository.UserRepository;
 import com.verby.indp.domain.common.exception.AuthException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -33,6 +34,7 @@ public class AuthTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final AdminRepository adminRepository;
     private final OwnerRepository ownerRepository;
+    private final UserRepository userRepository;
     private final Clock clock;
 
     public String createAdminToken(Long adminId) {
@@ -41,6 +43,29 @@ public class AuthTokenService {
 
     public String createOwnerToken(Long ownerId) {
         return buildJwt("ownerId", ownerId);
+    }
+
+    public String createUserToken(Long userId) {
+        return buildJwt("userId", userId);
+    }
+
+    public Long decodeUserToken(String token) {
+        Long userId = decodeClaim(token, "userId");
+        if (userId == null) {
+            throw new AuthException("유효하지 않은 토큰입니다.");
+        }
+        return userId;
+    }
+
+    @Transactional
+    public RefreshToken issueUserRefreshToken(Long userId) {
+        refreshTokenRepository.deleteBySubjectTypeAndSubjectId(SubjectType.USER, userId);
+        return refreshTokenRepository.save(buildRefreshToken(SubjectType.USER, userId));
+    }
+
+    @Transactional
+    public void revokeUserRefreshToken(Long userId) {
+        refreshTokenRepository.deleteBySubjectTypeAndSubjectId(SubjectType.USER, userId);
     }
 
     public Long decodeAdminToken(String token) {
@@ -130,6 +155,11 @@ public class AuthTokenService {
             adminRepository.findById(subjectId)
                 .orElseThrow(() -> new AuthException("권한이 없습니다."));
             return createAdminToken(subjectId);
+        }
+        if (subjectType == SubjectType.USER) {
+            userRepository.findById(subjectId)
+                .orElseThrow(() -> new AuthException("권한이 없습니다."));
+            return createUserToken(subjectId);
         }
         ownerRepository.findById(subjectId)
             .orElseThrow(() -> new AuthException("권한이 없습니다."));
