@@ -29,6 +29,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class UnifiedAuthServiceTest {
@@ -50,6 +51,9 @@ class UnifiedAuthServiceTest {
 
     @Mock
     private AuthTokenService authTokenService;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @Nested
     @DisplayName("login 메서드 실행 시")
@@ -112,6 +116,7 @@ class UnifiedAuthServiceTest {
 
             given(userRepository.findByLoginId("dj@example.com")).willReturn(Optional.empty());
             given(creatorRepository.findByEmail("dj@example.com")).willReturn(Optional.of(creator));
+            given(passwordEncoder.matches("password123!", "password123!")).willReturn(true);
             given(authTokenService.createCreatorToken(1L)).willReturn("access-token");
             given(authTokenService.issueCreatorRefreshToken(1L)).willReturn(refreshToken);
 

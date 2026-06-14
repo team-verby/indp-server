@@ -21,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class AdminCreatorServiceTest {
@@ -31,6 +32,9 @@ class AdminCreatorServiceTest {
     @Mock
     private CreatorRepository creatorRepository;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @Nested
     @DisplayName("createCreator 메서드 실행 시")
     class CreateCreator {
@@ -40,6 +44,7 @@ class AdminCreatorServiceTest {
         void createCreator() {
             // given
             given(creatorRepository.existsByEmail("dj@example.com")).willReturn(false);
+            given(passwordEncoder.encode("password123!")).willReturn("$2a$hashed");
             CreateCreatorRequest request = new CreateCreatorRequest(
                 "박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "password123!");
 

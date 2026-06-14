@@ -2,11 +2,14 @@ package com.verby.indp.domain.creator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 import com.verby.indp.domain.common.exception.BadRequestException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 class CreatorTest {
 
@@ -92,15 +95,19 @@ class CreatorTest {
         @Test
         @DisplayName("성공 : 비밀번호가 일치하면 false를 반환한다.")
         void mismatchPasswordFalse() {
-            Creator creator = new Creator("박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "password123!");
-            assertThat(creator.mismatchPassword("password123!")).isFalse();
+            PasswordEncoder encoder = mock(PasswordEncoder.class);
+            Creator creator = new Creator("박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "hashed-pw");
+            given(encoder.matches("password123!", "hashed-pw")).willReturn(true);
+            assertThat(creator.mismatchPassword("password123!", encoder)).isFalse();
         }
 
         @Test
         @DisplayName("성공 : 비밀번호가 불일치하면 true를 반환한다.")
         void mismatchPasswordTrue() {
-            Creator creator = new Creator("박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "password123!");
-            assertThat(creator.mismatchPassword("wrongpassword")).isTrue();
+            PasswordEncoder encoder = mock(PasswordEncoder.class);
+            Creator creator = new Creator("박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "hashed-pw");
+            given(encoder.matches("wrongpassword", "hashed-pw")).willReturn(false);
+            assertThat(creator.mismatchPassword("wrongpassword", encoder)).isTrue();
         }
     }
 }
