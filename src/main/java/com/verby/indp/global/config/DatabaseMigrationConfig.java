@@ -16,6 +16,7 @@ public class DatabaseMigrationConfig {
     @PostConstruct
     public void migrate() {
         dropRefreshTokenSubjectTypeConstraint();
+        dropPaymentTypeConstraint();
     }
 
     private void dropRefreshTokenSubjectTypeConstraint() {
@@ -51,6 +52,35 @@ public class DatabaseMigrationConfig {
             log.info("[Migration] refresh_token.subject_type 컬럼 재정의 완료");
         } catch (Exception e) {
             log.debug("[Migration] 컬럼 재정의 스킵 (이미 정상): {}", e.getMessage());
+        }
+    }
+
+    private void dropPaymentTypeConstraint() {
+        // payment.type 컬럼 CHECK 제약 제거 (USER_SUBSCRIPTION 추가로 인한 제약 위반 방지)
+        try {
+            var constraints = jdbcTemplate.queryForList(
+                "SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS " +
+                "WHERE TABLE_SCHEMA = DATABASE() " +
+                "  AND TABLE_NAME = 'payment' " +
+                "  AND CONSTRAINT_TYPE = 'CHECK'"
+            );
+            for (var row : constraints) {
+                String name = (String) row.get("CONSTRAINT_NAME");
+                try {
+                    jdbcTemplate.execute("ALTER TABLE payment DROP CHECK `" + name + "`");
+                    log.info("[Migration] payment CHECK 제약 제거 완료: {}", name);
+                } catch (Exception ex) {
+                    log.warn("[Migration] payment DROP CHECK 실패 ({}): {}", name, ex.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            log.warn("[Migration] payment CHECK 제약 조회 실패: {}", e.getMessage());
+        }
+        try {
+            jdbcTemplate.execute("ALTER TABLE payment MODIFY COLUMN type VARCHAR(255) NOT NULL");
+            log.info("[Migration] payment.type 컬럼 재정의 완료");
+        } catch (Exception e) {
+            log.debug("[Migration] payment.type 재정의 스킵: {}", e.getMessage());
         }
     }
 }
