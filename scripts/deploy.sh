@@ -51,8 +51,8 @@ JAR_NAME=$(ls -tr "$DEPLOY_PATH" | grep jar | tail -n 1)
 echo "[ $(date +%c) ] JAR Name: $JAR_NAME" >> $DEPLOY_LOG
 nohup java -jar $DEPLOY_PATH/"$JAR_NAME" --spring.profiles.active=$IDLE_PROFILE >> $APP_LOG 2>> $ERROR_LOG &
 
-echo "[ $(date +%c) ] $IDLE_PROFILE 10초 후 Health check 시작" >> $DEPLOY_LOG
-sleep 10
+echo "[ $(date +%c) ] $IDLE_PROFILE 30초 후 Health check 시작" >> $DEPLOY_LOG
+sleep 30
 sudo sh $SCRIPT_PATH/health-check.sh $IDLE_PORT
 
 echo "[ $(date +%c) ] Port Switching" >> $DEPLOY_LOG
