@@ -62,6 +62,28 @@ class AdminFixedPlaylistSongServiceTest {
             assertThat(exception).isNull();
             then(fixedPlaylistSongRepository).should().save(any(FixedPlaylistSong.class));
         }
+
+        @Test
+        @DisplayName("성공 : 엑셀 모드(시간대 없음) 특정곡을 저장한다.")
+        void addFixedPlaylistSongWithoutHour() {
+            // given
+            Store store = store();
+            given(storeService.getStoreByName("카페 공명")).willReturn(store);
+            given(fixedPlaylistSongRepository.save(any(FixedPlaylistSong.class)))
+                .willAnswer(inv -> inv.getArgument(0));
+
+            CreateFixedPlaylistSongRequest request = new CreateFixedPlaylistSongRequest(
+                "카페 공명", LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 30),
+                null, 25, "안녕 나의 사랑", "성시경", "5zAEiu3SaO4", 259);
+
+            // when
+            Exception exception = catchException(
+                () -> adminFixedPlaylistSongService.addFixedPlaylistSong(request));
+
+            // then
+            assertThat(exception).isNull();
+            then(fixedPlaylistSongRepository).should().save(any(FixedPlaylistSong.class));
+        }
     }
 
     @Nested

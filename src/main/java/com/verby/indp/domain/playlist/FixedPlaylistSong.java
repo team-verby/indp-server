@@ -10,8 +10,11 @@ import java.time.LocalDate;
 
 /**
  * 매장 플레이리스트에 반복적으로 들어가야 하는 "특정곡".
- * 지정한 기간([startDate, endDate]) 동안, 해당 시간대(targetHour)의 정해진 순서(position)에 삽입된다.
+ * 지정한 기간([startDate, endDate]) 동안, 정해진 순서(position)에 삽입된다.
  * 한 번 저장해두면 매일 플레이리스트 생성 시 클릭만으로 다시 입력할 필요 없이 적용할 수 있다.
+ *
+ * <p>targetHour 가 있으면 랜덤 생성 모드의 해당 시간대(0~23) 18곡 슬롯 내 순서(1~18)를 의미하고,
+ * null 이면 엑셀 모드의 단일 곡목록 내 순서(1~)를 의미한다.
  */
 @Entity
 @Getter
@@ -34,8 +37,8 @@ public class FixedPlaylistSong {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-    @Column(name = "target_hour", nullable = false)
-    private int targetHour;
+    @Column(name = "target_hour")
+    private Integer targetHour;
 
     @Column(name = "position", nullable = false)
     private int position;
@@ -58,7 +61,7 @@ public class FixedPlaylistSong {
         validateStore(store);
         validatePeriod(startDate, endDate);
         validateTargetHour(targetHour);
-        validatePosition(position);
+        validatePosition(position, targetHour);
         validateTitle(title);
         validateArtist(artist);
         validateVid(vid);
@@ -90,13 +93,18 @@ public class FixedPlaylistSong {
     }
 
     private void validateTargetHour(Integer targetHour) {
-        if (targetHour == null || targetHour < 0 || targetHour > 23) {
+        // targetHour가 null이면 엑셀 모드(단일 곡목록)를 의미한다.
+        if (targetHour != null && (targetHour < 0 || targetHour > 23)) {
             throw new BadRequestException("targetHour는 0~23 사이여야 합니다.");
         }
     }
 
-    private void validatePosition(Integer position) {
-        if (position == null || position < 1 || position > 18) {
+    private void validatePosition(Integer position, Integer targetHour) {
+        if (position == null || position < 1) {
+            throw new BadRequestException("position은 1 이상이어야 합니다.");
+        }
+        // 랜덤 모드(시간대 지정)는 시간대당 18곡 슬롯이므로 1~18로 제한한다.
+        if (targetHour != null && position > 18) {
             throw new BadRequestException("position은 1~18 사이여야 합니다.");
         }
     }

@@ -19,7 +19,7 @@ public record FindFixedPlaylistSongsResponse(
         String storeName,
         LocalDate startDate,
         LocalDate endDate,
-        int hour,
+        Integer hour,
         int position,
         String title,
         String artist,
