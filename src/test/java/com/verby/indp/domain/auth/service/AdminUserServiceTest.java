@@ -40,7 +40,9 @@ class AdminUserServiceTest {
             var sub = org.mockito.Mockito.mock(UserSubscription.class);
             var payment = org.mockito.Mockito.mock(com.verby.indp.domain.payment.Payment.class);
             given(payment.getTotalAmount()).willReturn(4400);
+            given(payment.getPaidAt()).willReturn(java.time.LocalDateTime.of(2026, 6, 15, 12, 0));
             given(sub.getStatus()).willReturn(com.verby.indp.domain.subscription.UserSubscriptionStatus.ACTIVE);
+            given(sub.getStartDate()).willReturn(java.time.LocalDate.of(2026, 6, 15));
             given(sub.getEndDate()).willReturn(java.time.LocalDate.of(2026, 7, 14));
             given(sub.getPayment()).willReturn(payment);
             given(sub.getUsagePeriod()).willReturn(1);

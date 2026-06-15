@@ -71,7 +71,7 @@ class DjTrackServiceTest {
                     creator, "track.mp3", "https://cdn.example.com/track.mp3", "3:42", 222);
             org.springframework.test.util.ReflectionTestUtils.setField(saved, "trackId", 1L);
 
-            given(imageService.uploadImage(file)).willReturn("https://cdn.example.com/track.mp3");
+            given(imageService.uploadAudio(file)).willReturn("https://cdn.example.com/track.mp3");
             given(creatorTrackRepository.save(any())).willReturn(saved);
 
             com.verby.indp.domain.creator.dto.response.DjTrackResponse response =

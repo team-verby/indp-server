@@ -30,7 +30,7 @@ public class DjTrackService {
 
     @Transactional
     public DjTrackResponse uploadTrack(Creator creator, MultipartFile file, String duration, int secs) {
-        String streamUrl = imageService.uploadImage(file);
+        String streamUrl = imageService.uploadAudio(file);
         CreatorTrack track = new CreatorTrack(creator, file.getOriginalFilename(), streamUrl, duration, secs);
         return DjTrackResponse.from(creatorTrackRepository.save(track));
     }
