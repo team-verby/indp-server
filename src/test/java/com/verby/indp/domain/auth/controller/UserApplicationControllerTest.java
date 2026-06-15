@@ -34,7 +34,7 @@ class UserApplicationControllerTest extends BaseControllerTest {
                 .willReturn(new UserApplicationResponse("order-uuid", 4400, "Plan A 라이트 요금제 · 월간"));
 
             UserApplicationRequest request = new UserApplicationRequest(
-                "홍길동", "user@test.com", "password123!", 1);
+                "testloginid", "홍길동", "user@test.com", "password123!", 1);
 
             ResultActions resultActions = mockMvc.perform(post("/api/user/applications")
                 .contentType(APPLICATION_JSON)
@@ -43,8 +43,9 @@ class UserApplicationControllerTest extends BaseControllerTest {
             resultActions.andExpect(status().isCreated())
                 .andDo(restDocs.document(
                     requestFields(
+                        fieldWithPath("loginId").type(STRING).description("아이디 (로그인용, 영문·숫자·언더바 4자 이상)"),
                         fieldWithPath("name").type(STRING).description("성함"),
-                        fieldWithPath("email").type(STRING).description("이메일 (로그인 ID)"),
+                        fieldWithPath("email").type(STRING).description("이메일 (정보 수신용)"),
                         fieldWithPath("password").type(STRING).description("비밀번호 (8자 이상)"),
                         fieldWithPath("usagePeriod").type(NUMBER).description("결제 주기 (1: 월간, 12: 연간)")
                     ),
@@ -57,13 +58,29 @@ class UserApplicationControllerTest extends BaseControllerTest {
         }
 
         @Test
+        @DisplayName("실패 : 이미 사용 중인 아이디이면 409를 반환한다.")
+        void applyWithDuplicateLoginId() throws Exception {
+            willThrow(new ConflictException("이미 사용 중인 아이디입니다."))
+                .given(userApplicationService).apply(any());
+
+            UserApplicationRequest request = new UserApplicationRequest(
+                "dupid", "홍길동", "user@test.com", "password123!", 1);
+
+            ResultActions resultActions = mockMvc.perform(post("/api/user/applications")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+            resultActions.andExpect(status().isConflict());
+        }
+
+        @Test
         @DisplayName("실패 : 이미 사용 중인 이메일이면 409를 반환한다.")
         void applyWithDuplicateEmail() throws Exception {
             willThrow(new ConflictException("이미 사용 중인 이메일입니다."))
                 .given(userApplicationService).apply(any());
 
             UserApplicationRequest request = new UserApplicationRequest(
-                "홍길동", "dup@test.com", "password123!", 1);
+                "testloginid", "홍길동", "dup@test.com", "password123!", 1);
 
             ResultActions resultActions = mockMvc.perform(post("/api/user/applications")
                 .contentType(APPLICATION_JSON)

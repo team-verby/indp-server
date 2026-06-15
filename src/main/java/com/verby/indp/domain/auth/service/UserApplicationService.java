@@ -32,12 +32,15 @@ public class UserApplicationService {
     @Transactional
     public UserApplicationResponse apply(UserApplicationRequest request) {
         validateUsagePeriod(request.usagePeriod());
+        if (userRepository.existsByLoginId(request.loginId())) {
+            throw new ConflictException("이미 사용 중인 아이디입니다.");
+        }
         if (userRepository.existsByEmail(request.email())) {
             throw new ConflictException("이미 사용 중인 이메일입니다.");
         }
 
         User user = new User(
-            request.email(),
+            request.loginId(),
             passwordEncoder.encode(request.password()),
             request.name(),
             request.email()

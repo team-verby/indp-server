@@ -49,6 +49,7 @@ class UserApplicationServiceTest {
         @Test
         @DisplayName("성공 : Plan A 구독을 신청한다 (월간).")
         void applyMonthly() {
+            given(userRepository.existsByLoginId("user123")).willReturn(false);
             given(userRepository.existsByEmail("user@test.com")).willReturn(false);
             given(passwordEncoder.encode("password123!")).willReturn("$2a$hashed");
 
@@ -59,7 +60,7 @@ class UserApplicationServiceTest {
             given(userSubscriptionRepository.save(any())).willReturn(null);
 
             UserApplicationResponse response = userApplicationService.apply(
-                new UserApplicationRequest("홍길동", "user@test.com", "password123!", 1));
+                new UserApplicationRequest("user123", "홍길동", "user@test.com", "password123!", 1));
 
             assertThat(response.amount()).isEqualTo(4400);
             assertThat(response.orderName()).contains("월간");
@@ -68,6 +69,7 @@ class UserApplicationServiceTest {
         @Test
         @DisplayName("성공 : Plan A 구독을 신청한다 (연간).")
         void applyAnnual() {
+            given(userRepository.existsByLoginId("user123")).willReturn(false);
             given(userRepository.existsByEmail("user@test.com")).willReturn(false);
             given(passwordEncoder.encode(any())).willReturn("$2a$hashed");
 
@@ -78,20 +80,33 @@ class UserApplicationServiceTest {
             given(userSubscriptionRepository.save(any())).willReturn(null);
 
             UserApplicationResponse response = userApplicationService.apply(
-                new UserApplicationRequest("홍길동", "user@test.com", "password123!", 12));
+                new UserApplicationRequest("user123", "홍길동", "user@test.com", "password123!", 12));
 
             assertThat(response.amount()).isEqualTo(52800);
             assertThat(response.orderName()).contains("연간");
         }
 
         @Test
+        @DisplayName("실패 : 이미 사용 중인 아이디이면 예외를 던진다.")
+        void applyWithDuplicateLoginId() {
+            given(userRepository.existsByLoginId("dupid")).willReturn(true);
+
+            Exception exception = catchException(
+                () -> userApplicationService.apply(
+                    new UserApplicationRequest("dupid", "홍길동", "user@test.com", "password123!", 1)));
+
+            assertThat(exception).isInstanceOf(ConflictException.class);
+        }
+
+        @Test
         @DisplayName("실패 : 이미 사용 중인 이메일이면 예외를 던진다.")
         void applyWithDuplicateEmail() {
+            given(userRepository.existsByLoginId("user123")).willReturn(false);
             given(userRepository.existsByEmail("dup@test.com")).willReturn(true);
 
             Exception exception = catchException(
                 () -> userApplicationService.apply(
-                    new UserApplicationRequest("홍길동", "dup@test.com", "password123!", 1)));
+                    new UserApplicationRequest("user123", "홍길동", "dup@test.com", "password123!", 1)));
 
             assertThat(exception).isInstanceOf(ConflictException.class);
         }
@@ -101,7 +116,7 @@ class UserApplicationServiceTest {
         void applyWithInvalidUsagePeriod() {
             Exception exception = catchException(
                 () -> userApplicationService.apply(
-                    new UserApplicationRequest("홍길동", "user@test.com", "password123!", 3)));
+                    new UserApplicationRequest("user123", "홍길동", "user@test.com", "password123!", 3)));
 
             assertThat(exception).isInstanceOf(BadRequestException.class);
         }
