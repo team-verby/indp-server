@@ -1,34 +1,25 @@
 package com.verby.indp.global.config;
 
-import javax.sql.DataSource;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-/**
- * Hibernate DDL(ddl-auto: update) 실행 전에 기존 CHECK 제약을 제거.
- * BeanFactoryPostProcessor로 구현해 EntityManagerFactory 초기화보다 먼저 실행됨.
- */
 @Slf4j
 @Configuration
-public class DatabaseMigrationConfig implements BeanFactoryPostProcessor {
+@RequiredArgsConstructor
+public class DatabaseMigrationConfig {
 
-    @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        try {
-            DataSource dataSource = beanFactory.getBean(DataSource.class);
-            JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-            dropRefreshTokenSubjectTypeConstraint(jdbcTemplate);
-            dropPaymentTypeConstraint(jdbcTemplate);
-        } catch (Exception e) {
-            log.warn("[Migration] DataSource 초기화 전 실행 불가 — 스킵: {}", e.getMessage());
-        }
+    private final JdbcTemplate jdbcTemplate;
+
+    @PostConstruct
+    public void migrate() {
+        dropRefreshTokenSubjectTypeConstraint();
+        dropPaymentTypeConstraint();
     }
 
-    private void dropRefreshTokenSubjectTypeConstraint(JdbcTemplate jdbcTemplate) {
+    private void dropRefreshTokenSubjectTypeConstraint() {
         try {
             var constraints = jdbcTemplate.queryForList(
                 "SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS " +
@@ -58,7 +49,7 @@ public class DatabaseMigrationConfig implements BeanFactoryPostProcessor {
         }
     }
 
-    private void dropPaymentTypeConstraint(JdbcTemplate jdbcTemplate) {
+    private void dropPaymentTypeConstraint() {
         try {
             var constraints = jdbcTemplate.queryForList(
                 "SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS " +
