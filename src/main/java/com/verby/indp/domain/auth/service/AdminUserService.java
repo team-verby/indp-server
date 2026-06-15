@@ -19,11 +19,16 @@ public class AdminUserService {
     private final UserRepository userRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
 
+    @Transactional
     public FindUsersResponse findUsers() {
         List<User> users = userRepository.findAll();
         List<FindUsersResponse.UserItem> items = users.stream().map(user -> {
             List<UserSubscription> subs = userSubscriptionRepository.findAllByUserOrderByCreatedAtDesc(user);
             UserSubscription latest = subs.isEmpty() ? null : subs.get(0);
+            // Eagerly access payment to avoid LazyInitializationException
+            if (latest != null && latest.getPayment() != null) {
+                latest.getPayment().getTotalAmount();
+            }
             return FindUsersResponse.UserItem.from(user, latest);
         }).toList();
         return new FindUsersResponse(items);

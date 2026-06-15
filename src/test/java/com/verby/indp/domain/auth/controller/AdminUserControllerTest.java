@@ -33,7 +33,7 @@ class AdminUserControllerTest extends BaseControllerTest {
             givenAdminAuth(admin);
             given(adminUserService.findUsers()).willReturn(new FindUsersResponse(
                 List.of(new FindUsersResponse.UserItem(
-                    1L, "user123", "홍길동", "user@test.com", "ACTIVE", LocalDate.of(2026, 7, 14)
+                    1L, "user123", "홍길동", "user@test.com", "ACTIVE", LocalDate.of(2026, 7, 14), 4400, 1
                 ))
             ));
 
@@ -49,7 +49,9 @@ class AdminUserControllerTest extends BaseControllerTest {
                         fieldWithPath("users[].name").type(STRING).description("성함"),
                         fieldWithPath("users[].email").type(STRING).description("이메일"),
                         fieldWithPath("users[].subscriptionStatus").type(STRING).description("구독 상태"),
-                        fieldWithPath("users[].subscriptionEndDate").type(STRING).description("구독 만료일 (없으면 null)").optional()
+                        fieldWithPath("users[].subscriptionEndDate").type(STRING).description("구독 만료일 (없으면 null)").optional(),
+                        fieldWithPath("users[].paidAmount").type(NUMBER).description("결제 금액 (없으면 null)").optional(),
+                        fieldWithPath("users[].usagePeriod").type(NUMBER).description("이용 기간 (개월, 없으면 null)").optional()
                     )
                 ));
         }

@@ -16,19 +16,25 @@ public record FindUsersResponse(
         String name,
         String email,
         String subscriptionStatus,
-        LocalDate subscriptionEndDate
+        LocalDate subscriptionEndDate,
+        Integer paidAmount,
+        Integer usagePeriod
     ) {
 
         public static UserItem from(User user, UserSubscription sub) {
             String status = sub != null ? sub.getStatus().name() : "NO_SUBSCRIPTION";
             LocalDate endDate = sub != null ? sub.getEndDate() : null;
+            Integer amount = (sub != null && sub.getPayment() != null) ? sub.getPayment().getTotalAmount() : null;
+            Integer period = sub != null ? sub.getUsagePeriod() : null;
             return new UserItem(
                 user.getUserId(),
                 user.getLoginId(),
                 user.getName(),
                 user.getEmail(),
                 status,
-                endDate
+                endDate,
+                amount,
+                period
             );
         }
     }

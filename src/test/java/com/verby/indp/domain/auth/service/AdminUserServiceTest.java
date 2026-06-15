@@ -38,8 +38,12 @@ class AdminUserServiceTest {
         void findUsersWithSubscription() {
             var user = UserFixture.user();
             var sub = org.mockito.Mockito.mock(UserSubscription.class);
+            var payment = org.mockito.Mockito.mock(com.verby.indp.domain.payment.Payment.class);
+            given(payment.getTotalAmount()).willReturn(4400);
             given(sub.getStatus()).willReturn(com.verby.indp.domain.subscription.UserSubscriptionStatus.ACTIVE);
             given(sub.getEndDate()).willReturn(java.time.LocalDate.of(2026, 7, 14));
+            given(sub.getPayment()).willReturn(payment);
+            given(sub.getUsagePeriod()).willReturn(1);
 
             given(userRepository.findAll()).willReturn(List.of(user));
             given(userSubscriptionRepository.findAllByUserOrderByCreatedAtDesc(user))
