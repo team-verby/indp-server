@@ -87,6 +87,29 @@ class AdminFixedPlaylistSongServiceTest {
     }
 
     @Nested
+    @DisplayName("findFixedPlaylistSongs 메서드 실행 시")
+    class FindFixedPlaylistSongs {
+
+        @Test
+        @DisplayName("성공 : 저장된 특정곡 전체 목록을 반환한다.")
+        void findFixedPlaylistSongs() {
+            // given
+            given(fixedPlaylistSongRepository
+                .findAllByOrderByStartDateAscTargetHourAscPositionAsc())
+                .willReturn(List.of(fixedPlaylistSong()));
+
+            // when
+            FindFixedPlaylistSongsResponse response =
+                adminFixedPlaylistSongService.findFixedPlaylistSongs();
+
+            // then
+            assertThat(response.fixedSongs()).hasSize(1);
+            then(fixedPlaylistSongRepository).should()
+                .findAllByOrderByStartDateAscTargetHourAscPositionAsc();
+        }
+    }
+
+    @Nested
     @DisplayName("findActiveFixedPlaylistSongs 메서드 실행 시")
     class FindActiveFixedPlaylistSongs {
 
