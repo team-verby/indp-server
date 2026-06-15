@@ -56,7 +56,7 @@ public class UnifiedAuthService {
     }
 
     private UnifiedLoginResponse loginAsUser(User user, String password) {
-        if (user.mismatchPassword(password)) {
+        if (user.mismatchPassword(password, passwordEncoder)) {
             throw new AuthException("비밀번호가 일치하지 않습니다.");
         }
         String accessToken = authTokenService.createUserToken(user.getUserId());

@@ -4,6 +4,7 @@ import com.verby.indp.domain.common.exception.BadRequestException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
@@ -38,8 +39,8 @@ public class User {
         this.email = email;
     }
 
-    public boolean mismatchPassword(String password) {
-        return !this.password.equals(password);
+    public boolean mismatchPassword(String rawPassword, PasswordEncoder encoder) {
+        return !encoder.matches(rawPassword, this.password);
     }
 
     private void validateLoginId(String loginId) {

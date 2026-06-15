@@ -69,6 +69,7 @@ class UnifiedAuthServiceTest {
                 LocalDateTime.now().plusDays(30));
 
             given(userRepository.findByLoginId("parkwan123")).willReturn(Optional.of(user));
+            given(passwordEncoder.matches("password123!", "password123!")).willReturn(true);
             given(authTokenService.createUserToken(1L)).willReturn("access-token");
             given(authTokenService.issueUserRefreshToken(1L)).willReturn(refreshToken);
 
@@ -152,6 +153,7 @@ class UnifiedAuthServiceTest {
             // given
             User user = userWithId(1L);
             given(userRepository.findByLoginId("parkwan123")).willReturn(Optional.of(user));
+            given(passwordEncoder.matches("wrongpassword", "password123!")).willReturn(false);
 
             // when
             Exception exception = catchException(

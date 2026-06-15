@@ -36,6 +36,9 @@ class UserServiceTest {
     @Mock
     private AuthTokenService authTokenService;
 
+    @Mock
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
     @Nested
     @DisplayName("login 메서드 실행 시")
     class Login {
@@ -50,6 +53,7 @@ class UserServiceTest {
                 LocalDateTime.now().plusDays(30));
 
             given(userRepository.findByLoginId("parkwan123")).willReturn(Optional.of(user));
+            given(passwordEncoder.matches("password123!", "password123!")).willReturn(true);
             given(authTokenService.createUserToken(1L)).willReturn("access-token");
             given(authTokenService.issueUserRefreshToken(1L)).willReturn(refreshToken);
 

@@ -110,27 +110,21 @@ class UserTest {
         @Test
         @DisplayName("성공 : 비밀번호가 일치하면 false를 반환한다.")
         void mismatchPasswordFalse() {
-            // given
+            org.springframework.security.crypto.password.PasswordEncoder encoder =
+                org.mockito.Mockito.mock(org.springframework.security.crypto.password.PasswordEncoder.class);
+            org.mockito.BDDMockito.given(encoder.matches("password123!", "password123!")).willReturn(true);
             User user = new User("parkwan123", "password123!", "박완", "parkwan@example.com");
-
-            // when
-            boolean result = user.mismatchPassword("password123!");
-
-            // then
-            assertThat(result).isFalse();
+            assertThat(user.mismatchPassword("password123!", encoder)).isFalse();
         }
 
         @Test
         @DisplayName("성공 : 비밀번호가 불일치하면 true를 반환한다.")
         void mismatchPasswordTrue() {
-            // given
+            org.springframework.security.crypto.password.PasswordEncoder encoder =
+                org.mockito.Mockito.mock(org.springframework.security.crypto.password.PasswordEncoder.class);
+            org.mockito.BDDMockito.given(encoder.matches("wrongpassword", "password123!")).willReturn(false);
             User user = new User("parkwan123", "password123!", "박완", "parkwan@example.com");
-
-            // when
-            boolean result = user.mismatchPassword("wrongpassword");
-
-            // then
-            assertThat(result).isTrue();
+            assertThat(user.mismatchPassword("wrongpassword", encoder)).isTrue();
         }
     }
 }
