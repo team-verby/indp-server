@@ -11,7 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 @Service
@@ -24,9 +26,19 @@ public class AdminPlaylistService {
 
     @Transactional
     public void addScheduledPlaylists(SchedulePlaylistsUpdateRequest request) {
+        // 같은 매장에 대해 다시 등록(재생성/적용 시각 변경)하면 아직 적용되지 않은(PENDING)
+        // 기존 예약을 먼저 제거해, 이전 예약이 중복으로 적용되는 것을 방지한다.
+        Set<Long> replacedStoreIds = new HashSet<>();
         request.schedulePlaylists()
             .forEach(schedulePlaylist -> {
                 Store store = storeService.getStoreByName(schedulePlaylist.storeName());
+                if (replacedStoreIds.add(store.getStoreId())) {
+                    List<ScheduledPlaylist> pendings = scheduledPlaylistUpdateRepository
+                        .findAllByStoreAndStatus(store, ScheduledPlaylist.UpdateStatus.PENDING);
+                    if (!pendings.isEmpty()) {
+                        scheduledPlaylistUpdateRepository.deleteAll(pendings);
+                    }
+                }
                 List<SongItem> songItems = schedulePlaylist.songs();
                 List<ScheduledPlaylistSong> songs = IntStream.range(0, songItems.size())
                     .mapToObj(i -> new ScheduledPlaylistSong(songItems.get(i).title(),

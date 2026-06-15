@@ -1,6 +1,7 @@
 package com.verby.indp.domain.playlist.repository;
 
 import com.verby.indp.domain.playlist.ScheduledPlaylist;
+import com.verby.indp.domain.store.Store;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
@@ -11,5 +12,10 @@ public interface ScheduledPlaylistUpdateRepository extends JpaRepository<Schedul
     List<ScheduledPlaylist> findAllByStatusAndScheduledAtLessThanEqual(
         ScheduledPlaylist.UpdateStatus status,
         LocalDateTime scheduledAt
+    );
+
+    List<ScheduledPlaylist> findAllByStoreAndStatus(
+        Store store,
+        ScheduledPlaylist.UpdateStatus status
     );
 }
