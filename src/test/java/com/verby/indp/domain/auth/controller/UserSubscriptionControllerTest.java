@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.domain.auth.User;
 import com.verby.indp.domain.common.exception.NotFoundException;
-import com.verby.indp.domain.creator.dto.response.UserPaymentsResponse;
+import com.verby.indp.domain.auth.dto.response.UserPaymentsResponse;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -56,7 +56,7 @@ class UserSubscriptionControllerTest extends BaseControllerTest {
             given(authTokenService.decodeUserToken(any())).willReturn(1L);
             given(userRepository.findById(1L)).willReturn(Optional.of(user));
             given(userSubscriptionService.getSubscription(any()))
-                .willReturn(new com.verby.indp.domain.creator.dto.response.UserSubscriptionResponse(
+                .willReturn(new com.verby.indp.domain.auth.dto.response.UserSubscriptionResponse(
                     "Plan A 라이트 요금제", 4400, 1,
                     java.time.LocalDate.of(2026, 6, 15),
                     java.time.LocalDate.of(2026, 7, 14)

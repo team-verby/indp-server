@@ -1,9 +1,9 @@
 package com.verby.indp.domain.auth.controller;
 
 import com.verby.indp.domain.auth.User;
+import com.verby.indp.domain.auth.dto.response.UserPaymentsResponse;
+import com.verby.indp.domain.auth.dto.response.UserSubscriptionResponse;
 import com.verby.indp.domain.auth.service.UserSubscriptionService;
-import com.verby.indp.domain.creator.dto.response.UserPaymentsResponse;
-import com.verby.indp.domain.creator.dto.response.UserSubscriptionResponse;
 import com.verby.indp.global.resolver.LoginUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

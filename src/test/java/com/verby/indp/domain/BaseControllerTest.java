@@ -12,6 +12,7 @@ import com.verby.indp.domain.auth.service.AuthTokenService;
 import com.verby.indp.domain.auth.service.OwnerService;
 import com.verby.indp.domain.auth.service.UnifiedAuthService;
 import com.verby.indp.domain.auth.service.UserService;
+import com.verby.indp.domain.auth.service.UserApplicationService;
 import com.verby.indp.domain.auth.service.UserSubscriptionService;
 import com.verby.indp.domain.creator.Creator;
 import com.verby.indp.domain.creator.repository.CreatorRepository;
@@ -173,6 +174,9 @@ public abstract class BaseControllerTest {
 
     @MockBean
     protected UserSubscriptionService userSubscriptionService;
+
+    @MockBean
+    protected UserApplicationService userApplicationService;
 
     @BeforeEach
     void setUp(final WebApplicationContext context,
