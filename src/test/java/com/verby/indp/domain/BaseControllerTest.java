@@ -6,9 +6,23 @@ import com.verby.indp.domain.auth.Admin;
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.auth.repository.AdminRepository;
 import com.verby.indp.domain.auth.repository.OwnerRepository;
+import com.verby.indp.domain.auth.repository.UserRepository;
 import com.verby.indp.domain.auth.service.AdminService;
 import com.verby.indp.domain.auth.service.AuthTokenService;
 import com.verby.indp.domain.auth.service.OwnerService;
+import com.verby.indp.domain.auth.service.UnifiedAuthService;
+import com.verby.indp.domain.auth.service.UserService;
+import com.verby.indp.domain.auth.service.AdminUserService;
+import com.verby.indp.domain.auth.service.UserApplicationService;
+import com.verby.indp.domain.auth.service.UserSubscriptionService;
+import com.verby.indp.domain.creator.Creator;
+import com.verby.indp.domain.creator.repository.CreatorRepository;
+import com.verby.indp.domain.creator.service.AdminCreatorService;
+import com.verby.indp.domain.creator.service.DjLiveService;
+import com.verby.indp.domain.creator.service.DjPlaylistService;
+import com.verby.indp.domain.creator.service.DjRevenueService;
+import com.verby.indp.domain.creator.service.DjService;
+import com.verby.indp.domain.creator.service.DjTrackService;
 import com.verby.indp.domain.payment.service.AdminPaymentService;
 import com.verby.indp.domain.payment.service.OwnerPaymentService;
 import com.verby.indp.domain.payment.service.PaymentConfirmService;
@@ -73,10 +87,25 @@ public abstract class BaseControllerTest {
     protected OwnerRepository ownerRepository;
 
     @MockBean
+    protected UserRepository userRepository;
+
+    @MockBean
+    protected CreatorRepository creatorRepository;
+
+    @MockBean
     protected AdminService adminService;
 
     @MockBean
     protected OwnerService ownerService;
+
+    @MockBean
+    protected UnifiedAuthService unifiedAuthService;
+
+    @MockBean
+    protected UserService userService;
+
+    @MockBean
+    protected AdminCreatorService adminCreatorService;
 
     @MockBean
     protected PaymentService paymentService;
@@ -129,6 +158,30 @@ public abstract class BaseControllerTest {
     @MockBean
     protected StoreSseService storeSseService;
 
+    @MockBean
+    protected DjService djService;
+
+    @MockBean
+    protected DjTrackService djTrackService;
+
+    @MockBean
+    protected DjLiveService djLiveService;
+
+    @MockBean
+    protected DjPlaylistService djPlaylistService;
+
+    @MockBean
+    protected DjRevenueService djRevenueService;
+
+    @MockBean
+    protected UserSubscriptionService userSubscriptionService;
+
+    @MockBean
+    protected UserApplicationService userApplicationService;
+
+    @MockBean
+    protected AdminUserService adminUserService;
+
     @BeforeEach
     void setUp(final WebApplicationContext context,
         final RestDocumentationContextProvider provider) {
@@ -149,5 +202,11 @@ public abstract class BaseControllerTest {
         Long adminId = admin.getAdminId();
         given(authTokenService.decodeAdminToken(anyString())).willReturn(adminId);
         given(adminRepository.findById(adminId)).willReturn(Optional.of(admin));
+    }
+
+    protected void givenCreatorAuth(Creator creator) {
+        Long creatorId = creator.getCreatorId();
+        given(authTokenService.decodeCreatorToken(anyString())).willReturn(creatorId);
+        given(creatorRepository.findById(creatorId)).willReturn(Optional.of(creator));
     }
 }

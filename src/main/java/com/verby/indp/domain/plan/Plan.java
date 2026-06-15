@@ -23,7 +23,7 @@ public class Plan {
     private PlanType type;
 
     public enum PlanType {
-        PLAN_A, PLAN_B
+        PLAN_A, PLAN_B, PLAN_C
     }
 
     @Column(name = "monthly_price")

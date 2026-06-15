@@ -26,6 +26,15 @@ public class PlanFixture {
         return plan;
     }
 
+    public static Plan planC() {
+        Plan plan = createPlan();
+        ReflectionTestUtils.setField(plan, "planId", 3L);
+        ReflectionTestUtils.setField(plan, "type", PlanType.PLAN_C);
+        ReflectionTestUtils.setField(plan, "monthlyPrice", 33000);
+        ReflectionTestUtils.setField(plan, "discounts", new ArrayList<>());
+        return plan;
+    }
+
     private static Plan createPlan() {
         try {
             Constructor<Plan> constructor = Plan.class.getDeclaredConstructor();

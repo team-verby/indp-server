@@ -31,7 +31,7 @@ public class RefreshToken {
     private LocalDateTime expiresAt;
 
     public enum SubjectType {
-        ADMIN, OWNER
+        ADMIN, OWNER, USER, CREATOR
     }
 
     public RefreshToken(String token, SubjectType subjectType, Long subjectId,

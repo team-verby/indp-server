@@ -112,8 +112,8 @@ class SubscriptionServiceTest {
         }
 
         @Test
-        @DisplayName("성공 : 기존 구독이 없으면 다음 화요일부터 시작한다.")
-        void orderSubscriptionStartsOnNextTuesdayWithoutExistingSubscription() {
+        @DisplayName("성공 : PLAN_A이고 기존 구독이 없으면 오늘부터 시작한다.")
+        void orderSubscriptionStartsTodayForPlanAWithoutExistingSubscription() {
             // given
             Owner owner = OwnerFixture.ownerWithId(1L);
             Store store = StoreFixture.inactiveStoreWithOwner(owner);
@@ -128,21 +128,41 @@ class SubscriptionServiceTest {
 
             // then
             StoreSubscription newSubscription = store.getSubscriptions().get(0);
+            assertThat(newSubscription.getStartDate()).isEqualTo(LocalDate.of(2026, 4, 24));
+        }
+
+        @Test
+        @DisplayName("성공 : PLAN_B이고 기존 구독이 없으면 다음 화요일부터 시작한다.")
+        void orderSubscriptionStartsOnNextTuesdayWithoutExistingSubscription() {
+            // given
+            Owner owner = OwnerFixture.ownerWithId(1L);
+            Store store = StoreFixture.inactiveStoreWithOwner(owner);
+            Plan plan = PlanFixture.planB();
+            given(storeService.getStoreById(1L)).willReturn(store);
+            given(planService.getPlan(2L)).willReturn(plan);
+
+            AddSubscriptionRequest request = new AddSubscriptionRequest(2L, 3);
+
+            // when
+            subscriptionService.orderRenewalSubscription(owner, 1L, request);
+
+            // then
+            StoreSubscription newSubscription = store.getSubscriptions().get(0);
             assertThat(newSubscription.getStartDate()).isEqualTo(LocalDate.of(2026, 4, 28));
         }
 
         @Test
-        @DisplayName("성공 : 만료된 구독만 있으면 다음 화요일부터 시작한다.")
+        @DisplayName("성공 : PLAN_B이고 만료된 구독만 있으면 다음 화요일부터 시작한다.")
         void orderSubscriptionStartsOnNextTuesdayWhenOnlyExpiredSubscriptionExists() {
             // given
             Owner owner = OwnerFixture.ownerWithId(1L);
             Store store = StoreFixture.inactiveStoreWithOwner(owner);
             store.addSubscription(StoreSubscriptionFixture.expiredSubscription());
-            Plan plan = PlanFixture.planA();
+            Plan plan = PlanFixture.planB();
             given(storeService.getStoreById(1L)).willReturn(store);
-            given(planService.getPlan(1L)).willReturn(plan);
+            given(planService.getPlan(2L)).willReturn(plan);
 
-            AddSubscriptionRequest request = new AddSubscriptionRequest(1L, 3);
+            AddSubscriptionRequest request = new AddSubscriptionRequest(2L, 3);
 
             // when
             subscriptionService.orderRenewalSubscription(owner, 1L, request);

@@ -6,9 +6,11 @@ import com.verby.indp.domain.auth.dto.request.LoginRequest;
 import com.verby.indp.domain.auth.dto.request.RefreshRequest;
 import com.verby.indp.domain.auth.dto.response.LoginResponse;
 import com.verby.indp.domain.auth.dto.response.RefreshResponse;
+import com.verby.indp.domain.auth.dto.response.UnifiedLoginResponse;
 import com.verby.indp.domain.auth.service.AdminService;
-import com.verby.indp.domain.auth.service.OwnerService;
 import com.verby.indp.domain.auth.service.AuthTokenService;
+import com.verby.indp.domain.auth.service.OwnerService;
+import com.verby.indp.domain.auth.service.UnifiedAuthService;
 import com.verby.indp.global.resolver.LoginAdmin;
 import com.verby.indp.global.resolver.LoginOwner;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +27,13 @@ public class AuthController {
 
     private final AdminService adminService;
     private final OwnerService ownerService;
+    private final UnifiedAuthService unifiedAuthService;
     private final AuthTokenService authTokenService;
+
+    @PostMapping("/auth/login")
+    public ResponseEntity<UnifiedLoginResponse> unifiedLogin(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(unifiedAuthService.login(request));
+    }
 
     @PostMapping("/admin/login")
     public ResponseEntity<LoginResponse> adminLogin(@RequestBody LoginRequest request) {
