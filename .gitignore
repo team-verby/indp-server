@@ -37,3 +37,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# RestDocs 생성 산출물 (빌드 시 자동 생성)
+src/main/resources/static/docs/
