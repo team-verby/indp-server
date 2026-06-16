@@ -12,9 +12,14 @@ do
   then
     echo "[ $(date +%c) ] $IDLE_PORT 포트에서 구동 중인 애플리케이션이 종료됨" >> $DEPLOY_LOG
     break
+  elif [ "$retry_count" -ge 5 ]
+  then
+    echo "[ $(date +%c) ] kill -9 $IDLE_PID" >> $DEPLOY_LOG
+    kill -9 $IDLE_PID
+    sleep 5
   else
     echo "[ $(date +%c) ] kill -15 $IDLE_PID" >> $DEPLOY_LOG
-    kill -15 "$IDLE_PID"
+    kill -15 $IDLE_PID
     sleep 5
   fi
 
