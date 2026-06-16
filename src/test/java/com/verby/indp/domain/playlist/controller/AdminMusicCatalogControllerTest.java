@@ -2,7 +2,6 @@ package com.verby.indp.domain.playlist.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
@@ -20,6 +19,7 @@ import com.verby.indp.domain.playlist.dto.request.UpdateMusicCatalogRequest.Mood
 import com.verby.indp.domain.playlist.dto.request.UpdateMusicCatalogRequest.SongItem;
 import com.verby.indp.domain.playlist.dto.response.FindMusicCatalogResponse;
 import com.verby.indp.fixture.AdminFixture;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -42,7 +42,7 @@ class AdminMusicCatalogControllerTest extends BaseControllerTest {
             // given
             givenAdminAuth(admin());
             given(musicCatalogService.findMusicCatalog()).willReturn(
-                new FindMusicCatalogResponse(List.of(
+                new FindMusicCatalogResponse(LocalDateTime.of(2026, 6, 16, 15, 30, 0), List.of(
                     new FindMusicCatalogResponse.MoodCatalog("잔잔한", List.of(
                         new FindMusicCatalogResponse.SongItem(
                             "안녕 나의 사랑", "성시경", "4:19", "5zAEiu3SaO4")
@@ -57,6 +57,8 @@ class AdminMusicCatalogControllerTest extends BaseControllerTest {
             resultActions.andExpect(status().isOk())
                 .andDo(restDocs.document(
                     responseFields(
+                        fieldWithPath("savedAt").type(STRING)
+                            .description("마지막 저장 시각(ISO-8601). 저장된 적 없으면 null").optional(),
                         fieldWithPath("moods").type(ARRAY).description("무드 목록"),
                         fieldWithPath("moods[].mood").type(STRING).description("무드명"),
                         fieldWithPath("moods[].songs").type(ARRAY).description("해당 무드의 곡 목록"),
@@ -77,11 +79,12 @@ class AdminMusicCatalogControllerTest extends BaseControllerTest {
     class UpdateMusicCatalog {
 
         @Test
-        @DisplayName("성공 : 음원 카탈로그 전체를 저장(교체)한다.")
+        @DisplayName("성공 : 음원 카탈로그 전체를 저장(교체)하고 저장 시각을 반환한다.")
         void updateMusicCatalog() throws Exception {
             // given
             givenAdminAuth(admin());
-            willDoNothing().given(musicCatalogService).updateMusicCatalog(any());
+            given(musicCatalogService.updateMusicCatalog(any()))
+                .willReturn(LocalDateTime.of(2026, 6, 16, 15, 30, 0));
 
             UpdateMusicCatalogRequest request = new UpdateMusicCatalogRequest(List.of(
                 new MoodCatalog("잔잔한", List.of(
@@ -96,7 +99,7 @@ class AdminMusicCatalogControllerTest extends BaseControllerTest {
                 .content(objectMapper.writeValueAsString(request)));
 
             // then
-            resultActions.andExpect(status().isNoContent())
+            resultActions.andExpect(status().isOk())
                 .andDo(restDocs.document(
                     requestFields(
                         fieldWithPath("moods").type(ARRAY).description("무드 목록"),
@@ -109,6 +112,10 @@ class AdminMusicCatalogControllerTest extends BaseControllerTest {
                             .description("재생시간(MM:SS)").optional(),
                         fieldWithPath("moods[].songs[].vid").type(STRING)
                             .description("YouTube 영상 ID").optional()
+                    ),
+                    responseFields(
+                        fieldWithPath("savedAt").type(STRING)
+                            .description("저장 시각(ISO-8601). 저장된 곡이 없으면 null").optional()
                     )
                 ));
         }

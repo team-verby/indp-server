@@ -2,7 +2,9 @@ package com.verby.indp.domain.playlist.controller;
 
 import com.verby.indp.domain.playlist.dto.request.UpdateMusicCatalogRequest;
 import com.verby.indp.domain.playlist.dto.response.FindMusicCatalogResponse;
+import com.verby.indp.domain.playlist.dto.response.SaveMusicCatalogResponse;
 import com.verby.indp.domain.playlist.service.AdminMusicCatalogService;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,9 +26,9 @@ public class AdminMusicCatalogController {
     }
 
     @PutMapping
-    public ResponseEntity<Void> updateMusicCatalog(
+    public ResponseEntity<SaveMusicCatalogResponse> updateMusicCatalog(
         @RequestBody UpdateMusicCatalogRequest request) {
-        musicCatalogService.updateMusicCatalog(request);
-        return ResponseEntity.noContent().build();
+        LocalDateTime savedAt = musicCatalogService.updateMusicCatalog(request);
+        return ResponseEntity.ok(new SaveMusicCatalogResponse(savedAt));
     }
 }

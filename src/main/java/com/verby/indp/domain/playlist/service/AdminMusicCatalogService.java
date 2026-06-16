@@ -6,8 +6,11 @@ import com.verby.indp.domain.playlist.dto.request.UpdateMusicCatalogRequest.Mood
 import com.verby.indp.domain.playlist.dto.request.UpdateMusicCatalogRequest.SongItem;
 import com.verby.indp.domain.playlist.dto.response.FindMusicCatalogResponse;
 import com.verby.indp.domain.playlist.repository.MusicCatalogSongRepository;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,20 +23,23 @@ public class AdminMusicCatalogService {
     private final MusicCatalogSongRepository musicCatalogSongRepository;
 
     public FindMusicCatalogResponse findMusicCatalog() {
-        return FindMusicCatalogResponse.from(
-            musicCatalogSongRepository.findAllByOrderByMoodAscPositionAsc());
+        List<MusicCatalogSong> songs =
+            musicCatalogSongRepository.findAllByOrderByMoodAscPositionAsc();
+        return FindMusicCatalogResponse.from(latestSavedAt(songs), songs);
     }
 
     /**
      * 음원 카탈로그 전체를 통째로 교체한다(기존 전체 삭제 후 재삽입).
      * 프론트의 음원 데이터 관리(mdData)가 무드 카탈로그 전체를 한 번에 저장하는 방식과 1:1로 대응한다.
+     *
+     * @return 저장된 시각(저장된 곡이 없으면 null). 전체 재삽입이라 행들의 createdAt 최댓값이 곧 마지막 저장 시각이다.
      */
     @Transactional
-    public void updateMusicCatalog(UpdateMusicCatalogRequest request) {
+    public LocalDateTime updateMusicCatalog(UpdateMusicCatalogRequest request) {
         musicCatalogSongRepository.deleteAllInBatch();
 
         if (request.moods() == null) {
-            return;
+            return null;
         }
 
         List<MusicCatalogSong> songs = new ArrayList<>();
@@ -61,5 +67,15 @@ public class AdminMusicCatalogService {
             }
         }
         musicCatalogSongRepository.saveAll(songs);
+        // saveAll 영속화 시 @CreatedDate(AuditingEntityListener)가 각 행 createdAt을 채운다.
+        return latestSavedAt(songs);
+    }
+
+    private LocalDateTime latestSavedAt(List<MusicCatalogSong> songs) {
+        return songs.stream()
+            .map(MusicCatalogSong::getCreatedAt)
+            .filter(Objects::nonNull)
+            .max(Comparator.naturalOrder())
+            .orElse(null);
     }
 }

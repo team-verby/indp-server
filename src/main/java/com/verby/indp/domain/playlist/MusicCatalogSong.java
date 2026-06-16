@@ -1,5 +1,6 @@
 package com.verby.indp.domain.playlist;
 
+import com.verby.indp.domain.common.entity.BaseTimeEntity;
 import com.verby.indp.domain.common.exception.BadRequestException;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "music_catalog_song")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-public class MusicCatalogSong {
+public class MusicCatalogSong extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
