@@ -14,11 +14,11 @@ echo "[ $(date +%c) ] 배포 시작" >> $DEPLOY_LOG
 CURRENT_PROFILE=$(curl -s http://127.0.0.1/profile)
 echo "[ $(date +%c) ] 현재 구동 중인 Profile: $CURRENT_PROFILE" >> $DEPLOY_LOG
 
-if [ $CURRENT_PROFILE = "prod1" ]
+if [ "$CURRENT_PROFILE" = "prod1" ]
 then
   IDLE_PROFILE=prod2
   IDLE_PORT=8082
-elif [ $CURRENT_PROFILE = "prod2" ]
+elif [ "$CURRENT_PROFILE" = "prod2" ]
 then
   IDLE_PROFILE=prod1
   IDLE_PORT=8081
