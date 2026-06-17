@@ -72,21 +72,5 @@ class UserApplicationControllerTest extends BaseControllerTest {
 
             resultActions.andExpect(status().isConflict());
         }
-
-        @Test
-        @DisplayName("실패 : 이미 사용 중인 이메일이면 409를 반환한다.")
-        void applyWithDuplicateEmail() throws Exception {
-            willThrow(new ConflictException("이미 사용 중인 이메일입니다."))
-                .given(userApplicationService).apply(any());
-
-            UserApplicationRequest request = new UserApplicationRequest(
-                "testloginid", "홍길동", "dup@test.com", "password123!", 1);
-
-            ResultActions resultActions = mockMvc.perform(post("/api/user/applications")
-                .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)));
-
-            resultActions.andExpect(status().isConflict());
-        }
     }
 }

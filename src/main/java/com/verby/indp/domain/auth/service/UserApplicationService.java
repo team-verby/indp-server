@@ -35,9 +35,7 @@ public class UserApplicationService {
         if (userRepository.existsByLoginId(request.loginId())) {
             throw new ConflictException("이미 사용 중인 아이디입니다.");
         }
-        if (userRepository.existsByEmail(request.email())) {
-            throw new ConflictException("이미 사용 중인 이메일입니다.");
-        }
+        // 이메일은 중복 신청 허용 — 아이디(loginId)만 유니크 검증
 
         User user = new User(
             request.loginId(),
