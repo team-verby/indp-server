@@ -5,15 +5,21 @@ import static com.verby.indp.fixture.CreatorTrackFixture.trackWithId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 import com.verby.indp.domain.common.exception.AuthException;
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.creator.Creator;
 import com.verby.indp.domain.creator.CreatorTrack;
+import com.verby.indp.domain.creator.dto.request.DjTrackUploadUrlRequest;
+import com.verby.indp.domain.creator.dto.request.RegisterDjTrackRequest;
+import com.verby.indp.domain.creator.dto.response.DjTrackResponse;
+import com.verby.indp.domain.creator.dto.response.DjTrackUploadUrlResponse;
 import com.verby.indp.domain.creator.dto.response.FindDjTracksResponse;
 import com.verby.indp.domain.creator.repository.CreatorTrackRepository;
 import com.verby.indp.global.image.ImageService;
+import com.verby.indp.global.image.PresignedUpload;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -78,6 +84,47 @@ class DjTrackServiceTest {
                 djTrackService.uploadTrack(creator, file, "3:42", 222);
 
             assertThat(response.filename()).isEqualTo("track.mp3");
+        }
+    }
+
+    @Nested
+    @DisplayName("createUploadUrl 메서드 실행 시")
+    class CreateUploadUrl {
+
+        @Test
+        @DisplayName("성공 : presigned 업로드 URL과 스트리밍 URL을 반환한다.")
+        void createUploadUrl() {
+            given(imageService.createAudioUploadUrl(anyString()))
+                .willReturn(new PresignedUpload(
+                    "https://s3.example.com/audio/uuid-track.mp3?signature=x",
+                    "https://cdn.example.com/audio/uuid-track.mp3"));
+
+            DjTrackUploadUrlResponse response =
+                djTrackService.createUploadUrl(new DjTrackUploadUrlRequest("track.mp3"));
+
+            assertThat(response.uploadUrl()).contains("signature");
+            assertThat(response.streamUrl()).isEqualTo("https://cdn.example.com/audio/uuid-track.mp3");
+        }
+    }
+
+    @Nested
+    @DisplayName("registerTrack 메서드 실행 시")
+    class RegisterTrack {
+
+        @Test
+        @DisplayName("성공 : S3 직접 업로드된 트랙 메타데이터를 등록한다.")
+        void registerTrack() {
+            Creator creator = creatorWithId(1L);
+            CreatorTrack saved = new CreatorTrack(
+                creator, "track.mp3", "https://cdn.example.com/track.mp3", "3:42", 222);
+            org.springframework.test.util.ReflectionTestUtils.setField(saved, "trackId", 1L);
+            given(creatorTrackRepository.save(any())).willReturn(saved);
+
+            DjTrackResponse response = djTrackService.registerTrack(creator,
+                new RegisterDjTrackRequest("track.mp3", "https://cdn.example.com/track.mp3", "3:42", 222));
+
+            assertThat(response.filename()).isEqualTo("track.mp3");
+            assertThat(response.streamUrl()).isEqualTo("https://cdn.example.com/track.mp3");
         }
     }
 

@@ -10,10 +10,12 @@ import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.JsonFieldType.ARRAY;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -22,7 +24,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.domain.creator.Creator;
 import com.verby.indp.domain.creator.CreatorTrack;
+import com.verby.indp.domain.creator.dto.request.DjTrackUploadUrlRequest;
+import com.verby.indp.domain.creator.dto.request.RegisterDjTrackRequest;
 import com.verby.indp.domain.creator.dto.response.DjTrackResponse;
+import com.verby.indp.domain.creator.dto.response.DjTrackUploadUrlResponse;
 import com.verby.indp.domain.creator.dto.response.FindDjTracksResponse;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -88,6 +93,80 @@ class DjTrackControllerTest extends BaseControllerTest {
                 .contentType(MediaType.MULTIPART_FORM_DATA));
 
             resultActions.andExpect(status().isCreated());
+        }
+    }
+
+    @Nested
+    @DisplayName("POST /api/dj/tracks/upload-url 실행 시")
+    class CreateUploadUrl {
+
+        @Test
+        @DisplayName("성공 : presigned 업로드 URL을 반환한다.")
+        void createUploadUrl() throws Exception {
+            Creator creator = creatorWithId(1L);
+            givenCreatorAuth(creator);
+            given(djTrackService.createUploadUrl(any()))
+                .willReturn(new DjTrackUploadUrlResponse(
+                    "https://s3.example.com/audio/uuid-track.mp3?signature=x",
+                    "https://cdn.example.com/audio/uuid-track.mp3"));
+
+            DjTrackUploadUrlRequest request = new DjTrackUploadUrlRequest("track.mp3");
+
+            ResultActions resultActions = mockMvc.perform(post("/api/dj/tracks/upload-url")
+                .header(AUTHORIZATION_HEADER, BEARER_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+            resultActions.andExpect(status().isOk())
+                .andDo(restDocs.document(
+                    requestFields(
+                        fieldWithPath("filename").type(STRING).description("업로드할 파일명")
+                    ),
+                    responseFields(
+                        fieldWithPath("uploadUrl").type(STRING).description("S3 직접 업로드용 presigned PUT URL"),
+                        fieldWithPath("streamUrl").type(STRING).description("업로드 후 접근할 스트리밍 URL")
+                    )
+                ));
+        }
+    }
+
+    @Nested
+    @DisplayName("POST /api/dj/tracks/register 실행 시")
+    class RegisterTrack {
+
+        @Test
+        @DisplayName("성공 : S3 직접 업로드된 트랙을 등록한다.")
+        void registerTrack() throws Exception {
+            Creator creator = creatorWithId(1L);
+            givenCreatorAuth(creator);
+            CreatorTrack track = trackWithId(creator, 1L);
+            given(djTrackService.registerTrack(any(), any()))
+                .willReturn(DjTrackResponse.from(track));
+
+            RegisterDjTrackRequest request = new RegisterDjTrackRequest(
+                "track.mp3", "https://cdn.example.com/audio/track.mp3", "3:42", 222);
+
+            ResultActions resultActions = mockMvc.perform(post("/api/dj/tracks/register")
+                .header(AUTHORIZATION_HEADER, BEARER_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+            resultActions.andExpect(status().isCreated())
+                .andDo(restDocs.document(
+                    requestFields(
+                        fieldWithPath("filename").type(STRING).description("파일명"),
+                        fieldWithPath("streamUrl").type(STRING).description("S3 업로드 완료 후 받은 스트리밍 URL"),
+                        fieldWithPath("duration").type(STRING).description("재생 시간 (예: 3:42)"),
+                        fieldWithPath("secs").type(NUMBER).description("재생 시간(초)")
+                    ),
+                    responseFields(
+                        fieldWithPath("id").type(NUMBER).description("트랙 ID"),
+                        fieldWithPath("filename").type(STRING).description("파일명"),
+                        fieldWithPath("duration").type(STRING).description("재생 시간 (예: 3:42)"),
+                        fieldWithPath("secs").type(NUMBER).description("재생 시간(초)"),
+                        fieldWithPath("streamUrl").type(STRING).description("스트리밍 URL")
+                    )
+                ));
         }
     }
 

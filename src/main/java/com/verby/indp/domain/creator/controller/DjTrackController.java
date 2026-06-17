@@ -1,7 +1,10 @@
 package com.verby.indp.domain.creator.controller;
 
 import com.verby.indp.domain.creator.Creator;
+import com.verby.indp.domain.creator.dto.request.DjTrackUploadUrlRequest;
+import com.verby.indp.domain.creator.dto.request.RegisterDjTrackRequest;
 import com.verby.indp.domain.creator.dto.response.DjTrackResponse;
+import com.verby.indp.domain.creator.dto.response.DjTrackUploadUrlResponse;
 import com.verby.indp.domain.creator.dto.response.FindDjTracksResponse;
 import com.verby.indp.domain.creator.service.DjTrackService;
 import com.verby.indp.global.resolver.LoginCreator;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,6 +43,23 @@ public class DjTrackController {
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(djTrackService.uploadTrack(creator, file, duration, secs));
+    }
+
+    @PostMapping("/upload-url")
+    public ResponseEntity<DjTrackUploadUrlResponse> createUploadUrl(
+        @LoginCreator Creator creator,
+        @RequestBody DjTrackUploadUrlRequest request
+    ) {
+        return ResponseEntity.ok(djTrackService.createUploadUrl(request));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<DjTrackResponse> registerTrack(
+        @LoginCreator Creator creator,
+        @RequestBody RegisterDjTrackRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(djTrackService.registerTrack(creator, request));
     }
 
     @DeleteMapping("/{trackId}")
