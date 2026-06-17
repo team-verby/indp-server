@@ -77,7 +77,8 @@ public class ImageService {
         String key = folder + "/" + multipartFile.getOriginalFilename();
         try (InputStream inputStream = multipartFile.getInputStream()) {
             amazonS3.putObject(new PutObjectRequest(bucket, key, inputStream, objectMetadata));
-            return amazonS3.getUrl(bucket, key).toString();
+            // 버킷은 비공개(OAC) — 공개 접근은 CloudFront 경유로만. raw S3 URL은 403이므로 CDN URL 반환.
+            return toCloudFrontUrl(key);
         } catch (IOException e) {
             throw new BadRequestException("파일을 업로드하는데 실패했습니다.");
         }

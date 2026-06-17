@@ -36,21 +36,20 @@ class ImageServiceTest {
     class UploadImage {
 
         @Test
-        @DisplayName("성공 : 이미지가 업로드된다.")
-        void uploadImage() throws MalformedURLException {
+        @DisplayName("성공 : 이미지가 업로드되고 CloudFront URL이 반환된다.")
+        void uploadImage() {
             // given
+            org.springframework.test.util.ReflectionTestUtils.setField(
+                imageService, "cloudFrontDomain", "d144jf8wjk9lk.cloudfront.net");
             MockMultipartFile file = new MockMultipartFile("image", "image.png", IMAGE_PNG_VALUE,
                 "content".getBytes());
 
-            when(amazonS3.getUrl(any(), any())).thenReturn(
-                new URL("https://s3.amazonaws.com/imageUrl"));
-
             // when
-            imageService.uploadImage(file);
+            String url = imageService.uploadImage(file);
 
             // then
+            assertThat(url).isEqualTo("https://d144jf8wjk9lk.cloudfront.net/image/image.png");
             verify(amazonS3, times(1)).putObject(any());
-            verify(amazonS3, times(1)).getUrl(any(), any());
         }
     }
 
