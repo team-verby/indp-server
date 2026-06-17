@@ -9,12 +9,14 @@ import com.verby.indp.domain.common.exception.BadRequestException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +24,9 @@ public class ImageService {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
+
+    @Value("${cloud.aws.cloudfront.domain}")
+    private String cloudFrontDomain;
 
     private static final String IMAGE_FOLDER = "image";
     private static final String AUDIO_FOLDER = "audio";
@@ -45,7 +50,9 @@ public class ImageService {
         if (filename == null || filename.isBlank()) {
             throw new BadRequestException("filename은 필수입니다.");
         }
-        String key = AUDIO_FOLDER + "/" + UUID.randomUUID() + "-" + filename;
+        // URL에 안전하도록 파일명 정리(공백·특수문자 → _). 표시용 원본명은 DB에 별도 저장됨.
+        String safeName = filename.replaceAll("[^a-zA-Z0-9._-]", "_");
+        String key = AUDIO_FOLDER + "/" + UUID.randomUUID() + "-" + safeName;
         Date expiration = new Date(System.currentTimeMillis() + PRESIGNED_URL_EXPIRE_MILLIS);
 
         GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucket, key)
@@ -53,8 +60,13 @@ public class ImageService {
             .withExpiration(expiration);
 
         URL uploadUrl = amazonS3.generatePresignedUrl(request);
-        String streamUrl = amazonS3.getUrl(bucket, key).toString();
+        // 재생은 CloudFront를 통해 — 버킷은 비공개 유지(OAC), 캐싱으로 전송비 절감
+        String streamUrl = toCloudFrontUrl(key);
         return new PresignedUpload(uploadUrl.toString(), streamUrl);
+    }
+
+    private String toCloudFrontUrl(String key) {
+        return "https://" + cloudFrontDomain + "/" + UriUtils.encodePath(key, StandardCharsets.UTF_8);
     }
 
     private String upload(MultipartFile multipartFile, String folder) {

@@ -2,6 +2,12 @@ spring:
   profiles:
     active: local
 
+# 미디어(오디오) 전송용 CloudFront 도메인 — 비밀값 아님. 전 프로파일 공통.
+cloud:
+  aws:
+    cloudfront:
+      domain: d144jf8wjk9lk.cloudfront.net
+
 ---
 
 spring:

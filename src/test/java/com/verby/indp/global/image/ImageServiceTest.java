@@ -59,20 +59,21 @@ class ImageServiceTest {
     class CreateAudioUploadUrl {
 
         @Test
-        @DisplayName("성공 : presigned 업로드 URL과 스트리밍 URL을 반환한다.")
+        @DisplayName("성공 : presigned 업로드 URL과 CloudFront 스트리밍 URL을 반환한다.")
         void createAudioUploadUrl() throws MalformedURLException {
             // given
+            org.springframework.test.util.ReflectionTestUtils.setField(
+                imageService, "cloudFrontDomain", "d144jf8wjk9lk.cloudfront.net");
             when(amazonS3.generatePresignedUrl(any(GeneratePresignedUrlRequest.class)))
                 .thenReturn(new URL("https://s3.amazonaws.com/audio/uuid-track.mp3?signature=x"));
-            when(amazonS3.getUrl(any(), any()))
-                .thenReturn(new URL("https://s3.amazonaws.com/audio/uuid-track.mp3"));
 
             // when
             PresignedUpload result = imageService.createAudioUploadUrl("track.mp3");
 
             // then
             assertThat(result.uploadUrl()).contains("signature");
-            assertThat(result.streamUrl()).isEqualTo("https://s3.amazonaws.com/audio/uuid-track.mp3");
+            assertThat(result.streamUrl()).startsWith("https://d144jf8wjk9lk.cloudfront.net/audio/");
+            assertThat(result.streamUrl()).endsWith("-track.mp3");
             verify(amazonS3, times(1)).generatePresignedUrl(any(GeneratePresignedUrlRequest.class));
         }
 
