@@ -32,7 +32,10 @@ public class DjService {
         if (request.thumbnail() != null && !request.thumbnail().isEmpty()) {
             thumbnailUrl = imageService.uploadImage(request.thumbnail());
         }
-        creator.updateProfile(request.djName(), thumbnailUrl);
+        creator.updateProfile(request.djName(), thumbnailUrl, request.introduction());
+        if (Boolean.TRUE.equals(request.removeThumbnail()) && thumbnailUrl == null) {
+            creator.removeThumbnail();
+        }
         creatorRepository.save(creator);
     }
 

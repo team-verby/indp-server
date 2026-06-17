@@ -36,7 +36,9 @@ class DjControllerTest extends BaseControllerTest {
             Creator creator = creatorWithId(1L);
             givenCreatorAuth(creator);
             given(djService.getProfile(creator))
-                .willReturn(new DjProfileResponse("DJ Parkwan", "박완", "010-1234-5678", "dj@example.com", null));
+                .willReturn(new DjProfileResponse(
+                    "DJ Parkwan", "박완", "010-1234-5678", "dj@example.com",
+                    "https://cdn.example.com/thumb.jpg", "잔잔한 카페 음악을 들려드립니다."));
 
             ResultActions resultActions = mockMvc.perform(get("/api/dj/profile")
                 .header(AUTHORIZATION_HEADER, BEARER_TOKEN));
@@ -48,7 +50,8 @@ class DjControllerTest extends BaseControllerTest {
                         fieldWithPath("name").type(STRING).description("실명"),
                         fieldWithPath("phone").type(STRING).description("휴대폰"),
                         fieldWithPath("email").type(STRING).description("이메일"),
-                        fieldWithPath("thumbnailUrl").description("썸네일 URL (null 가능)")
+                        fieldWithPath("thumbnailUrl").description("썸네일 URL (null 가능)"),
+                        fieldWithPath("introduction").description("소개글 (null 가능)")
                     )
                 ));
         }

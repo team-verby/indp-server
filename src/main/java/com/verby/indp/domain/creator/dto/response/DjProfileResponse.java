@@ -7,7 +7,8 @@ public record DjProfileResponse(
     String name,
     String phone,
     String email,
-    String thumbnailUrl
+    String thumbnailUrl,
+    String introduction
 ) {
 
     public static DjProfileResponse from(Creator creator) {
@@ -16,7 +17,8 @@ public record DjProfileResponse(
             creator.getName(),
             creator.getPhone(),
             creator.getEmail(),
-            creator.getThumbnailUrl()
+            creator.getThumbnailUrl(),
+            creator.getIntroduction()
         );
     }
 }

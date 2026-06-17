@@ -54,13 +54,15 @@ class DjServiceTest {
     class UpdateProfile {
 
         @Test
-        @DisplayName("성공 : 썸네일 없이 djName만 변경한다.")
+        @DisplayName("성공 : 썸네일 없이 djName과 소개글만 변경한다.")
         void updateProfileWithoutThumbnail() {
             Creator creator = creatorWithId(1L);
             Exception exception = catchException(
                 () -> djService.updateProfile(creator,
-                    new com.verby.indp.domain.creator.dto.request.UpdateDjProfileRequest("DJ New", null)));
+                    new com.verby.indp.domain.creator.dto.request.UpdateDjProfileRequest(
+                        "DJ New", null, "소개글입니다.", false)));
             assertThat(exception).isNull();
+            assertThat(creator.getIntroduction()).isEqualTo("소개글입니다.");
         }
 
         @Test
@@ -74,8 +76,24 @@ class DjServiceTest {
 
             Exception exception = catchException(
                 () -> djService.updateProfile(creator,
-                    new com.verby.indp.domain.creator.dto.request.UpdateDjProfileRequest("DJ New", thumbnail)));
+                    new com.verby.indp.domain.creator.dto.request.UpdateDjProfileRequest(
+                        "DJ New", thumbnail, null, false)));
             assertThat(exception).isNull();
+            assertThat(creator.getThumbnailUrl()).isEqualTo("https://cdn.example.com/thumb.jpg");
+        }
+
+        @Test
+        @DisplayName("성공 : removeThumbnail이 true면 썸네일을 제거한다.")
+        void updateProfileRemoveThumbnail() {
+            Creator creator = creatorWithId(1L);
+            creator.updateProfile(null, "https://cdn.example.com/old.jpg", null);
+
+            Exception exception = catchException(
+                () -> djService.updateProfile(creator,
+                    new com.verby.indp.domain.creator.dto.request.UpdateDjProfileRequest(
+                        "DJ New", null, null, true)));
+            assertThat(exception).isNull();
+            assertThat(creator.getThumbnailUrl()).isNull();
         }
     }
 
