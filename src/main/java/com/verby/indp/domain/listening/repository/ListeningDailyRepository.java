@@ -2,6 +2,7 @@ package com.verby.indp.domain.listening.repository;
 
 import com.verby.indp.domain.listening.ListeningDaily;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,4 +24,11 @@ public interface ListeningDailyRepository extends JpaRepository<ListeningDaily, 
         @Param("creatorId") Long creatorId,
         @Param("from") LocalDate from,
         @Param("to") LocalDate to);
+
+    /**
+     * 실시간 청취자 수: 오늘(ymd) 행 중 최근(threshold 이후) heartbeat가 반영된 사용자 수.
+     * (user_id, creator_id, ymd) 유니크이므로 행 수 = 서로 다른 사용자 수.
+     */
+    int countByCreatorIdAndYmdAndUpdatedAtGreaterThanEqual(
+        Long creatorId, LocalDate ymd, LocalDateTime threshold);
 }

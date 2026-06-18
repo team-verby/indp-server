@@ -11,8 +11,10 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
 
 /**
  * 구독자(user)가 특정 크리에이터(creator)의 음악을 하루(ymd) 동안 청취한 누적 초.
@@ -45,6 +47,11 @@ public class ListeningDaily extends BaseTimeEntity {
 
     @Column(name = "seconds", nullable = false)
     private int seconds;
+
+    /** 마지막 heartbeat 반영 시각. 실시간 청취자 판정에 사용. */
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     public ListeningDaily(Long userId, Long creatorId, LocalDate ymd, int seconds) {
         validateId(userId, "userId");

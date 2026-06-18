@@ -21,6 +21,9 @@ public final class SettlementPolicy {
     /** heartbeat 1건당 인정 상한 (5분 + 지터·재개 여유). 초과분은 클램프. */
     public static final int MAX_BEAT_SEC = 360;
 
+    /** 실시간 청취자 판정 윈도우 (7분). 이 시간 내 heartbeat가 있으면 청취 중으로 간주. */
+    public static final int ACTIVE_WINDOW_SEC = 420;
+
     /** 개인 크리에이터 사업소득 원천징수율. */
     public static final double WITHHOLDING_RATE = 0.033;
 
