@@ -9,5 +9,7 @@ public interface CreatorRepository extends JpaRepository<Creator, Long> {
 
     boolean existsByEmail(String email);
 
+    boolean existsByCreatorIdAndActiveTrue(Long creatorId);
+
     Optional<Creator> findByEmail(String email);
 }

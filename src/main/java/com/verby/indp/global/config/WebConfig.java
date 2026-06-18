@@ -54,6 +54,6 @@ public class WebConfig implements WebMvcConfigurer {
             .excludePathPatterns("/api/dj/playlists", "/api/dj/playlists/**");
 
         registry.addInterceptor(new UserLoginCheckInterceptor(userRepository, authTokenService))
-            .addPathPatterns("/api/user/subscription", "/api/user/payments");
+            .addPathPatterns("/api/user/subscription", "/api/user/payments", "/api/listening/**");
     }
 }

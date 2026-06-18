@@ -23,6 +23,7 @@ import com.verby.indp.domain.creator.service.DjPlaylistService;
 import com.verby.indp.domain.creator.service.DjRevenueService;
 import com.verby.indp.domain.creator.service.DjService;
 import com.verby.indp.domain.creator.service.DjTrackService;
+import com.verby.indp.domain.listening.service.ListeningService;
 import com.verby.indp.domain.payment.service.AdminPaymentService;
 import com.verby.indp.domain.payment.service.OwnerPaymentService;
 import com.verby.indp.domain.payment.service.PaymentConfirmService;
@@ -190,6 +191,9 @@ public abstract class BaseControllerTest {
     @MockBean
     protected AdminUserService adminUserService;
 
+    @MockBean
+    protected ListeningService listeningService;
+
     @BeforeEach
     void setUp(final WebApplicationContext context,
         final RestDocumentationContextProvider provider) {
@@ -216,5 +220,11 @@ public abstract class BaseControllerTest {
         Long creatorId = creator.getCreatorId();
         given(authTokenService.decodeCreatorToken(anyString())).willReturn(creatorId);
         given(creatorRepository.findById(creatorId)).willReturn(Optional.of(creator));
+    }
+
+    protected void givenUserAuth(com.verby.indp.domain.auth.User user) {
+        Long userId = user.getUserId();
+        given(authTokenService.decodeUserToken(anyString())).willReturn(userId);
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
     }
 }
