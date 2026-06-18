@@ -4,7 +4,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public record UpdateDjProfileRequest(
     String djName,
-    MultipartFile thumbnail
+    MultipartFile thumbnail,
+    String introduction,
+    Boolean removeThumbnail
 ) {
 
 }

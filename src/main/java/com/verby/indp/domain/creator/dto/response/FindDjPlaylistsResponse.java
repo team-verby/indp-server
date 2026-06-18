@@ -12,6 +12,7 @@ public record FindDjPlaylistsResponse(
         Long id,
         String name,
         String djName,
+        String thumbnailUrl,
         boolean isLive
     ) {
 
@@ -20,6 +21,7 @@ public record FindDjPlaylistsResponse(
                 creator.getCreatorId(),
                 creator.getDjName() + " 채널",
                 creator.getDjName(),
+                creator.getThumbnailUrl(),
                 creator.isLive()
             );
         }

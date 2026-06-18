@@ -1,6 +1,7 @@
 package com.verby.indp.domain.creator;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchException;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -114,7 +115,7 @@ class CreatorTest {
         @DisplayName("성공 : djName을 업데이트한다.")
         void updateProfileDjName() {
             Creator creator = new Creator("박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "pw");
-            creator.updateProfile("DJ New", null);
+            creator.updateProfile("DJ New", null, null);
             assertThat(creator.getDjName()).isEqualTo("DJ New");
         }
 
@@ -122,9 +123,35 @@ class CreatorTest {
         @DisplayName("성공 : djName이 blank이면 변경하지 않는다.")
         void updateProfileBlankDjName() {
             Creator creator = new Creator("박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "pw");
-            creator.updateProfile("", "https://cdn.example.com/thumb.jpg");
+            creator.updateProfile("", "https://cdn.example.com/thumb.jpg", null);
             assertThat(creator.getDjName()).isEqualTo("DJ Parkwan");
             assertThat(creator.getThumbnailUrl()).isEqualTo("https://cdn.example.com/thumb.jpg");
+        }
+
+        @Test
+        @DisplayName("성공 : 소개글을 업데이트한다.")
+        void updateProfileIntroduction() {
+            Creator creator = new Creator("박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "pw");
+            creator.updateProfile(null, null, "잔잔한 카페 음악을 들려드립니다.");
+            assertThat(creator.getIntroduction()).isEqualTo("잔잔한 카페 음악을 들려드립니다.");
+        }
+
+        @Test
+        @DisplayName("실패 : 소개글이 1000자를 초과하면 예외를 던진다.")
+        void updateProfileTooLongIntroduction() {
+            Creator creator = new Creator("박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "pw");
+            String tooLong = "가".repeat(1001);
+            assertThatThrownBy(() -> creator.updateProfile(null, null, tooLong))
+                .isInstanceOf(BadRequestException.class);
+        }
+
+        @Test
+        @DisplayName("성공 : 썸네일을 제거한다.")
+        void removeThumbnail() {
+            Creator creator = new Creator("박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "pw");
+            creator.updateProfile(null, "https://cdn.example.com/thumb.jpg", null);
+            creator.removeThumbnail();
+            assertThat(creator.getThumbnailUrl()).isNull();
         }
     }
 

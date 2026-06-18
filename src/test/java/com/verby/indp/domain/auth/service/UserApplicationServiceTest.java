@@ -50,7 +50,6 @@ class UserApplicationServiceTest {
         @DisplayName("성공 : Plan A 구독을 신청한다 (월간).")
         void applyMonthly() {
             given(userRepository.existsByLoginId("user123")).willReturn(false);
-            given(userRepository.existsByEmail("user@test.com")).willReturn(false);
             given(passwordEncoder.encode("password123!")).willReturn("$2a$hashed");
 
             Payment payment = new Payment(PaymentType.USER_SUBSCRIPTION, "Plan A 라이트 요금제 · 월간", 4400);
@@ -70,7 +69,6 @@ class UserApplicationServiceTest {
         @DisplayName("성공 : Plan A 구독을 신청한다 (연간).")
         void applyAnnual() {
             given(userRepository.existsByLoginId("user123")).willReturn(false);
-            given(userRepository.existsByEmail("user@test.com")).willReturn(false);
             given(passwordEncoder.encode(any())).willReturn("$2a$hashed");
 
             Payment payment = new Payment(PaymentType.USER_SUBSCRIPTION, "Plan A 라이트 요금제 · 연간", 52800);
@@ -99,16 +97,21 @@ class UserApplicationServiceTest {
         }
 
         @Test
-        @DisplayName("실패 : 이미 사용 중인 이메일이면 예외를 던진다.")
-        void applyWithDuplicateEmail() {
+        @DisplayName("성공 : 이메일이 중복이어도 아이디가 고유하면 신청된다.")
+        void applyWithDuplicateEmailAllowed() {
             given(userRepository.existsByLoginId("user123")).willReturn(false);
-            given(userRepository.existsByEmail("dup@test.com")).willReturn(true);
+            given(passwordEncoder.encode(any())).willReturn("$2a$hashed");
 
-            Exception exception = catchException(
-                () -> userApplicationService.apply(
-                    new UserApplicationRequest("user123", "홍길동", "dup@test.com", "password123!", 1)));
+            Payment payment = new Payment(PaymentType.USER_SUBSCRIPTION, "Plan A 라이트 요금제 · 월간", 4400);
+            ReflectionTestUtils.setField(payment, "orderId", "test-order-id");
+            given(paymentRepository.save(any())).willReturn(payment);
+            given(userRepository.save(any())).willReturn(null);
+            given(userSubscriptionRepository.save(any())).willReturn(null);
 
-            assertThat(exception).isInstanceOf(ConflictException.class);
+            UserApplicationResponse response = userApplicationService.apply(
+                new UserApplicationRequest("user123", "홍길동", "dup@test.com", "password123!", 1));
+
+            assertThat(response.amount()).isEqualTo(4400);
         }
 
         @Test

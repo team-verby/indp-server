@@ -3,12 +3,21 @@ package com.verby.indp.domain.creator.service;
 import static com.verby.indp.fixture.CreatorFixture.creatorWithId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.creator.Creator;
+import com.verby.indp.domain.creator.dto.response.DjLiveListenersResponse;
 import com.verby.indp.domain.creator.repository.CreatorRepository;
 import com.verby.indp.domain.creator.repository.CreatorTrackRepository;
+import com.verby.indp.domain.listening.repository.ListeningDailyRepository;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,6 +37,12 @@ class DjLiveServiceTest {
 
     @Mock
     private CreatorTrackRepository creatorTrackRepository;
+
+    @Mock
+    private ListeningDailyRepository listeningDailyRepository;
+
+    @Mock
+    private Clock clock;
 
     @Nested
     @DisplayName("startLive 메서드 실행 시")
@@ -71,6 +86,26 @@ class DjLiveServiceTest {
 
             assertThat(exception).isNull();
             assertThat(creator.isLive()).isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("getListeners 메서드 실행 시")
+    class GetListeners {
+
+        @Test
+        @DisplayName("성공 : 최근 윈도우 내 청취 중인 사용자 수를 반환한다.")
+        void getListeners() {
+            Creator creator = creatorWithId(1L);
+            given(clock.instant()).willReturn(Instant.parse("2026-06-18T05:00:00Z"));
+            given(clock.getZone()).willReturn(ZoneId.of("UTC"));
+            given(listeningDailyRepository.countByCreatorIdAndYmdAndUpdatedAtGreaterThanEqual(
+                eq(1L), eq(LocalDate.of(2026, 6, 18)), any(LocalDateTime.class)))
+                .willReturn(3);
+
+            DjLiveListenersResponse response = djLiveService.getListeners(creator);
+
+            assertThat(response.count()).isEqualTo(3);
         }
     }
 }

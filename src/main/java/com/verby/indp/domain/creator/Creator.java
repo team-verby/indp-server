@@ -41,6 +41,9 @@ public class Creator extends BaseTimeEntity {
     @Column(name = "thumbnail_url")
     private String thumbnailUrl;
 
+    @Column(name = "introduction", length = 1000)
+    private String introduction;
+
     @Column(name = "active", nullable = false)
     private boolean active = true;
 
@@ -72,12 +75,26 @@ public class Creator extends BaseTimeEntity {
         this.isLive = false;
     }
 
-    public void updateProfile(String djName, String thumbnailUrl) {
+    public void updateProfile(String djName, String thumbnailUrl, String introduction) {
         if (djName != null && !djName.isBlank()) {
             this.djName = djName;
         }
         if (thumbnailUrl != null) {
             this.thumbnailUrl = thumbnailUrl;
+        }
+        if (introduction != null) {
+            validateIntroduction(introduction);
+            this.introduction = introduction;
+        }
+    }
+
+    public void removeThumbnail() {
+        this.thumbnailUrl = null;
+    }
+
+    private void validateIntroduction(String introduction) {
+        if (introduction.length() > 1000) {
+            throw new BadRequestException("소개글은 1000자 이하로 작성해 주세요.");
         }
     }
 
