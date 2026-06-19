@@ -53,6 +53,8 @@ class DjLiveServiceTest {
         void startLive() {
             Creator creator = creatorWithId(1L);
             given(creatorTrackRepository.countByCreator(creator)).willReturn(1);
+            given(clock.instant()).willReturn(Instant.parse("2026-06-18T05:00:00Z"));
+            given(clock.getZone()).willReturn(ZoneId.of("UTC"));
 
             Exception exception = catchException(() -> djLiveService.startLive(creator));
 
@@ -86,6 +88,29 @@ class DjLiveServiceTest {
 
             assertThat(exception).isNull();
             assertThat(creator.isLive()).isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("heartbeat 메서드 실행 시")
+    class Heartbeat {
+
+        @Test
+        @DisplayName("성공 : 라이브 중인 채널이 TTL 윈도우 내 라이브로 판정된다.")
+        void heartbeat() {
+            Creator creator = creatorWithId(1L);
+            creator.startLive();
+            Instant now = Instant.parse("2026-06-18T05:00:00Z");
+            given(clock.instant()).willReturn(now);
+            given(clock.getZone()).willReturn(ZoneId.of("UTC"));
+
+            djLiveService.heartbeat(creator);
+
+            LocalDateTime asOf = LocalDateTime.ofInstant(now, ZoneId.of("UTC"));
+            assertThat(creator.isLiveWithin(asOf, DjLiveService.LIVE_TTL_SEC)).isTrue();
+            assertThat(creator.isLiveWithin(
+                asOf.plusSeconds(DjLiveService.LIVE_TTL_SEC + 1), DjLiveService.LIVE_TTL_SEC))
+                .isFalse();
         }
     }
 

@@ -17,14 +17,14 @@ public record DjPlaylistDetailResponse(
     List<DjTrackResponse> tracks
 ) {
 
-    public static DjPlaylistDetailResponse from(Creator creator, List<CreatorTrack> tracks) {
+    public static DjPlaylistDetailResponse from(Creator creator, List<CreatorTrack> tracks, boolean live) {
         return new DjPlaylistDetailResponse(
             creator.getCreatorId(),
             creator.getDjName() + " 채널",
             creator.getDjName(),
             creator.getThumbnailUrl(),
             creator.getIntroduction(),
-            creator.isLive(),
+            live,
             0,
             0,
             tracks.stream().map(DjTrackResponse::from).toList()

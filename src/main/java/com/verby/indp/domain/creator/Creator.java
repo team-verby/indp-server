@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -50,6 +51,9 @@ public class Creator extends BaseTimeEntity {
     @Column(name = "is_live", nullable = false)
     private boolean isLive = false;
 
+    @Column(name = "last_live_at")
+    private LocalDateTime lastLiveAt;
+
     public Creator(String name, String djName, String phone, String email, String password) {
         validateName(name);
         validateDjName(djName);
@@ -73,6 +77,23 @@ public class Creator extends BaseTimeEntity {
 
     public void stopLive() {
         this.isLive = false;
+    }
+
+    /**
+     * 라이브 하트비트 갱신. 대시보드가 주기적으로 호출해 '실제로 켜져 있음'을 증명한다.
+     */
+    public void heartbeat(LocalDateTime now) {
+        this.lastLiveAt = now;
+    }
+
+    /**
+     * 실시간 라이브 여부. isLive 플래그가 켜져 있더라도 마지막 하트비트가 TTL을 넘겼으면
+     * (탭 강제 종료·크래시 등으로 stopLive가 유실된 경우) 오프라인으로 간주한다.
+     */
+    public boolean isLiveWithin(LocalDateTime now, long ttlSeconds) {
+        return isLive
+            && lastLiveAt != null
+            && !lastLiveAt.isBefore(now.minusSeconds(ttlSeconds));
     }
 
     public void updateProfile(String djName, String thumbnailUrl, String introduction) {

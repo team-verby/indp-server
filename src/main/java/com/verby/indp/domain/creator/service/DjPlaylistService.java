@@ -7,6 +7,8 @@ import com.verby.indp.domain.creator.dto.response.DjPlaylistDetailResponse;
 import com.verby.indp.domain.creator.dto.response.FindDjPlaylistsResponse;
 import com.verby.indp.domain.creator.repository.CreatorRepository;
 import com.verby.indp.domain.creator.repository.CreatorTrackRepository;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,13 +22,14 @@ public class DjPlaylistService {
 
     private final CreatorRepository creatorRepository;
     private final CreatorTrackRepository creatorTrackRepository;
+    private final Clock clock;
 
     public FindDjPlaylistsResponse getPlaylists() {
-        List<Creator> creators = creatorRepository.findAll().stream()
+        LocalDateTime now = LocalDateTime.now(clock);
+        List<FindDjPlaylistsResponse.DjPlaylistItem> items = creatorRepository.findAll().stream()
             .filter(Creator::isActive)
-            .toList();
-        List<FindDjPlaylistsResponse.DjPlaylistItem> items = creators.stream()
-            .map(FindDjPlaylistsResponse.DjPlaylistItem::from)
+            .map(creator -> FindDjPlaylistsResponse.DjPlaylistItem.from(
+                creator, creator.isLiveWithin(now, DjLiveService.LIVE_TTL_SEC)))
             .toList();
         return new FindDjPlaylistsResponse(items);
     }
@@ -35,6 +38,7 @@ public class DjPlaylistService {
         Creator creator = creatorRepository.findById(creatorId)
             .orElseThrow(() -> new NotFoundException("존재하지 않는 채널입니다."));
         List<CreatorTrack> tracks = creatorTrackRepository.findAllByCreatorOrderByCreatedAtAsc(creator);
-        return DjPlaylistDetailResponse.from(creator, tracks);
+        boolean live = creator.isLiveWithin(LocalDateTime.now(clock), DjLiveService.LIVE_TTL_SEC);
+        return DjPlaylistDetailResponse.from(creator, tracks, live);
     }
 }

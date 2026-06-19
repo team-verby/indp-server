@@ -78,6 +78,24 @@ class DjLiveControllerTest extends BaseControllerTest {
     }
 
     @Nested
+    @DisplayName("POST /api/dj/live/heartbeat 실행 시")
+    class HeartbeatTest {
+
+        @Test
+        @DisplayName("성공 : 라이브 하트비트를 갱신한다.")
+        void heartbeat() throws Exception {
+            Creator creator = creatorWithId(1L);
+            givenCreatorAuth(creator);
+            willDoNothing().given(djLiveService).heartbeat(any());
+
+            ResultActions resultActions = mockMvc.perform(post("/api/dj/live/heartbeat")
+                .header(AUTHORIZATION_HEADER, BEARER_TOKEN));
+
+            resultActions.andExpect(status().isOk());
+        }
+    }
+
+    @Nested
     @DisplayName("GET /api/dj/live/listeners 실행 시")
     class GetListeners {
 
