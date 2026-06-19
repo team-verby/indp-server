@@ -7,6 +7,7 @@ import com.verby.indp.global.resolver.LoginCreator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,5 +21,11 @@ public class DjRevenueController {
     @GetMapping("/revenue")
     public ResponseEntity<DjRevenueResponse> getRevenue(@LoginCreator Creator creator) {
         return ResponseEntity.ok(djRevenueService.getRevenue(creator));
+    }
+
+    @PostMapping("/revenue/request")
+    public ResponseEntity<Void> requestPayout(@LoginCreator Creator creator) {
+        djRevenueService.requestPayout(creator);
+        return ResponseEntity.ok().build();
     }
 }
