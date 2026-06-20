@@ -33,6 +33,12 @@ public class DjLiveController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/heartbeat")
+    public ResponseEntity<Void> heartbeat(@LoginCreator Creator creator) {
+        djLiveService.heartbeat(creator);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/listeners")
     public ResponseEntity<DjLiveListenersResponse> getListeners(@LoginCreator Creator creator) {
         return ResponseEntity.ok(djLiveService.getListeners(creator));

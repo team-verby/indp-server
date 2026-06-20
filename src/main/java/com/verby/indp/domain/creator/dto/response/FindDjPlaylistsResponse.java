@@ -16,13 +16,13 @@ public record FindDjPlaylistsResponse(
         boolean isLive
     ) {
 
-        public static DjPlaylistItem from(Creator creator) {
+        public static DjPlaylistItem from(Creator creator, boolean live) {
             return new DjPlaylistItem(
                 creator.getCreatorId(),
                 creator.getDjName() + " 채널",
                 creator.getDjName(),
                 creator.getThumbnailUrl(),
-                creator.isLive()
+                live
             );
         }
     }

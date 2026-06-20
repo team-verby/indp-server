@@ -11,6 +11,9 @@ import com.verby.indp.domain.creator.dto.response.DjPlaylistDetailResponse;
 import com.verby.indp.domain.creator.dto.response.FindDjPlaylistsResponse;
 import com.verby.indp.domain.creator.repository.CreatorRepository;
 import com.verby.indp.domain.creator.repository.CreatorTrackRepository;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +36,14 @@ class DjPlaylistServiceTest {
     @Mock
     private CreatorTrackRepository creatorTrackRepository;
 
+    @Mock
+    private Clock clock;
+
+    private void givenClock() {
+        given(clock.instant()).willReturn(Instant.parse("2026-06-18T05:00:00Z"));
+        given(clock.getZone()).willReturn(ZoneId.of("UTC"));
+    }
+
     @Nested
     @DisplayName("getPlaylists 메서드 실행 시")
     class GetPlaylists {
@@ -41,6 +52,7 @@ class DjPlaylistServiceTest {
         @DisplayName("성공 : 활성 크리에이터 목록을 반환한다.")
         void getPlaylists() {
             Creator creator = creatorWithId(1L);
+            givenClock();
             given(creatorRepository.findAll()).willReturn(List.of(creator));
 
             FindDjPlaylistsResponse response = djPlaylistService.getPlaylists();
@@ -58,6 +70,7 @@ class DjPlaylistServiceTest {
         @DisplayName("성공 : 채널 상세를 반환한다.")
         void getPlaylistDetail() {
             Creator creator = creatorWithId(1L);
+            givenClock();
             given(creatorRepository.findById(1L)).willReturn(Optional.of(creator));
             given(creatorTrackRepository.findAllByCreatorOrderByCreatedAtAsc(creator))
                 .willReturn(List.of());
