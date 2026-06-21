@@ -12,6 +12,7 @@ import com.verby.indp.domain.creator.Creator;
 import com.verby.indp.domain.creator.dto.request.CreateCreatorRequest;
 import com.verby.indp.domain.creator.dto.response.FindCreatorsResponse;
 import com.verby.indp.domain.creator.repository.CreatorRepository;
+import com.verby.indp.domain.listening.repository.ListeningDailyRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +32,9 @@ class AdminCreatorServiceTest {
 
     @Mock
     private CreatorRepository creatorRepository;
+
+    @Mock
+    private ListeningDailyRepository listeningDailyRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -84,6 +88,8 @@ class AdminCreatorServiceTest {
             Creator c1 = creatorWithId(1L);
             Creator c2 = creatorWithId(2L);
             given(creatorRepository.findAll()).willReturn(List.of(c1, c2));
+            given(listeningDailyRepository.sumAllSecondsByCreatorId(1L)).willReturn(6912L);
+            given(listeningDailyRepository.sumAllSecondsByCreatorId(2L)).willReturn(0L);
 
             // when
             FindCreatorsResponse response = adminCreatorService.findCreators();
@@ -91,6 +97,9 @@ class AdminCreatorServiceTest {
             // then
             assertThat(response.creators()).hasSize(2);
             assertThat(response.creators().get(0).id()).isEqualTo(1L);
+            // 6912초 / 3456 = 정확히 2.0원 (1원 단위 내림이 아닌 소수점 적립액)
+            assertThat(response.creators().get(0).accruedWon()).isEqualTo(2.0);
+            assertThat(response.creators().get(0).totalListenSeconds()).isEqualTo(6912L);
         }
     }
 

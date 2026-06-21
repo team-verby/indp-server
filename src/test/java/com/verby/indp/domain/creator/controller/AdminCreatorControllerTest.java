@@ -109,7 +109,7 @@ class AdminCreatorControllerTest extends BaseControllerTest {
             CreatorItem item = new CreatorItem(
                 1L, "박완", "DJ Parkwan", "010-1234-5678", "dj@example.com",
                 null, LocalDateTime.of(2026, 6, 1, 0, 0), true,
-                false, 0, 0, null, null, null, null);
+                false, 0, 0, null, null, null, null, 6912L, 2.0);
             given(adminCreatorService.findCreators())
                 .willReturn(new FindCreatorsResponse(List.of(item)));
 
@@ -137,7 +137,9 @@ class AdminCreatorControllerTest extends BaseControllerTest {
                             fieldWithPath("creators[].totalListenMinutes").type(NULL).description("누적 청취 시간(분)"),
                             fieldWithPath("creators[].subscriberCount").type(NULL).description("구독자 수"),
                             fieldWithPath("creators[].thisMonthEstimate").type(NULL).description("이번 달 예상 정산"),
-                            fieldWithPath("creators[].totalPaid").type(NULL).description("누적 정산 금액")
+                            fieldWithPath("creators[].totalPaid").type(NULL).description("누적 정산 금액"),
+                            fieldWithPath("creators[].totalListenSeconds").type(NUMBER).description("누적 청취 시간(초) — 어드민 전용"),
+                            fieldWithPath("creators[].accruedWon").type(NUMBER).description("누적 정산 적립액(원, 소수점) — 어드민 전용")
                         )
                     )
                 );

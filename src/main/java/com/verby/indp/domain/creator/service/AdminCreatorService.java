@@ -7,6 +7,7 @@ import com.verby.indp.domain.creator.dto.request.CreateCreatorRequest;
 import com.verby.indp.domain.creator.dto.response.FindCreatorsResponse;
 import com.verby.indp.domain.creator.dto.response.FindCreatorsResponse.CreatorItem;
 import com.verby.indp.domain.creator.repository.CreatorRepository;
+import com.verby.indp.domain.listening.repository.ListeningDailyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.List;
 public class AdminCreatorService {
 
     private final CreatorRepository creatorRepository;
+    private final ListeningDailyRepository listeningDailyRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -39,7 +41,8 @@ public class AdminCreatorService {
 
     public FindCreatorsResponse findCreators() {
         List<CreatorItem> items = creatorRepository.findAll().stream()
-            .map(CreatorItem::from)
+            .map(creator -> CreatorItem.from(
+                creator, listeningDailyRepository.sumAllSecondsByCreatorId(creator.getCreatorId())))
             .toList();
         return new FindCreatorsResponse(items);
     }
@@ -47,7 +50,8 @@ public class AdminCreatorService {
     public FindCreatorsResponse.CreatorItem findCreator(long creatorId) {
         Creator creator = creatorRepository.findById(creatorId)
             .orElseThrow(() -> new NotFoundException("존재하지 않는 크리에이터입니다."));
-        return FindCreatorsResponse.CreatorItem.from(creator);
+        long totalSeconds = listeningDailyRepository.sumAllSecondsByCreatorId(creatorId);
+        return CreatorItem.from(creator, totalSeconds);
     }
 
     @Transactional
