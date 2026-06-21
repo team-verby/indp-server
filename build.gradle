@@ -131,7 +131,8 @@ def jacocoExcludePatterns = [
 		"**/dto/request/TimePreference*",
 		"**/domain/plan/Plan.*",
 		"**/domain/plan/PlanDiscount*",
-		"**/domain/policy/PricePolicy*"
+		"**/domain/policy/PricePolicy*",
+		"**/global/seed/**"
 ]
 
 def excludedClassFilesForReport(classDirectories, jacocoExcludePatterns) {
