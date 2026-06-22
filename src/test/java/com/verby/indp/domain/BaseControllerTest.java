@@ -201,6 +201,9 @@ public abstract class BaseControllerTest {
     @MockBean
     protected com.verby.indp.domain.settlement.service.AdminSettlementService adminSettlementService;
 
+    @MockBean
+    protected com.verby.indp.domain.creator.service.CreatorApplicationService creatorApplicationService;
+
     @BeforeEach
     void setUp(final WebApplicationContext context,
         final RestDocumentationContextProvider provider) {
