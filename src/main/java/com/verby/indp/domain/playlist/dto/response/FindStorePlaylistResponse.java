@@ -49,6 +49,7 @@ public record FindStorePlaylistResponse(
         String title,
         String artist,
         Integer playTime,
+        String vid,
         boolean isRecommended,
         String refereeName
     ) {
@@ -56,7 +57,7 @@ public record FindStorePlaylistResponse(
         private static SongItem from(PlaylistSong song) {
             return new SongItem(song.getPlaylistSongId(), song.getPlayOrder(), song.getTitle(),
                 song.getArtist(),
-                song.getPlayTime(), song.isRecommended(),
+                song.getPlayTime(), song.getVid(), song.isRecommended(),
                 song.isRecommended() ? song.getSongRecommendation().getRefereeName() : null);
         }
     }
