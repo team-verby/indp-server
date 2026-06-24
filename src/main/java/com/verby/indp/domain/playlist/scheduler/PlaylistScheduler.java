@@ -15,7 +15,8 @@ public class PlaylistScheduler {
     private final PlaylistService playlistService;
     private final Clock clock;
 
-    @Scheduled(cron = "0 0/30 * * * *")
+    // 매분 검사 — 관리자가 지정한 시·분에 정확히 반영되도록(30분 단위 제약 제거)
+    @Scheduled(cron = "0 * * * * *")
     public void applyScheduledPlaylistUpdates() {
         playlistService.applyDueScheduledUpdates();
     }
