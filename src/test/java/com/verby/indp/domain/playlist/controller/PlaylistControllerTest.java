@@ -111,6 +111,8 @@ class PlaylistControllerTest extends BaseControllerTest {
                                 .description("아티스트"),
                             fieldWithPath("playlist.songs[].playTime").type(NUMBER)
                                 .description("곡 길이 (초)"),
+                            fieldWithPath("playlist.songs[].vid").type(STRING)
+                                .description("YouTube 영상 ID"),
                             fieldWithPath("playlist.songs[].isRecommended").type(BOOLEAN)
                                 .description("손님 추천 곡 여부"),
                             fieldWithPath("playlist.songs[].refereeName").type(JsonFieldType.NULL)
