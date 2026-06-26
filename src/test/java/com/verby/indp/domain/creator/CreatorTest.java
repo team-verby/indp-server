@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import com.verby.indp.domain.common.exception.BadRequestException;
+import java.time.LocalTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -188,6 +189,62 @@ class CreatorTest {
             Creator creator = new Creator("박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "hashed-pw");
             given(encoder.matches("wrongpassword", "hashed-pw")).willReturn(false);
             assertThat(creator.mismatchPassword("wrongpassword", encoder)).isTrue();
+        }
+    }
+
+    @Nested
+    @DisplayName("isWithinLiveWindow 호출 시")
+    class IsWithinLiveWindow {
+
+        private Creator creator() {
+            return new Creator("박완", "DJ Parkwan", "010-1234-5678", "dj@example.com", "hashed-pw");
+        }
+
+        @Test
+        @DisplayName("성공 : autoLive가 false면 항상 false를 반환한다.")
+        void notAutoLive() {
+            Creator creator = creator();
+            assertThat(creator.isWithinLiveWindow(LocalTime.of(12, 0))).isFalse();
+        }
+
+        @Test
+        @DisplayName("성공 : start/end가 null이면 24시간 상시 true를 반환한다.")
+        void alwaysLiveWhenNullWindow() {
+            Creator creator = creator();
+            creator.enableAutoLive(null, null);
+            assertThat(creator.isWithinLiveWindow(LocalTime.of(0, 0))).isTrue();
+            assertThat(creator.isWithinLiveWindow(LocalTime.of(23, 59))).isTrue();
+        }
+
+        @Test
+        @DisplayName("성공 : 08:00~23:00 창에서 창 안/밖을 구분한다.")
+        void dayWindow() {
+            Creator creator = creator();
+            creator.enableAutoLive(LocalTime.of(8, 0), LocalTime.of(23, 0));
+            assertThat(creator.isWithinLiveWindow(LocalTime.of(7, 59))).isFalse();
+            assertThat(creator.isWithinLiveWindow(LocalTime.of(8, 0))).isTrue();
+            assertThat(creator.isWithinLiveWindow(LocalTime.of(22, 59))).isTrue();
+            assertThat(creator.isWithinLiveWindow(LocalTime.of(23, 0))).isFalse();
+        }
+
+        @Test
+        @DisplayName("성공 : 자정을 넘는 창(22:00~02:00)을 처리한다.")
+        void overnightWindow() {
+            Creator creator = creator();
+            creator.enableAutoLive(LocalTime.of(22, 0), LocalTime.of(2, 0));
+            assertThat(creator.isWithinLiveWindow(LocalTime.of(23, 0))).isTrue();
+            assertThat(creator.isWithinLiveWindow(LocalTime.of(1, 0))).isTrue();
+            assertThat(creator.isWithinLiveWindow(LocalTime.of(2, 0))).isFalse();
+            assertThat(creator.isWithinLiveWindow(LocalTime.of(12, 0))).isFalse();
+        }
+
+        @Test
+        @DisplayName("성공 : disableAutoLive 후에는 false를 반환한다.")
+        void disable() {
+            Creator creator = creator();
+            creator.enableAutoLive(LocalTime.of(8, 0), LocalTime.of(23, 0));
+            creator.disableAutoLive();
+            assertThat(creator.isWithinLiveWindow(LocalTime.of(12, 0))).isFalse();
         }
     }
 }

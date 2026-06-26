@@ -17,7 +17,9 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -131,6 +133,75 @@ class DjLiveServiceTest {
             DjLiveListenersResponse response = djLiveService.getListeners(creator);
 
             assertThat(response.count()).isEqualTo(3);
+        }
+    }
+
+    @Nested
+    @DisplayName("syncAutoLive 메서드 실행 시")
+    class SyncAutoLive {
+
+        // 2026-06-18T05:00:00Z == UTC 05:00 (라이브 창 08~23시 밖)
+        private void givenClockUtc(String instant) {
+            given(clock.instant()).willReturn(Instant.parse(instant));
+            given(clock.getZone()).willReturn(ZoneId.of("UTC"));
+        }
+
+        @Test
+        @DisplayName("성공 : 라이브 창 안 + 트랙이 있으면 라이브를 켠다.")
+        void turnsOnWithinWindow() {
+            Creator creator = creatorWithId(1L);
+            creator.enableAutoLive(LocalTime.of(8, 0), LocalTime.of(23, 0));
+            givenClockUtc("2026-06-18T12:00:00Z"); // UTC 12:00 → 창 안
+            given(creatorRepository.findAllByAutoLiveTrueAndActiveTrue()).willReturn(List.of(creator));
+            given(creatorTrackRepository.countByCreator(creator)).willReturn(5);
+
+            djLiveService.syncAutoLive();
+
+            LocalDateTime asOf = LocalDateTime.of(2026, 6, 18, 12, 0);
+            assertThat(creator.isLive()).isTrue();
+            assertThat(creator.isLiveWithin(asOf, DjLiveService.LIVE_TTL_SEC)).isTrue();
+        }
+
+        @Test
+        @DisplayName("성공 : 라이브 창 안이어도 트랙이 없으면 라이브로 켜지 않는다.")
+        void skipsWhenNoTracks() {
+            Creator creator = creatorWithId(1L);
+            creator.enableAutoLive(LocalTime.of(8, 0), LocalTime.of(23, 0));
+            givenClockUtc("2026-06-18T12:00:00Z");
+            given(creatorRepository.findAllByAutoLiveTrueAndActiveTrue()).willReturn(List.of(creator));
+            given(creatorTrackRepository.countByCreator(creator)).willReturn(0);
+
+            djLiveService.syncAutoLive();
+
+            assertThat(creator.isLive()).isFalse();
+        }
+
+        @Test
+        @DisplayName("성공 : 라이브 창 밖 + 라이브 중이면 라이브를 끈다.")
+        void turnsOffOutsideWindow() {
+            Creator creator = creatorWithId(1L);
+            creator.enableAutoLive(LocalTime.of(8, 0), LocalTime.of(23, 0));
+            creator.startLive();
+            givenClockUtc("2026-06-18T05:00:00Z"); // UTC 05:00 → 창 밖
+            given(creatorRepository.findAllByAutoLiveTrueAndActiveTrue()).willReturn(List.of(creator));
+
+            djLiveService.syncAutoLive();
+
+            assertThat(creator.isLive()).isFalse();
+        }
+
+        @Test
+        @DisplayName("성공 : 24시간(창 null) 계정은 언제나 라이브를 켠다.")
+        void alwaysLive() {
+            Creator creator = creatorWithId(1L);
+            creator.enableAutoLive(null, null);
+            givenClockUtc("2026-06-18T05:00:00Z");
+            given(creatorRepository.findAllByAutoLiveTrueAndActiveTrue()).willReturn(List.of(creator));
+            given(creatorTrackRepository.countByCreator(creator)).willReturn(3);
+
+            djLiveService.syncAutoLive();
+
+            assertThat(creator.isLive()).isTrue();
         }
     }
 }

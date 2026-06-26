@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,6 +55,21 @@ public class Creator extends BaseTimeEntity {
     @Column(name = "last_live_at")
     private LocalDateTime lastLiveAt;
 
+    /**
+     * 스케줄 자동 라이브 대상 여부. 운영용 시드 DJ 계정만 true로 두고,
+     * 스케줄러가 라이브 창에 맞춰 isLive/heartbeat를 자동 관리한다. 일반 DJ는 false.
+     */
+    @Column(name = "auto_live", nullable = false)
+    private boolean autoLive = false;
+
+    /** 자동 라이브 시작 시각(LocalTime). null이면 24시간 상시 라이브. */
+    @Column(name = "live_start_time")
+    private LocalTime liveStartTime;
+
+    /** 자동 라이브 종료 시각(LocalTime). null이면 24시간 상시 라이브. */
+    @Column(name = "live_end_time")
+    private LocalTime liveEndTime;
+
     public Creator(String name, String djName, String phone, String email, String password) {
         validateName(name);
         validateDjName(djName);
@@ -94,6 +110,34 @@ public class Creator extends BaseTimeEntity {
         return isLive
             && lastLiveAt != null
             && !lastLiveAt.isBefore(now.minusSeconds(ttlSeconds));
+    }
+
+    /** 스케줄 자동 라이브를 켠다. start/end가 null이면 24시간 상시 라이브. */
+    public void enableAutoLive(LocalTime startTime, LocalTime endTime) {
+        this.autoLive = true;
+        this.liveStartTime = startTime;
+        this.liveEndTime = endTime;
+    }
+
+    public void disableAutoLive() {
+        this.autoLive = false;
+    }
+
+    /**
+     * 자동 라이브 대상이고, 현재 시각이 라이브 창 안인지 판단한다.
+     * start/end가 null이거나 같으면 24시간 상시 라이브. 자정을 넘는 창(예: 22:00~02:00)도 처리.
+     */
+    public boolean isWithinLiveWindow(LocalTime now) {
+        if (!autoLive) {
+            return false;
+        }
+        if (liveStartTime == null || liveEndTime == null || liveStartTime.equals(liveEndTime)) {
+            return true;
+        }
+        if (liveStartTime.isBefore(liveEndTime)) {
+            return !now.isBefore(liveStartTime) && now.isBefore(liveEndTime);
+        }
+        return !now.isBefore(liveStartTime) || now.isBefore(liveEndTime);
     }
 
     public void updateProfile(String djName, String thumbnailUrl, String introduction) {

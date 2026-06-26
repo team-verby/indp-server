@@ -10,6 +10,8 @@ import com.verby.indp.domain.listening.SettlementPolicy;
 import com.verby.indp.domain.listening.repository.ListeningDailyRepository;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,5 +66,30 @@ public class DjLiveService {
     @Transactional
     public void updateLiveTracks(Creator creator, UpdateLiveTracksRequest request) {
         // 라이브 트랙 순서 업데이트는 향후 구현 예정
+    }
+
+    /**
+     * 자동 라이브 대상(시드 DJ)의 라이브 상태를 현재 시각 기준으로 동기화한다.
+     * 라이브 창 안이면 isLive=true + heartbeat(스케줄러 주기로 TTL 갱신), 창 밖이면 stopLive.
+     * 트랙이 없는 계정은 재생 불가이므로 라이브로 노출하지 않는다.
+     * auto_live=true 계정이 없으면 완전 무동작(일반 DJ에는 영향 없음).
+     */
+    @Transactional
+    public void syncAutoLive() {
+        LocalDateTime now = LocalDateTime.now(clock);
+        LocalTime nowTime = now.toLocalTime();
+        List<Creator> creators = creatorRepository.findAllByAutoLiveTrueAndActiveTrue();
+        for (Creator creator : creators) {
+            if (creator.isWithinLiveWindow(nowTime)) {
+                if (creatorTrackRepository.countByCreator(creator) > 0) {
+                    creator.startLive();
+                    creator.heartbeat(now);
+                    creatorRepository.save(creator);
+                }
+            } else if (creator.isLive()) {
+                creator.stopLive();
+                creatorRepository.save(creator);
+            }
+        }
     }
 }

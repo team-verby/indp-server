@@ -15,6 +15,9 @@ public interface CreatorRepository extends JpaRepository<Creator, Long> {
 
     Optional<Creator> findByEmail(String email);
 
+    /** 스케줄 자동 라이브 대상(시드 DJ) 목록. */
+    List<Creator> findAllByAutoLiveTrueAndActiveTrue();
+
     /** 활성 크리에이터 ID 목록 (월 적립 집계 대상). */
     @Query("SELECT c.creatorId FROM Creator c WHERE c.active = true")
     List<Long> findActiveCreatorIds();
