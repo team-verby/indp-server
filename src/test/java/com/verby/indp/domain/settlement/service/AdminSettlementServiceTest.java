@@ -10,12 +10,16 @@ import static org.mockito.Mockito.never;
 
 import com.verby.indp.domain.common.exception.NotFoundException;
 import com.verby.indp.domain.creator.Creator;
+import com.verby.indp.domain.creator.dto.request.RequestPayoutRequest;
 import com.verby.indp.domain.creator.repository.CreatorRepository;
 import com.verby.indp.domain.settlement.CreatorBalance;
 import com.verby.indp.domain.settlement.CreatorLedger;
 import com.verby.indp.domain.settlement.SettlementRequest;
 import com.verby.indp.domain.settlement.SettlementStatus;
+import com.verby.indp.domain.settlement.SettlementTaxInfo;
+import com.verby.indp.domain.settlement.TaxType;
 import com.verby.indp.domain.settlement.dto.response.FindSettlementsResponse;
+import com.verby.indp.domain.settlement.dto.response.SettlementTaxSecretResponse;
 import com.verby.indp.domain.settlement.repository.CreatorBalanceRepository;
 import com.verby.indp.domain.settlement.repository.CreatorLedgerRepository;
 import com.verby.indp.domain.settlement.repository.SettlementRequestRepository;
@@ -98,6 +102,41 @@ class AdminSettlementServiceTest {
                 adminSettlementService.findSettlements(SettlementStatus.REQUESTED);
 
             assertThat(response.settlements()).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("getTaxSecret 메서드 실행 시")
+    class GetTaxSecret {
+
+        @Test
+        @DisplayName("성공 : 주민등록번호·계좌번호 전체 값을 반환한다.")
+        void getTaxSecret() {
+            RequestPayoutRequest payoutRequest = new RequestPayoutRequest(
+                TaxType.INDIVIDUAL, "국민은행", "12345678901234", "박완",
+                "010-1234-5678", "dj@example.com",
+                "박완", "9010101234567", "서울시 강남구",
+                null, null, null, null, null, true);
+            SettlementTaxInfo taxInfo = SettlementTaxInfo.from(
+                payoutRequest, LocalDateTime.of(2026, 6, 18, 10, 0));
+            SettlementRequest request = new SettlementRequest(
+                10L, 60_000L, LocalDateTime.of(2026, 6, 18, 10, 0), taxInfo);
+            given(settlementRequestRepository.findById(1L)).willReturn(Optional.of(request));
+
+            SettlementTaxSecretResponse response = adminSettlementService.getTaxSecret(1L);
+
+            assertThat(response.residentNumber()).isEqualTo("9010101234567");
+            assertThat(response.accountNumber()).isEqualTo("12345678901234");
+        }
+
+        @Test
+        @DisplayName("실패 : 존재하지 않는 신청이면 예외를 던진다.")
+        void getTaxSecretNotFound() {
+            given(settlementRequestRepository.findById(99L)).willReturn(Optional.empty());
+
+            Exception exception = catchException(() -> adminSettlementService.getTaxSecret(99L));
+
+            assertThat(exception).isInstanceOf(NotFoundException.class);
         }
     }
 

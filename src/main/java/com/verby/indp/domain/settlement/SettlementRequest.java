@@ -3,6 +3,7 @@ package com.verby.indp.domain.settlement;
 import com.verby.indp.domain.common.entity.BaseTimeEntity;
 import com.verby.indp.domain.common.exception.BadRequestException;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -50,7 +51,16 @@ public class SettlementRequest extends BaseTimeEntity {
     @Column(name = "processed_at")
     private LocalDateTime processedAt;
 
+    /** 신청 시점에 수집한 세금·신원·계좌 정보 스냅샷 (구버전 신청은 null일 수 있음). */
+    @Embedded
+    private SettlementTaxInfo taxInfo;
+
     public SettlementRequest(Long creatorId, long amount, LocalDateTime requestedAt) {
+        this(creatorId, amount, requestedAt, null);
+    }
+
+    public SettlementRequest(
+        Long creatorId, long amount, LocalDateTime requestedAt, SettlementTaxInfo taxInfo) {
         if (creatorId == null || creatorId <= 0) {
             throw new BadRequestException("creatorId는 필수입니다.");
         }
@@ -64,6 +74,7 @@ public class SettlementRequest extends BaseTimeEntity {
         this.amount = amount;
         this.status = SettlementStatus.REQUESTED;
         this.requestedAt = requestedAt;
+        this.taxInfo = taxInfo;
     }
 
     public void markPaid(LocalDateTime processedAt) {

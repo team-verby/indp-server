@@ -2,6 +2,7 @@ package com.verby.indp.domain.settlement.controller;
 
 import com.verby.indp.domain.settlement.SettlementStatus;
 import com.verby.indp.domain.settlement.dto.response.FindSettlementsResponse;
+import com.verby.indp.domain.settlement.dto.response.SettlementTaxSecretResponse;
 import com.verby.indp.domain.settlement.service.AdminSettlementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,12 @@ public class AdminSettlementController {
     public ResponseEntity<FindSettlementsResponse> findSettlements(
         @RequestParam(required = false) SettlementStatus status) {
         return ResponseEntity.ok(adminSettlementService.findSettlements(status));
+    }
+
+    @GetMapping("/{settlementRequestId}/tax-info")
+    public ResponseEntity<SettlementTaxSecretResponse> getTaxSecret(
+        @PathVariable long settlementRequestId) {
+        return ResponseEntity.ok(adminSettlementService.getTaxSecret(settlementRequestId));
     }
 
     @PatchMapping("/{settlementRequestId}/approve")

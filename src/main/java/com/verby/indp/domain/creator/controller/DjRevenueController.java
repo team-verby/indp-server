@@ -1,6 +1,7 @@
 package com.verby.indp.domain.creator.controller;
 
 import com.verby.indp.domain.creator.Creator;
+import com.verby.indp.domain.creator.dto.request.RequestPayoutRequest;
 import com.verby.indp.domain.creator.dto.response.DjRevenueResponse;
 import com.verby.indp.domain.creator.service.DjRevenueService;
 import com.verby.indp.global.resolver.LoginCreator;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,8 +26,10 @@ public class DjRevenueController {
     }
 
     @PostMapping("/revenue/request")
-    public ResponseEntity<Void> requestPayout(@LoginCreator Creator creator) {
-        djRevenueService.requestPayout(creator);
+    public ResponseEntity<Void> requestPayout(
+        @LoginCreator Creator creator,
+        @RequestBody RequestPayoutRequest request) {
+        djRevenueService.requestPayout(creator, request);
         return ResponseEntity.ok().build();
     }
 }

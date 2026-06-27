@@ -10,6 +10,7 @@ import com.verby.indp.domain.settlement.SettlementRequest;
 import com.verby.indp.domain.settlement.SettlementStatus;
 import com.verby.indp.domain.settlement.dto.response.FindSettlementsResponse;
 import com.verby.indp.domain.settlement.dto.response.FindSettlementsResponse.SettlementItem;
+import com.verby.indp.domain.settlement.dto.response.SettlementTaxSecretResponse;
 import com.verby.indp.domain.settlement.repository.CreatorBalanceRepository;
 import com.verby.indp.domain.settlement.repository.CreatorLedgerRepository;
 import com.verby.indp.domain.settlement.repository.SettlementRequestRepository;
@@ -52,6 +53,15 @@ public class AdminSettlementService {
             .map(request -> SettlementItem.of(request, creators.get(request.getCreatorId())))
             .toList();
         return new FindSettlementsResponse(items);
+    }
+
+    /**
+     * 정산 처리를 위해 마스킹 없이 주민등록번호·계좌번호 전체 값을 복호화해 반환한다.
+     * (목록에는 마스킹 값만 내려가므로, 실제 지급 시 이 API로 전체 값을 확인한다.)
+     */
+    public SettlementTaxSecretResponse getTaxSecret(long settlementRequestId) {
+        SettlementRequest request = getRequest(settlementRequestId);
+        return SettlementTaxSecretResponse.of(request.getTaxInfo());
     }
 
     /** 지급 처리 — 잔액에서 신청 금액을 차감하고 PAYOUT 원장을 기록한다. */

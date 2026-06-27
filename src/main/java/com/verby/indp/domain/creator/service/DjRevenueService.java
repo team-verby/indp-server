@@ -2,12 +2,14 @@ package com.verby.indp.domain.creator.service;
 
 import com.verby.indp.domain.common.exception.BadRequestException;
 import com.verby.indp.domain.creator.Creator;
+import com.verby.indp.domain.creator.dto.request.RequestPayoutRequest;
 import com.verby.indp.domain.creator.dto.response.DjRevenueResponse;
 import com.verby.indp.domain.listening.SettlementPolicy;
 import com.verby.indp.domain.listening.repository.ListeningDailyRepository;
 import com.verby.indp.domain.settlement.CreatorBalance;
 import com.verby.indp.domain.settlement.SettlementRequest;
 import com.verby.indp.domain.settlement.SettlementStatus;
+import com.verby.indp.domain.settlement.SettlementTaxInfo;
 import com.verby.indp.domain.settlement.repository.CreatorBalanceRepository;
 import com.verby.indp.domain.settlement.repository.SettlementRequestRepository;
 import java.time.Clock;
@@ -41,10 +43,16 @@ public class DjRevenueService {
             .map(CreatorBalance::getBalance)
             .orElse(0L);
 
-        long totalPaid = 0L; // 정산 지급(P3) 연동 시 PAID 합으로 대체
+        long totalPaid = settlementRequestRepository.sumAmountByCreatorIdAndStatus(
+            creatorId, SettlementStatus.PAID);
         boolean hasPendingRequest = settlementRequestRepository.existsByCreatorIdAndStatus(
             creatorId, SettlementStatus.REQUESTED);
         boolean canRequest = balance >= SettlementPolicy.MIN_PAYOUT_WON && !hasPendingRequest;
+
+        DjRevenueResponse.LastSettlement lastSettlement = settlementRequestRepository
+            .findFirstByCreatorIdAndProcessedAtIsNotNullOrderByProcessedAtDesc(creatorId)
+            .map(DjRevenueResponse.LastSettlement::of)
+            .orElse(null);
 
         return new DjRevenueResponse(
             thisMonthEstimate,
@@ -52,16 +60,18 @@ public class DjRevenueService {
             totalPaid,
             canRequest,
             SettlementPolicy.MIN_PAYOUT_WON,
-            hasPendingRequest
+            hasPendingRequest,
+            lastSettlement
         );
     }
 
     /**
      * 정산(출금)을 신청한다. 잔액이 최소 신청 금액 이상이고 대기 중 신청이 없을 때만 가능하다.
-     * 신청 시점 잔액을 스냅샷으로 보관하며, 실제 차감은 어드민 지급 처리 시 이루어진다.
+     * 신청 시점 잔액과 세금·신원·계좌 정보를 스냅샷으로 보관하며,
+     * 실제 차감은 어드민 지급 처리 시 이루어진다.
      */
     @Transactional
-    public void requestPayout(Creator creator) {
+    public void requestPayout(Creator creator, RequestPayoutRequest request) {
         Long creatorId = creator.getCreatorId();
 
         long balance = creatorBalanceRepository.findById(creatorId)
@@ -75,7 +85,10 @@ public class DjRevenueService {
             throw new BadRequestException("이미 처리 대기 중인 정산 신청이 있습니다.");
         }
 
+        request.validate();
+        LocalDateTime now = LocalDateTime.now(clock);
+        SettlementTaxInfo taxInfo = SettlementTaxInfo.from(request, now);
         settlementRequestRepository.save(
-            new SettlementRequest(creatorId, balance, LocalDateTime.now(clock)));
+            new SettlementRequest(creatorId, balance, now, taxInfo));
     }
 }
