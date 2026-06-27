@@ -3,6 +3,8 @@ package com.verby.indp.domain.creator.service;
 import static com.verby.indp.fixture.CreatorFixture.creatorWithId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 import com.verby.indp.domain.common.exception.NotFoundException;
@@ -11,8 +13,11 @@ import com.verby.indp.domain.creator.dto.response.DjPlaylistDetailResponse;
 import com.verby.indp.domain.creator.dto.response.FindDjPlaylistsResponse;
 import com.verby.indp.domain.creator.repository.CreatorRepository;
 import com.verby.indp.domain.creator.repository.CreatorTrackRepository;
+import com.verby.indp.domain.listening.repository.ListeningDailyRepository;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +28,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class DjPlaylistServiceTest {
@@ -37,6 +43,9 @@ class DjPlaylistServiceTest {
     private CreatorTrackRepository creatorTrackRepository;
 
     @Mock
+    private ListeningDailyRepository listeningDailyRepository;
+
+    @Mock
     private Clock clock;
 
     private void givenClock() {
@@ -49,7 +58,7 @@ class DjPlaylistServiceTest {
     class GetPlaylists {
 
         @Test
-        @DisplayName("성공 : 활성 크리에이터 목록을 반환한다.")
+        @DisplayName("성공 : 활성 크리에이터 목록을 반환한다(비라이브는 청취자 0).")
         void getPlaylists() {
             Creator creator = creatorWithId(1L);
             givenClock();
@@ -59,6 +68,26 @@ class DjPlaylistServiceTest {
 
             assertThat(response.playlists()).hasSize(1);
             assertThat(response.playlists().get(0).djName()).isEqualTo("DJ Parkwan");
+            assertThat(response.playlists().get(0).isLive()).isFalse();
+            assertThat(response.playlists().get(0).listeners()).isZero();
+        }
+
+        @Test
+        @DisplayName("성공 : 라이브 채널은 실시간 청취자 수를 함께 반환한다.")
+        void getPlaylistsLiveListeners() {
+            Creator creator = creatorWithId(1L);
+            givenClock();
+            // 라이브 상태로 만든다(isLive=true + 최근 하트비트).
+            ReflectionTestUtils.setField(creator, "isLive", true);
+            creator.heartbeat(LocalDateTime.now(clock));
+            given(creatorRepository.findAll()).willReturn(List.of(creator));
+            given(listeningDailyRepository.countByCreatorIdAndYmdAndUpdatedAtGreaterThanEqual(
+                eq(1L), any(LocalDate.class), any(LocalDateTime.class))).willReturn(7);
+
+            FindDjPlaylistsResponse response = djPlaylistService.getPlaylists();
+
+            assertThat(response.playlists().get(0).isLive()).isTrue();
+            assertThat(response.playlists().get(0).listeners()).isEqualTo(7);
         }
     }
 

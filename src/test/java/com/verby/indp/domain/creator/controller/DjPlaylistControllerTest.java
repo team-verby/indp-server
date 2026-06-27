@@ -36,7 +36,7 @@ class DjPlaylistControllerTest extends BaseControllerTest {
             given(djPlaylistService.getPlaylists())
                 .willReturn(new FindDjPlaylistsResponse(
                     List.of(new DjPlaylistItem(
-                        1L, "DJ Parkwan 채널", "DJ Parkwan", "https://cdn.example.com/thumb.jpg", true))
+                        1L, "DJ Parkwan 채널", "DJ Parkwan", "https://cdn.example.com/thumb.jpg", true, 7))
                 ));
 
             ResultActions resultActions = mockMvc.perform(get("/api/dj/playlists"));
@@ -49,7 +49,8 @@ class DjPlaylistControllerTest extends BaseControllerTest {
                         fieldWithPath("playlists[].name").type(STRING).description("채널명"),
                         fieldWithPath("playlists[].djName").type(STRING).description("DJ 활동명"),
                         fieldWithPath("playlists[].thumbnailUrl").description("썸네일 URL (null 가능)"),
-                        fieldWithPath("playlists[].isLive").type(BOOLEAN).description("라이브 여부")
+                        fieldWithPath("playlists[].isLive").type(BOOLEAN).description("라이브 여부"),
+                        fieldWithPath("playlists[].listeners").type(NUMBER).description("현재 청취자 수 (비라이브는 0)")
                     )
                 ));
         }

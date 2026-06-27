@@ -13,16 +13,18 @@ public record FindDjPlaylistsResponse(
         String name,
         String djName,
         String thumbnailUrl,
-        boolean isLive
+        boolean isLive,
+        int listeners
     ) {
 
-        public static DjPlaylistItem from(Creator creator, boolean live) {
+        public static DjPlaylistItem from(Creator creator, boolean live, int listeners) {
             return new DjPlaylistItem(
                 creator.getCreatorId(),
                 creator.getDjName() + " 채널",
                 creator.getDjName(),
                 creator.getThumbnailUrl(),
-                live
+                live,
+                listeners
             );
         }
     }
