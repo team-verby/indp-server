@@ -89,6 +89,27 @@ class DjPlaylistServiceTest {
             assertThat(response.playlists().get(0).isLive()).isTrue();
             assertThat(response.playlists().get(0).listeners()).isEqualTo(7);
         }
+
+        @Test
+        @DisplayName("성공 : 임시 데모 채널(autoLive)은 0~1500 범위의 안정적인 데모 청취자 수를 반환한다.")
+        void getPlaylistsAutoLiveDemoListeners() {
+            Creator creator = creatorWithId(1L);
+            givenClock();
+            // autoLive + 라이브 상태로 만든다(실시간 집계 대신 데모 표시).
+            ReflectionTestUtils.setField(creator, "isLive", true);
+            ReflectionTestUtils.setField(creator, "autoLive", true);
+            creator.heartbeat(LocalDateTime.now(clock));
+            given(creatorRepository.findAll()).willReturn(List.of(creator));
+
+            FindDjPlaylistsResponse first = djPlaylistService.getPlaylists();
+            FindDjPlaylistsResponse second = djPlaylistService.getPlaylists();
+
+            assertThat(first.playlists().get(0).isLive()).isTrue();
+            assertThat(first.playlists().get(0).listeners()).isBetween(0, 1500);
+            // 같은 시점이면 새로고침해도 값이 변하지 않는다.
+            assertThat(second.playlists().get(0).listeners())
+                .isEqualTo(first.playlists().get(0).listeners());
+        }
     }
 
     @Nested
