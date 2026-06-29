@@ -16,7 +16,7 @@ public record FindStoreByAdminResponse(
     public static FindStoreByAdminResponse from(Store store) {
         StoreApply storeApply = store.getStoreApply();
 
-        ApplyInfo applyInfo = ApplyInfo.from(storeApply);
+        ApplyInfo applyInfo = ApplyInfo.from(storeApply, store.getOwner().getLoginId());
         StoreInfo storeInfo = StoreInfo.from(store);
         MusicInfo musicInfo = MusicInfo.from(store.getStoreMusic());
         List<SubscriptionInfo> subscriptions = store.getSubscriptions().stream()
@@ -26,10 +26,11 @@ public record FindStoreByAdminResponse(
         return new FindStoreByAdminResponse(applyInfo, storeInfo, musicInfo, subscriptions);
     }
 
-    private record ApplyInfo(String applicantName, String applicantPhone) {
+    private record ApplyInfo(String applicantName, String applicantPhone, String loginId) {
 
-        private static ApplyInfo from(StoreApply storeApply) {
-            return new ApplyInfo(storeApply.getApplicantName(), storeApply.getApplicantPhone());
+        private static ApplyInfo from(StoreApply storeApply, String loginId) {
+            return new ApplyInfo(storeApply.getApplicantName(), storeApply.getApplicantPhone(),
+                loginId);
         }
     }
 

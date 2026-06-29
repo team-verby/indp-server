@@ -211,6 +211,8 @@ class AdminStoreControllerTest extends BaseControllerTest {
                                 .description("신청자 이름"),
                             fieldWithPath("applyInfo.applicantPhone").type(STRING)
                                 .description("신청자 연락처"),
+                            fieldWithPath("applyInfo.loginId").type(STRING)
+                                .description("점주 로그인 아이디 (자동 생성: store####)"),
                             fieldWithPath("storeInfo.name").type(STRING).description("매장명"),
                             fieldWithPath("storeInfo.industry").type(STRING).description("업종"),
                             fieldWithPath("storeInfo.address").type(STRING).description("주소"),
