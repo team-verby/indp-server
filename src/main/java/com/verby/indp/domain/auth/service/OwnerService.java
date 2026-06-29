@@ -2,6 +2,7 @@ package com.verby.indp.domain.auth.service;
 
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.auth.RefreshToken;
+import com.verby.indp.domain.auth.dto.request.ChangePasswordRequest;
 import com.verby.indp.domain.auth.dto.request.LoginRequest;
 import com.verby.indp.domain.auth.dto.response.LoginResponse;
 import com.verby.indp.domain.auth.repository.OwnerRepository;
@@ -39,6 +40,15 @@ public class OwnerService {
     @Transactional
     public void logout(Long ownerId) {
         authTokenService.revokeOwnerRefreshToken(ownerId);
+    }
+
+    @Transactional
+    public void changePassword(Owner owner, ChangePasswordRequest request) {
+        if (owner.mismatchPassword(request.currentPassword())) {
+            throw new AuthException("현재 비밀번호가 일치하지 않습니다.");
+        }
+        owner.changePassword(request.newPassword());
+        ownerRepository.save(owner);
     }
 
     public Owner createOwner(String name, String phone) {

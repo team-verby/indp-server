@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.JsonFieldType.NULL;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
@@ -18,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.verby.indp.domain.BaseControllerTest;
 import com.verby.indp.domain.auth.Admin;
 import com.verby.indp.domain.auth.Owner;
+import com.verby.indp.domain.auth.dto.request.ChangePasswordRequest;
 import com.verby.indp.domain.auth.dto.request.LoginRequest;
 import com.verby.indp.domain.auth.dto.request.RefreshRequest;
 import com.verby.indp.domain.auth.dto.response.LoginResponse;
@@ -191,6 +193,39 @@ class AuthControllerTest extends BaseControllerTest {
             // then
             resultActions.andExpect(status().isNoContent())
                 .andDo(restDocs.document());
+        }
+    }
+
+    @Nested
+    @DisplayName("PATCH /api/owner/password 실행 시")
+    class ChangeOwnerPassword {
+
+        @Test
+        @DisplayName("성공 : 점주가 비밀번호를 변경한다.")
+        void changeOwnerPassword() throws Exception {
+            // given
+            Owner owner = owner();
+            givenOwnerAuth(owner);
+            willDoNothing().given(ownerService).changePassword(any(), any());
+
+            ChangePasswordRequest request = new ChangePasswordRequest("password123!", "newPass456!");
+
+            // when
+            ResultActions resultActions = mockMvc.perform(patch("/api/owner/password")
+                .header(AUTHORIZATION_HEADER, BEARER_TOKEN)
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+            // then
+            resultActions.andExpect(status().isNoContent())
+                .andDo(
+                    restDocs.document(
+                        requestFields(
+                            fieldWithPath("currentPassword").type(STRING).description("현재 비밀번호"),
+                            fieldWithPath("newPassword").type(STRING).description("새 비밀번호")
+                        )
+                    )
+                );
         }
     }
 

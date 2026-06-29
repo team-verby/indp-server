@@ -11,6 +11,7 @@ import static org.mockito.BDDMockito.willDoNothing;
 import com.verby.indp.domain.auth.Owner;
 import com.verby.indp.domain.auth.RefreshToken;
 import com.verby.indp.domain.auth.RefreshToken.SubjectType;
+import com.verby.indp.domain.auth.dto.request.ChangePasswordRequest;
 import com.verby.indp.domain.auth.dto.request.LoginRequest;
 import com.verby.indp.domain.auth.dto.response.LoginResponse;
 import com.verby.indp.domain.auth.repository.OwnerRepository;
@@ -108,6 +109,42 @@ class OwnerServiceTest {
 
             // then
             then(authTokenService).should().revokeOwnerRefreshToken(1L);
+        }
+    }
+
+    @Nested
+    @DisplayName("changePassword 메서드 실행 시")
+    class ChangePassword {
+
+        @Test
+        @DisplayName("성공 : 현재 비밀번호가 맞으면 새 비밀번호로 변경한다.")
+        void changePassword() {
+            // given
+            Owner owner = owner();
+            given(ownerRepository.save(any())).willReturn(owner);
+            ChangePasswordRequest request = new ChangePasswordRequest("password123!", "newPass456!");
+
+            // when
+            ownerService.changePassword(owner, request);
+
+            // then
+            assertThat(owner.mismatchPassword("newPass456!")).isFalse();
+            then(ownerRepository).should().save(owner);
+        }
+
+        @Test
+        @DisplayName("실패 : 현재 비밀번호가 틀리면 예외를 던진다.")
+        void changePasswordWithWrongCurrent() {
+            // given
+            Owner owner = owner();
+            ChangePasswordRequest request = new ChangePasswordRequest("wrong", "newPass456!");
+
+            // when
+            Exception exception = catchException(
+                () -> ownerService.changePassword(owner, request));
+
+            // then
+            assertThat(exception).isInstanceOf(AuthException.class);
         }
     }
 

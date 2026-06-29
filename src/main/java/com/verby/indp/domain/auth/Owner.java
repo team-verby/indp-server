@@ -43,6 +43,11 @@ public class Owner {
         return !this.password.equals(password);
     }
 
+    public void changePassword(String newPassword) {
+        validatePassword(newPassword);
+        this.password = newPassword;
+    }
+
     private void validateLoginId(String loginId) {
         if (loginId == null || loginId.isBlank()) {
             throw new BadRequestException("loginId는 필수입니다.");

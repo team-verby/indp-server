@@ -2,6 +2,7 @@ package com.verby.indp.domain.auth.controller;
 
 import com.verby.indp.domain.auth.Admin;
 import com.verby.indp.domain.auth.Owner;
+import com.verby.indp.domain.auth.dto.request.ChangePasswordRequest;
 import com.verby.indp.domain.auth.dto.request.LoginRequest;
 import com.verby.indp.domain.auth.dto.request.RefreshRequest;
 import com.verby.indp.domain.auth.dto.response.LoginResponse;
@@ -15,6 +16,7 @@ import com.verby.indp.global.resolver.LoginAdmin;
 import com.verby.indp.global.resolver.LoginOwner;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,6 +61,15 @@ public class AuthController {
     @PostMapping("/owner/logout")
     public ResponseEntity<Void> ownerLogout(@LoginOwner Owner owner) {
         ownerService.logout(owner.getOwnerId());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/owner/password")
+    public ResponseEntity<Void> changeOwnerPassword(
+        @LoginOwner Owner owner,
+        @RequestBody ChangePasswordRequest request
+    ) {
+        ownerService.changePassword(owner, request);
         return ResponseEntity.noContent().build();
     }
 }
