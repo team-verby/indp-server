@@ -11,6 +11,7 @@ import com.verby.indp.domain.store.dto.response.AddFirstSubscriptionResponse;
 import com.verby.indp.domain.store.repository.StoreRepository;
 import com.verby.indp.domain.subscription.dto.request.AddSubscriptionRequest;
 import com.verby.indp.domain.subscription.service.SubscriptionService;
+import com.verby.indp.global.notification.ApplicationMailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ public class ApplyStoreService {
     private final StoreRepository storeRepository;
     private final OwnerService ownerService;
     private final SubscriptionService subscriptionService;
+    private final ApplicationMailService applicationMailService;
 
     @Transactional
     public AddFirstSubscriptionResponse applyStore(ApplyStoreRequest request) {
@@ -32,7 +34,15 @@ public class ApplyStoreService {
 
         AddSubscriptionRequest addSubscriptionRequest = new AddSubscriptionRequest(request.planId(),
             request.usagePeriod());
-        return subscriptionService.orderFirstSubscription(store, addSubscriptionRequest);
+        AddFirstSubscriptionResponse response =
+            subscriptionService.orderFirstSubscription(store, addSubscriptionRequest);
+
+        applicationMailService.notifyStoreApplication(
+            request.name(), request.applicantName(), request.applicantPhone(),
+            request.planId(), request.usagePeriod(),
+            store.getOwner().getLoginId(), store.getOwner().getPassword());
+
+        return response;
     }
 
     private void validateDuplicateName(String name) {

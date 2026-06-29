@@ -11,6 +11,7 @@ import com.verby.indp.domain.payment.PaymentType;
 import com.verby.indp.domain.payment.repository.PaymentRepository;
 import com.verby.indp.domain.subscription.UserSubscription;
 import com.verby.indp.domain.subscription.repository.UserSubscriptionRepository;
+import com.verby.indp.global.notification.ApplicationMailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class UserApplicationService {
     private final PaymentRepository paymentRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationMailService applicationMailService;
 
     @Transactional
     public UserApplicationResponse apply(UserApplicationRequest request) {
@@ -52,6 +54,9 @@ public class UserApplicationService {
         paymentRepository.save(payment);
 
         userSubscriptionRepository.save(new UserSubscription(user, payment, request.usagePeriod()));
+
+        applicationMailService.notifyUserApplication(
+            request.loginId(), request.name(), request.email(), request.usagePeriod(), amount);
 
         return new UserApplicationResponse(payment.getOrderId(), amount, orderName);
     }

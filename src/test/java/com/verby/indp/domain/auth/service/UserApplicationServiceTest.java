@@ -14,6 +14,7 @@ import com.verby.indp.domain.payment.Payment;
 import com.verby.indp.domain.payment.PaymentType;
 import com.verby.indp.domain.payment.repository.PaymentRepository;
 import com.verby.indp.domain.subscription.repository.UserSubscriptionRepository;
+import com.verby.indp.global.notification.ApplicationMailService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -41,6 +42,9 @@ class UserApplicationServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private ApplicationMailService applicationMailService;
 
     @Nested
     @DisplayName("apply 메서드 실행 시")

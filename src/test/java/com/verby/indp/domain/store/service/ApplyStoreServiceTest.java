@@ -22,6 +22,7 @@ import com.verby.indp.domain.store.vo.PlaylistType;
 import com.verby.indp.domain.store.vo.Tempo;
 import com.verby.indp.domain.store.vo.Vibe;
 import com.verby.indp.domain.subscription.service.SubscriptionService;
+import com.verby.indp.global.notification.ApplicationMailService;
 import java.time.LocalTime;
 import java.util.List;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -47,6 +48,9 @@ class ApplyStoreServiceTest {
 
     @Mock
     private SubscriptionService subscriptionService;
+
+    @Mock
+    private ApplicationMailService applicationMailService;
 
     @Nested
     @DisplayName("applyStore 메서드 실행 시")
